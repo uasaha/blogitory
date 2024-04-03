@@ -35,12 +35,12 @@ public class Heart extends BaseCreatedAtEntity {
   private Pk pk;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @MapsId("member_no")
+  @MapsId("memberNo")
   @JoinColumn(name = "member_no")
   private Member member;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @MapsId("posts_no")
+  @MapsId("postsNo")
   @JoinColumn(name = "posts_no")
   private Posts posts;
 
@@ -48,7 +48,7 @@ public class Heart extends BaseCreatedAtEntity {
   private boolean deleted;
 
   /**
-   * PK of Heart
+   * PK of Heart.
    */
   @Getter
   @EqualsAndHashCode
@@ -56,7 +56,9 @@ public class Heart extends BaseCreatedAtEntity {
   @AllArgsConstructor
   @Embeddable
   public static class Pk implements Serializable {
+    @Column(name = "member_no")
     private Long memberNo;
+    @Column(name = "posts_no")
     private Long postsNo;
   }
 }

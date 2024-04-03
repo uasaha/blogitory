@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 설명 작성 필!
+ * Comment entity.
  *
  * @author woonseok
  * @since 1.0
@@ -43,7 +43,7 @@ public class Comment extends BaseCreatedAtEntity {
   private Posts posts;
 
   @ManyToOne
-  @JoinColumn(name = "comment_no")
+  @JoinColumn(name = "comment_parent_no")
   private Comment parentComment;
 
   @Column(name = "comment_contents")
