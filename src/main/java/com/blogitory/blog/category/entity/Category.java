@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 설명 작성 필!
+ * Category entity.
  *
  * @author woonseok
  * @since 1.0
@@ -36,6 +36,9 @@ public class Category {
   @ManyToOne(fetch = FetchType.LAZY)
   private Blog blog;
 
+  @Column(name = "category_name")
   private String name;
+
+  @Column(name = "category_deleted")
   private boolean deleted;
 }
