@@ -1,0 +1,46 @@
+.nav-icon {
+    max-width: 20px;
+    max-height: 20px;
+    margin-bottom: 4px;
+}
+
+.write-button {
+    color: black;
+    border: 0.1em solid black;
+    border-radius: 10px;
+}
+
+.write-button:focus {
+    border: 0.1em solid black;
+}
+
+.signup-button {
+    color: black;
+    border: 0.1em solid black;
+    border-radius: 10px;
+}
+
+.notice-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.default-input {
+    background-color: #EEEEEE;
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-bottom: 1px solid #AAAAAA;
+    border-radius: 0;
+}
+
+.default-input:focus {
+    outline: none;
+    border-bottom: 1px solid #252525;
+    border-radius: 0;
+}
+
+.signup-div{
+    margin-top: 1em;
+    height: 2em;
+}

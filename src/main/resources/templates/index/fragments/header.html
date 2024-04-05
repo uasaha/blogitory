@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="header">
+    <header class="navbar navbar-expand-md bg-body-tertiary fixed-top nav-bar-light">
+        <div class="container-lg">
+            <a class="navbar-brand" href="/" style="font-size: 25px;">
+                <img src="/static/logo/logo-BE81F7.svg" width="30" height="30" alt="">
+                <b>Blog</b>itory
+            </a>
+            <button class="navbar-toggler  float-start" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavAltMarkup"
+                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse float-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav" style="font-size: 18px">
+                    <a class="nav-link" href="#"><img class="nav-icon" src="/static/icons/trending_up.svg"
+                                                      alt="trending_up"> 트렌딩</a>
+                    <a class="nav-link" href="#"><img class="nav-icon" src="/static/icons/update.svg" alt="update">
+                        최신</a>
+                    <a class="nav-link" href="#"><img class="nav-icon" src="/static/icons/reorder.svg" alt="feed">
+                        피드</a>
+                </div>
+                <div class="navbar-nav ms-md-auto">
+                    <a class="nav-link d-none" href="#"><img class="nav-icon" src="/static/icons/notice.svg"
+                                                             alt="notice"></a>
+                    <a class="nav-link d-none" href="#"><img class="nav-icon" src="/static/icons/write.svg" alt="write"></a>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        <a class="nav-link"><img class="nav-icon" src="/static/icons/login.svg" alt="login"> 로그인
+                        </a>
+                    </button>
+                    <div class="dropdown d-none">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <img class="img-profile rounded-circle" style="height: 25px; width: 25px"
+                                 src="/static/logo/logo-BE81F7.svg" alt="profile">
+                            Blogitory
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">프로필 설정</a></li>
+                            <li><a class="dropdown-item" href="#">내 블로그</a></li>
+                            <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <img src="/static/logo/logo-BE81F7.svg" width="25" height="25" alt="">
+                    <span style="font-size: 20px">&ensp;<b>Blog</b>itory</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="/login">
+                        <div class="form-group mb-4">
+                            <label for="id-input">이메일</label>
+                            <input id="id-input default-input" name="id" type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="pwd-input">비밀번호</label>
+                            <input id="pwd-input default-input" name="pwd" type="password" class="form-control" required>
+                        </div>
+                        <a href="/signup">회원가입</a> /
+                        <a href="#">비밀번호 찾기</a>
+                        <button type="submit" class="btn write-button ms-md-auto float-end">로그인</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <span class="float-end">소셜로 시작하기</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
