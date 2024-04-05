@@ -54,4 +54,13 @@ public class RoleMember {
     private Long roleNo;
     private Long memberNo;
   }
+
+  /**
+   * Constructor without Pk.
+   */
+  public RoleMember(Role role, Member member) {
+    this.pk = new Pk(role.getRoleNo(), member.getMemberNo());
+    this.role = role;
+    this.member = member;
+  }
 }
