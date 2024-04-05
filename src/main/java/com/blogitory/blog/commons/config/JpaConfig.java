@@ -1,4 +1,4 @@
-package com.blogitory.blog.config;
+package com.blogitory.blog.commons.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

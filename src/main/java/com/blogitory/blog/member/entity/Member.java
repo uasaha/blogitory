@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -46,4 +47,18 @@ public class Member extends BaseCreatedAtEntity {
 
   @Column(name = "member_left")
   private boolean left;
+
+  /**
+   * Constructor of Member for Signup.
+   *
+   * @param email email.
+   * @param password password.
+   * @param name name.
+   */
+  @Builder
+  public Member(String email, String password, String name) {
+    this.email = email;
+    this.password = password;
+    this.name = name;
+  }
 }
