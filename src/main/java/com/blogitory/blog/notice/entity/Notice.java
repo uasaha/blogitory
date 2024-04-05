@@ -41,4 +41,7 @@ public class Notice extends BaseCreatedAtEntity {
 
   @Column(name = "notice_msg")
   private String msg;
+
+  @Column(name = "notice_read")
+  private boolean read;
 }
