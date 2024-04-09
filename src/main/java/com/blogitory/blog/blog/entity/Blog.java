@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 public class Blog extends BaseCreatedAtEntity {
   @Id
   @Column(name = "blog_no")
-  private Long memberNo;
+  private Integer memberNo;
 
   @MapsId("member_no")
   @OneToOne(fetch = FetchType.LAZY)
@@ -39,26 +39,14 @@ public class Blog extends BaseCreatedAtEntity {
   @Column(name = "blog_name")
   private String name;
 
+  @Column(name = "blog_url_name")
+  private String urlName;
+
   @Column(name = "blog_background")
   private String background;
 
   @Column(name = "blog_intro")
   private String intro;
-
-  @Column(name = "blog_email")
-  private String email;
-
-  @Column(name = "blog_github")
-  private String github;
-
-  @Column(name = "blog_twitter")
-  private String twitter;
-
-  @Column(name = "blog_facebook")
-  private String facebook;
-
-  @Column(name = "blog_homepage")
-  private String homepage;
 
   @Column(name = "blog_theme")
   private boolean theme;

@@ -28,7 +28,7 @@ public class Member extends BaseCreatedAtEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column
-  private Long memberNo;
+  private Integer memberNo;
 
   @Column(name = "member_email")
   private String email;
@@ -41,6 +41,21 @@ public class Member extends BaseCreatedAtEntity {
 
   @Column(name = "member_profile_thumb")
   private String profileThumb;
+
+  @Column(name = "member_intro_email")
+  private String introEmail;
+
+  @Column(name = "member_github")
+  private String github;
+
+  @Column(name = "member_twitter")
+  private String twitter;
+
+  @Column(name = "member_facebook")
+  private String facebook;
+
+  @Column(name = "member_homepage")
+  private String homepage;
 
   @Column(name = "member_blocked")
   private boolean blocked;

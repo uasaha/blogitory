@@ -26,7 +26,7 @@ public class ImageCategory {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "image_category_no")
-  private Long imageCategoryNo;
+  private Integer imageCategoryNo;
 
   @Column(name = "image_category_name")
   private String name;

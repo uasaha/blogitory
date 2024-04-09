@@ -30,7 +30,7 @@ public class Category {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "category_no")
-  private Long categoryNo;
+  private Integer categoryNo;
 
   @JoinColumn(name = "blog_no")
   @ManyToOne(fetch = FetchType.LAZY)

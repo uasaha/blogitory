@@ -57,7 +57,7 @@ public class Heart extends BaseCreatedAtEntity {
   @Embeddable
   public static class Pk implements Serializable {
     @Column(name = "member_no")
-    private Long memberNo;
+    private Integer memberNo;
     @Column(name = "posts_no")
     private Long postsNo;
   }
