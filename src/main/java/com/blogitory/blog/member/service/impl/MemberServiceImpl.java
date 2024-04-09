@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
 
   private final PasswordEncoder passwordEncoder;
 
-  private static final Long DEFAULT_ROLE_NO = 4L;
+  private static final Integer DEFAULT_ROLE_NO = 4;
 
   /**
    * {@inheritDoc}
