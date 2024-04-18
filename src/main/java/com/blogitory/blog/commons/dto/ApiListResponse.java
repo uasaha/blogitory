@@ -25,25 +25,25 @@ public class ApiListResponse<T> {
    * @param totalCount count of body
    */
   public ApiListResponse(Collection<T> results, Integer totalCount) {
-    this(true, 0, "", results, totalCount);
+    this(true, 200, "Success", results, totalCount);
   }
 
   /**
    * Constructor.
    *
    * @param isSuccessful  is Success
-   * @param resultCode    service code
+   * @param status    HTTP status code
    * @param resultMessage service message
    * @param results       body
    * @param totalCount    count of body
    */
   @Builder
   public ApiListResponse(boolean isSuccessful,
-                         Integer resultCode,
+                         Integer status,
                          String resultMessage,
                          Collection<T> results,
                          Integer totalCount) {
-    this(new Header(isSuccessful, resultCode, resultMessage), results, totalCount);
+    this(new Header(isSuccessful, status, resultMessage), results, totalCount);
   }
 
   /**

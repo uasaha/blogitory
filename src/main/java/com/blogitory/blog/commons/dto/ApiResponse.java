@@ -22,26 +22,26 @@ public class ApiResponse<T> {
    * @param result body
    */
   public ApiResponse(T result) {
-    this(true, 0, "", result);
+    this(true, 200, "Success", result);
   }
 
   /**
    * Constructor.
    *
    * @param isSuccessful  is Success
-   * @param resultCode    service code
+   * @param status HTTP status code
    * @param resultMessage service message
    * @param result        body
    */
   @Builder
-  public ApiResponse(boolean isSuccessful, Integer resultCode, String resultMessage, T result) {
-    this(new Header(isSuccessful, resultCode, resultMessage), result);
+  public ApiResponse(boolean isSuccessful, Integer status, String resultMessage, T result) {
+    this(new Header(isSuccessful, status, resultMessage), result);
   }
 
   /**
    * Constructor.
    *
-   * @param header isSuccessful, resultCode, resultMessage=
+   * @param header isSuccessful, status, resultMessage=
    * @param result body
    */
   public ApiResponse(Header header, T result) {
