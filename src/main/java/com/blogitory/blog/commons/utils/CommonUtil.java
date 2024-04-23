@@ -15,7 +15,7 @@ public class CommonUtil {
   /**
    * Random bean.
    *
-   * @return Random
+   * @return Random instance
    */
   @Bean
   public Random random() {

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogitory - 설정</title>
+</head>
+<body style="background-color: #EEEEEE">
+<div class="container-md" layout:fragment="main-content" style="padding-top: 5em; max-width: 600px">
+    <div class="row">
+        <div th:replace="~{index/fragments/settings-sidebar :: settings-sidebar}"></div>
+        <div class="col-12 text-center" style="margin-top: 1em">
+            <figure>
+                <img id="settingProfileThumb" class="img-profile rounded-circle"
+                     style="height: 10em; width: 10em"
+                     th:src="${members.getThumb().equals('')} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="profile">
+                <figcaption class="figure-caption">
+                    <button class="btn" type="button" onclick="updateThumbOpen()">
+                        <img src="/static/icons/write.svg" alt="edit" style="width: 20px; height: 20px">
+                        <span>변경</span>
+                    </button>
+                </figcaption>
+                <input id="thumbInput" type="file" class="d-none" accept="image/*" onchange="updateThumb()"/>
+            </figure>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-3">
+                    <p>이름</p>
+                </div>
+                <div id="nameAria" class="col-7">
+                    <p id="nameP" th:text="${profiles.getName() == null} ? '' : ${profiles.getName()}"></p>
+                </div>
+                <div id="nameAriaUpdate" class="col-2 text-center">
+                    <button class="btn" onclick="nameAriaInvisible()">
+                        <img src="/static/icons/write.svg" alt="edit">
+                    </button>
+                </div>
+                <div id="nameAriaWrite" class="col-9 input-group d-none">
+                    <input type="text" class="form-control" id="settingNameInput" aria-describedby="nameAddon"
+                           onkeyup="nameValidate(this)"
+                           th:value="${profiles.getName() == null} ? '' : ${profiles.getName()}"/>
+                    <button class="btn btn-outline-secondary" type="button" id="nameAddon" onclick="saveName()">저장</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-3">
+                    <p>공개 이메일</p>
+                </div>
+                <div id="introEmailAria" class="col-7">
+                    <p id="introEmailP" th:text="${profiles.getIntroEmail() == null} ? '' : ${profiles.getIntroEmail()}"></p>
+                </div>
+                <div id="introEmailAriaUpdate" class="col-2 text-center">
+                    <button class="btn" onclick="introEmailAriaInvisible()">
+                        <img src="/static/icons/write.svg" alt="edit">
+                    </button>
+                </div>
+                <div id="introEmailAriaWrite" class="col-9 input-group d-none">
+                    <input type="text" class="form-control" id="settingIntroEmailInput" aria-describedby="introEmailAddon"
+                           onkeyup="socialValidate(this)"
+                           th:value="${profiles.getIntroEmail() == null} ? '' : ${profiles.getIntroEmail()}"/>
+                    <button class="btn btn-outline-secondary" type="button" id="introEmailAddon" onclick="saveIntroEmail()">저장</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-3">
+                    <p>Github</p>
+                </div>
+                <div id="githubAria" class="col-7">
+                    <p id="githubP" th:text="${profiles.getGithub() == null} ? '' : ${profiles.getGithub()}"></p>
+                </div>
+                <div id="githubAriaUpdate" class="col-2 text-center">
+                    <button class="btn" onclick="githubAriaInvisible()">
+                        <img src="/static/icons/write.svg" alt="edit">
+                    </button>
+                </div>
+                <div id="githubAriaWrite" class="col-9 input-group d-none">
+                    <input type="text" class="form-control" id="settingGithubInput" aria-describedby="githubAddon"
+                           onkeyup="socialValidate(this)"
+                           th:value="${profiles.getGithub() == null} ? '' : ${profiles.getGithub()}"/>
+                    <button class="btn btn-outline-secondary" type="button" id="githubAddon" onclick="saveGithub()">저장</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-3">
+                    <p>Facebook</p>
+                </div>
+                <div id="facebookAria" class="col-7">
+                    <p id="facebookP" th:text="${profiles.getFacebook() == null} ? '' : ${profiles.getFacebook()}"></p>
+                </div>
+                <div id="facebookAriaUpdate" class="col-2 text-center">
+                    <button class="btn" onclick="facebookAriaInvisible()">
+                        <img src="/static/icons/write.svg" alt="edit">
+                    </button>
+                </div>
+                <div id="facebookAriaWrite" class="col-9 input-group d-none">
+                    <input type="text" class="form-control" id="settingFacebookInput" aria-describedby="facebookAddon"
+                           onkeyup="socialValidate(this)"
+                           th:value="${profiles.getFacebook() == null} ? '' : ${profiles.getFacebook()}"/>
+                    <button class="btn btn-outline-secondary" type="button" id="facebookAddon" onclick="saveFacebook()">저장</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-3">
+                    <p>X</p>
+                </div>
+                <div id="xAria" class="col-7">
+                    <p id="xP" th:text="${profiles.getTwitter() == null} ? '' : ${profiles.getTwitter()}"></p>
+                </div>
+                <div id="xAriaUpdate" class="col-2 text-center">
+                    <button class="btn" onclick="xAriaInvisible()">
+                        <img src="/static/icons/write.svg" alt="edit">
+                    </button>
+                </div>
+                <div id="xAriaWrite" class="col-9 input-group d-none">
+                    <input type="text" class="form-control" id="settingXInput" aria-describedby="xAddon"
+                           onkeyup="socialValidate(this)"
+                           th:value="${profiles.getTwitter() == null} ? '' : ${profiles.getTwitter()}"/>
+                    <button class="btn btn-outline-secondary" type="button" id="xAddon" onclick="saveX()">저장</button>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-3">
+                    <p>Homepage</p>
+                </div>
+                <div id="homepageAria" class="col-7">
+                    <p id="homepageP" th:text="${profiles.getHomepage() == null} ? '' : ${profiles.getHomepage()}"></p>
+                </div>
+                <div id="homepageAriaUpdate" class="col-2 text-center">
+                    <button class="btn" onclick="homepageAriaInvisible()">
+                        <img src="/static/icons/write.svg" alt="edit">
+                    </button>
+                </div>
+                <div id="homepageAriaWrite" class="col-9 input-group d-none">
+                    <input type="text" class="form-control" id="settingHomepageInput" aria-describedby="homepageAddon"
+                           onkeyup="socialValidate(this)"
+                           th:value="${profiles.getHomepage() == null} ? '' : ${profiles.getHomepage()}"/>
+                    <button class="btn btn-outline-secondary" type="button" id="homepageAddon" onclick="saveHomepage()">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

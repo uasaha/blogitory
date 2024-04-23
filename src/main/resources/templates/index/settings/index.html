@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogitory - 설정</title>
+</head>
+<body style="background-color: #EEEEEE">
+<div class="container-md" layout:fragment="main-content" style="padding-top: 5em; max-width: 600px">
+    <div class="row">
+        <div th:replace="~{index/fragments/settings-sidebar :: settings-sidebar}"></div>
+        <div class="col" style="height: 500px;">
+
+            <span>설정내용</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

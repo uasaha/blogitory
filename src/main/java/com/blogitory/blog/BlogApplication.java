@@ -2,6 +2,7 @@ package com.blogitory.blog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 /**
  * Blogitory start.
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author woonseok
  * @since 1.0
  */
+@ConfigurationPropertiesScan
 @SpringBootApplication
 public class BlogApplication {
 

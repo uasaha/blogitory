@@ -4,13 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Response Dto for new member's info is duplicated.
+ * Dto for login response.
  *
  * @author woonseok
  * @since 1.0
  **/
 @Getter
 @AllArgsConstructor
-public class MemberDuplicationResponseDto {
-  private boolean isDuplicated;
+public class MemberLoginResponseDto {
+  private Integer memberNo;
+  private String email;
+  private String name;
+  private String password;
 }

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:xmls="http://www.w3.org/1999/xhtml">
 <head>
@@ -15,14 +14,34 @@
     <link href="/static/css/index.css" rel="stylesheet">
 </head>
 <body style="font-family: 'SCoreDream', sans-serif">
-<div>
-    <div th:replace="~{index/fragments/header :: header}"></div>
-    <div layout:fragment="content"></div>
-</div>
+<div th:replace="~{index/fragments/header :: header}"></div>
+<div layout:fragment="main-content"></div>
 
+<script>
+    const currentUrl = document.URL;
+    const failedReason = document.getElementById("failed-reason");
+    let loginModalBtn = document.getElementById("login-modal-btn");
+
+    window.addEventListener("load", () => {
+        if (currentUrl.includes("login-failed")) {
+            loginModalBtn.click();
+            failedReason.className = "mb-4";
+        }
+
+        if (currentUrl.includes("/settings/blog")) {
+            document.getElementById("settings-blog").className = "nav-link active";
+        } else if (currentUrl.includes("/settings/profile")) {
+            document.getElementById("settings-profile").className = "nav-link active";
+        } else if (currentUrl.includes("/settings")) {
+            document.getElementById("settings-index").className = "nav-link active";
+        }
+
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/static/js/settings.js"></script>
 </body>
 </html>

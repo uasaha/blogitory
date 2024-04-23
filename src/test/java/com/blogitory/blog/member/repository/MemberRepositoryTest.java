@@ -6,6 +6,8 @@ import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.role.entity.Role;
 import com.blogitory.blog.role.entity.RoleDummy;
+import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,9 @@ class MemberRepositoryTest {
   @Autowired
   MemberRepository memberRepository;
 
+  @Autowired
+  EntityManager entityManager;
+
   Member member;
   Role role;
 
@@ -30,6 +35,12 @@ class MemberRepositoryTest {
   void beforeEach() {
     member = MemberDummy.dummy();
     role = RoleDummy.dummy();
+  }
+
+  @AfterEach
+  void teardown() {
+    entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
+            .executeUpdate();
   }
 
   @Test

@@ -11,8 +11,8 @@ public class MemberDummy {
     return new Member(
             1,
             "test@test.com",
-            "password",
-            "name",
+            "password!@#",
+            "dummy",
             "profileThumb",
             "test@test.com",
             "github",

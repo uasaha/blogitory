@@ -40,7 +40,43 @@
     border-radius: 0;
 }
 
-.signup-div{
+.signup-div {
     margin-top: 1em;
     height: 2em;
+}
+
+.oauth-icon {
+    width: 45px;
+    height: 45px;
+}
+
+.text-divider {
+    font-size: 15px;
+    display: flex;
+    text-align: center;
+}
+
+.social-login-text:after {
+    width: 5em;
+    height: 1px;
+    background-color: #eaedf4;
+    display: inline-block;
+    vertical-align: super;
+    content: "";
+}
+
+.social-login-text:before {
+    width: 5em;
+    height: 1px;
+    background-color: #eaedf4;
+    display: inline-block;
+    vertical-align: super;
+    content: "";
+}
+
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.6);
 }

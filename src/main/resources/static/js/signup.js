@@ -95,12 +95,11 @@ function memberSignup(element) {
         && pwdValidate(pwdInput)
         && pwdCheckValidate(pwdCheckInput)
         && isEmailVerified) {
-        alert("성공!")
         let signupForm = document.getElementById("signupForm");
         signupForm.submit();
 
     } else {
         element.disabled = false;
-        alert("실패!");
+        alert("실패하였습니다. 잠시 후 다시 시도해주세요.");
     }
 }

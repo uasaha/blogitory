@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,9 +34,11 @@ public class MailRestController {
    * @param email for verifying
    */
   @GetMapping("/verification")
-  public void issueVerificationCode(
+  public ResponseEntity<Void> issueVerificationCode(
           @RequestParam @NotBlank @Size(min = 3, max = 100) @Email String email) {
     mailService.sendVerificationCode(email);
+
+    return ResponseEntity.ok().build();
   }
 
   /**
@@ -45,8 +48,9 @@ public class MailRestController {
    * @return is verified, 200
    */
   @PostMapping("/verification")
-  public MailVerificationResponseDto checkVerificationCode(
+  public ResponseEntity<MailVerificationResponseDto> checkVerificationCode(
           @RequestBody @Valid MailVerificationRequestDto requestDto) {
-    return new MailVerificationResponseDto(mailService.checkVerificationCode(requestDto));
+    return ResponseEntity.ok(
+            new MailVerificationResponseDto(mailService.checkVerificationCode(requestDto)));
   }
 }

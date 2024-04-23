@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
  **/
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UrlUtil {
+  private static final String REFERER = "Referer";
 
   /**
    * Get base url on request.
@@ -24,5 +25,9 @@ public class UrlUtil {
             request.getRequestURL().length()
                     - request.getRequestURI().length())
             + request.getContextPath();
+  }
+
+  public static String getRefererUrl(HttpServletRequest request) {
+    return request.getHeader(REFERER);
   }
 }

@@ -1,5 +1,6 @@
 package com.blogitory.blog.member.service.impl;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -8,9 +9,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.member.dto.MemberSignupRequestDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
+import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.role.entity.Role;
@@ -36,6 +39,7 @@ class MemberServiceTest {
   private RoleMemberRepository roleMemberRepository;
   private PasswordEncoder passwordEncoder;
   private MemberService memberService;
+  private JwtService jwtService;
 
   @BeforeEach
   void setUp() {
@@ -43,13 +47,14 @@ class MemberServiceTest {
     roleRepository = mock(RoleRepository.class);
     roleMemberRepository = mock(RoleMemberRepository.class);
     passwordEncoder = mock(PasswordEncoder.class);
+    jwtService = mock(JwtService.class);
 
     memberService = new MemberServiceImpl(
-            memberRepository, roleRepository, roleMemberRepository, passwordEncoder);
+            memberRepository, roleRepository, roleMemberRepository, jwtService, passwordEncoder);
   }
 
   @Test
-  @DisplayName("회원가입")
+  @DisplayName("회원가입 - 성공")
   void signup() {
     Member member = MemberDummy.dummy();
     Role role = new Role(4, "ROLE_DUMMY");
@@ -71,7 +76,7 @@ class MemberServiceTest {
 
   @Test
   @DisplayName("회원가입 - 실패(권한 없음)")
-  void signupFail() {
+  void signupFailNoRoles() {
     Member member = MemberDummy.dummy();
     Role role = new Role(4, "ROLE_DUMMY");
     RoleMember roleMember = RoleMemberDummy.dummy(role, member);
@@ -83,8 +88,22 @@ class MemberServiceTest {
     when(roleMemberRepository.save(any())).thenReturn(roleMember);
     when(passwordEncoder.encode(member.getPassword())).thenReturn(member.getPassword());
 
-    assertThrows(NotFoundException.class, () -> memberService.signup(requestDto));
+    assertThatThrownBy(() -> memberService.signup(requestDto))
+            .isInstanceOf(NotFoundException.class);
   }
+
+  @Test
+  @DisplayName("회원가입 - 실패(이메일 중복)")
+  void signupFailExistEmail() {
+    Member member = MemberDummy.dummy();
+    MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
+            member.getName(), member.getEmail(), member.getPassword());
+
+    when(memberRepository.existsMemberByEmail(any())).thenReturn(true);
+
+    assertThrows(MemberEmailAlreadyUsedException.class, () -> memberService.signup(requestDto));
+  }
+
 
   @Test
   @DisplayName("이메일 중복")

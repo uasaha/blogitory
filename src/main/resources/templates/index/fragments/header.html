@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <div th:fragment="header">
     <header class="navbar navbar-expand-md bg-body-tertiary fixed-top nav-bar-light">
         <div class="container-lg">
@@ -14,32 +15,41 @@
             </button>
             <div class="collapse navbar-collapse float-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav" style="font-size: 18px">
-                    <a class="nav-link" href="#"><img class="nav-icon" src="/static/icons/trending_up.svg"
-                                                      alt="trending_up"> 트렌딩</a>
-                    <a class="nav-link" href="#"><img class="nav-icon" src="/static/icons/update.svg" alt="update">
-                        최신</a>
-                    <a class="nav-link" href="#"><img class="nav-icon" src="/static/icons/reorder.svg" alt="feed">
-                        피드</a>
+                    <a class="nav-link" href="#">
+                        <img class="nav-icon" src="/static/icons/update.svg" alt="update">
+                        <span>최신</span>
+                    </a>
+                    <a class="nav-link" href="#">
+                        <img class="nav-icon" src="/static/icons/shuffle.svg" alt="trending_up">
+                        <span>셔플</span>
+                    </a>
+                    <a class="nav-link" href="#">
+                        <img class="nav-icon" src="/static/icons/reorder.svg" alt="feed">
+                        <span>피드</span>
+                    </a>
                 </div>
                 <div class="navbar-nav ms-md-auto">
-                    <a class="nav-link d-none" href="#"><img class="nav-icon" src="/static/icons/notice.svg"
-                                                             alt="notice"></a>
-                    <a class="nav-link d-none" href="#"><img class="nav-icon" src="/static/icons/write.svg" alt="write"></a>
-                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <a class="nav-link d-none" href="#">
+                        <img class="nav-icon" src="/static/icons/notice.svg" alt="notice">
+                    </a>
+                    <a class="nav-link d-none" href="#">
+                        <img class="nav-icon" src="/static/icons/write.svg" alt="write">
+                    </a>
+                    <button sec:authorize="isAnonymous()" id="login-modal-btn" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#loginModal">
                         <a class="nav-link"><img class="nav-icon" src="/static/icons/login.svg" alt="login"> 로그인
                         </a>
                     </button>
-                    <div class="dropdown d-none">
+                    <div sec:authorize="isAuthenticated()" class="dropdown">
                         <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
                             <img class="img-profile rounded-circle" style="height: 25px; width: 25px"
-                                 src="/static/logo/logo-BE81F7.svg" alt="profile">
-                            Blogitory
+                                 th:src="${members.getThumb().equals('')} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="profile">
+                            <span th:text="${members.getName()}"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">프로필 설정</a></li>
+                            <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
                             <li><a class="dropdown-item" href="#">내 블로그</a></li>
-                            <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                            <li><a class="dropdown-item" href="/settings">설정</a></li>
                         </ul>
                     </div>
                 </div>
@@ -51,19 +61,22 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <img src="/static/logo/logo-BE81F7.svg" width="25" height="25" alt="">
-                    <span style="font-size: 20px">&ensp;<b>Blog</b>itory</span>
+                    <span style="font-size: 20px">&ensp;<b>Blog</b>itory&nbsp;로그인</span>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" action="/login">
                         <div class="form-group mb-4">
-                            <label for="id-input">이메일</label>
-                            <input id="id-input default-input" name="id" type="email" class="form-control" required>
+                            <label for="login-id-input">이메일</label>
+                            <input id="login-id-input" name="id" type="email" class="form-control" required>
                         </div>
                         <div class="form-group mb-4">
-                            <label for="pwd-input">비밀번호</label>
-                            <input id="pwd-input default-input" name="pwd" type="password" class="form-control"
+                            <label for="login-pwd-input">비밀번호</label>
+                            <input id="login-pwd-input" name="pwd" type="password" class="form-control"
                                    required>
+                        </div>
+                        <div id="failed-reason" class="mb-4 d-none">
+                            <span style="color: firebrick">아이디 혹은 비밀번호가 일치하지 않습니다.</span>
                         </div>
                         <a href="/signup">회원가입</a> /
                         <a href="#">비밀번호 찾기</a>
