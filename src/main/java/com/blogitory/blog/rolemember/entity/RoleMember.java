@@ -51,8 +51,8 @@ public class RoleMember {
   @AllArgsConstructor
   @Embeddable
   public static class Pk implements Serializable {
-    private Long roleNo;
-    private Long memberNo;
+    private Integer roleNo;
+    private Integer memberNo;
   }
 
   /**
