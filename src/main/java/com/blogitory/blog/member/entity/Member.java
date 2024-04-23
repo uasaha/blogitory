@@ -76,4 +76,32 @@ public class Member extends BaseCreatedAtEntity {
     this.password = password;
     this.name = name;
   }
+
+  public void updateThumbnail(String url) {
+    this.profileThumb = url;
+  }
+
+  public void updateName(String name) {
+    this.name = name;
+  }
+
+  public void updateOpenEmail(String email) {
+    this.introEmail = email;
+  }
+
+  public void updateGithub(String github) {
+    this.github = github;
+  }
+
+  public void updateFacebook(String facebook) {
+    this.facebook = facebook;
+  }
+
+  public void updateX(String x) {
+    this.twitter = x;
+  }
+
+  public void updateHomepage(String homepage) {
+    this.homepage = homepage;
+  }
 }
