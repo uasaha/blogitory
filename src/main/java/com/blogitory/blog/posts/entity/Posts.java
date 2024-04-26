@@ -1,6 +1,5 @@
 package com.blogitory.blog.posts.entity;
 
-import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.commons.base.BaseCreatedAtEntity;
 import jakarta.persistence.Column;
@@ -34,10 +33,6 @@ public class Posts extends BaseCreatedAtEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "posts_no")
   private Long postsNo;
-
-  @JoinColumn(name = "blog_no")
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Blog blog;
 
   @JoinColumn(name = "category_no")
   @ManyToOne(fetch = FetchType.LAZY)

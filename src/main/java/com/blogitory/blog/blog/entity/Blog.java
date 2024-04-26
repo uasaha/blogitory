@@ -4,11 +4,11 @@ import com.blogitory.blog.commons.base.BaseCreatedAtEntity;
 import com.blogitory.blog.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,12 +28,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Blog extends BaseCreatedAtEntity {
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "blog_no")
-  private Integer memberNo;
+  private Long blogNo;
 
-  @MapsId("member_no")
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "blog_no")
+  @ManyToOne
+  @JoinColumn(name = "member_no")
   private Member member;
 
   @Column(name = "blog_name")
@@ -49,5 +49,5 @@ public class Blog extends BaseCreatedAtEntity {
   private String intro;
 
   @Column(name = "blog_theme")
-  private boolean theme;
+  private String theme;
 }

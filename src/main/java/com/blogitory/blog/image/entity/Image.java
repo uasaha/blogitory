@@ -1,5 +1,6 @@
 package com.blogitory.blog.image.entity;
 
+import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.commons.base.BaseCreatedAtEntity;
 import com.blogitory.blog.imagecategory.entity.ImageCategory;
 import com.blogitory.blog.member.entity.Member;
@@ -47,6 +48,10 @@ public class Image extends BaseCreatedAtEntity {
   @ManyToOne
   @JoinColumn(name = "posts_no")
   private Posts posts;
+
+  @ManyToOne
+  @JoinColumn(name = "blog_no")
+  private Blog blog;
 
   @Column(name = "image_url")
   private String url;
