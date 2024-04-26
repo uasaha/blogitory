@@ -57,9 +57,14 @@ class ImageServiceTest {
   void uploadThumbnail() {
     ImageCategory imageCategory = new ImageCategory(1, "thumb");
     MockMultipartFile file = new MockMultipartFile("name", "content".getBytes(StandardCharsets.UTF_8));
-    FileUploadResponseDto responseDto = new FileUploadResponseDto(
-            "url", "originName", "savedName",
-            "extension", "savedPath");
+    FileUploadResponseDto responseDto =
+            FileUploadResponseDto.builder()
+                    .url("url")
+                    .originName("originName")
+                    .savedName("savedName")
+                    .extension("extension")
+                    .savePath("savedPath")
+                    .build();
     Member member = MemberDummy.dummy();
     Image image = Image.builder()
             .imageCategory(imageCategory)

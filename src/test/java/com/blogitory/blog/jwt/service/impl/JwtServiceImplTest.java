@@ -15,6 +15,7 @@ import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.member.dto.MemberLoginResponseDto;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.impl.DefaultClaims;
@@ -106,7 +107,7 @@ class JwtServiceImplTest {
     doNothing().when(operations).set(any(), any());
     when(redisTemplate.opsForValue()).thenReturn(operations);
     when(redisTemplate.expire(uuid, 14, TimeUnit.DAYS)).thenReturn(true);
-    when(objectMapper.writeValueAsString(any())).thenThrow(AuthenticationException.class);
+    when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
     assertThrows(AuthenticationException.class, () -> jwtService.issue(uuid, memberLoginResponseDto, roles));
   }
@@ -133,6 +134,10 @@ class JwtServiceImplTest {
     String result = jwtService.reIssue(uuid);
 
     assertEquals(accessToken, result);
+    assertEquals(1, info.getMemberNo());
+    assertEquals("test@email.com", info.getEmail());
+    assertEquals("name", info.getName());
+    assertEquals("refreshToken", info.getRefreshToken());
   }
 
   @Test
