@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of JwtService.
@@ -24,13 +25,13 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  **/
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
   private final JwtProvider jwtProvider;
   private final JwtProperties jwtProperties;
   private final RedisTemplate<String, Object> redisTemplate;
   private final ObjectMapper objectMapper;
-  private static final String REDIS_MEMBER_KEY = "member";
 
   /**
    * {@inheritDoc}

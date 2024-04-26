@@ -15,6 +15,7 @@ public class BlogController {
 
   @GetMapping("@{blogUrl}")
   public String blog(@PathVariable String blogUrl) {
+
     return "/blog/index";
   }
 }

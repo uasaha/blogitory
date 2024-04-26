@@ -17,5 +17,5 @@ public interface ImageService {
    * @param file     new one
    * @return origin name & url
    */
-  ThumbnailUpdateResponseDto updateThumbnail(Integer memberNo, MultipartFile file);
+  ThumbnailUpdateResponseDto uploadThumbnail(Integer memberNo, MultipartFile file);
 }

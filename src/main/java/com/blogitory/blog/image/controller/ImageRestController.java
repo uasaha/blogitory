@@ -32,6 +32,6 @@ public class ImageRestController {
   @PostMapping("/thumbnail")
   public ResponseEntity<ThumbnailUpdateResponseDto> updateThumbnail(
           @RequestParam("file") MultipartFile file) {
-    return ResponseEntity.ok(imageService.updateThumbnail(SecurityUtils.getCurrentUserNo(), file));
+    return ResponseEntity.ok(imageService.uploadThumbnail(SecurityUtils.getCurrentUserNo(), file));
   }
 }

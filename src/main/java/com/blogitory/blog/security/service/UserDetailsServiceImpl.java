@@ -3,6 +3,7 @@ package com.blogitory.blog.security.service;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.role.repository.RoleRepository;
+import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    Member member = memberRepository.findByEmail(email).orElseThrow();
+    Member member = memberRepository.findByEmail(email)
+            .orElseThrow(AuthenticationException::new);
     List<SimpleGrantedAuthority> roles = roleRepository.findRolesByMemberNo(member.getMemberNo())
             .stream().map(SimpleGrantedAuthority::new).toList();
 

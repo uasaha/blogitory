@@ -37,7 +37,7 @@ public class ImageServiceImpl implements ImageService {
    * {@inheritDoc}
    */
   @Override
-  public ThumbnailUpdateResponseDto updateThumbnail(Integer memberNo, MultipartFile file) {
+  public ThumbnailUpdateResponseDto uploadThumbnail(Integer memberNo, MultipartFile file) {
 
     ImageCategory imageCategory = imageCategoryRepository.findByName(THUMBNAIL)
             .orElseThrow(() -> new NotFoundException(ImageCategory.class));

@@ -28,7 +28,8 @@ public class JwtProvider {
    * @return new JWT
    */
   public String createToken(String secret, String value, List<String> roles, Long expire) {
-    Claims claims = Jwts.claims().setSubject(value);
+    Claims claims = Jwts.claims();
+    claims.setSubject(value);
     claims.put("roles", roles);
 
     return createToken(secret, claims, expire);
