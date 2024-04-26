@@ -2,11 +2,14 @@ package com.blogitory.blog.member.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.blogitory.blog.member.dto.MemberMyProfileResponseDto;
+import com.blogitory.blog.member.dto.MemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.role.entity.Role;
 import com.blogitory.blog.role.entity.RoleDummy;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -74,5 +77,48 @@ class MemberRepositoryTest {
 
     assertTrue(existResult);
     assertFalse(notExistResult);
+  }
+
+  @Test
+  @DisplayName("내 프로필 조회")
+  void getMyProfile() {
+    memberRepository.save(member);
+
+    Optional<MemberMyProfileResponseDto> responseDto =
+            memberRepository.getMyProfile(member.getMemberNo());
+
+    assertTrue(responseDto.isPresent());
+
+    MemberMyProfileResponseDto actual = responseDto.orElseThrow();
+
+    assertAll(
+            () -> assertEquals(member.getEmail(), actual.getEmail()),
+            () -> assertEquals(member.getName(), actual.getName()),
+            () -> assertEquals(member.getProfileThumb(), actual.getProfileThumb()),
+            () -> assertEquals(member.getIntroEmail(), actual.getIntroEmail()),
+            () -> assertEquals(member.getGithub(), actual.getGithub()),
+            () -> assertEquals(member.getTwitter(), actual.getTwitter()),
+            () -> assertEquals(member.getFacebook(), actual.getFacebook()),
+            () -> assertEquals(member.getHomepage(), actual.getHomepage()),
+            () -> assertEquals(member.getCreatedAt(), actual.getCreatedAt())
+    );
+  }
+
+  @Test
+  @DisplayName("로그인 정보 조회")
+  void getPersistInfo() {
+    memberRepository.save(member);
+
+    Optional<MemberPersistInfoDto> responseDto =
+            memberRepository.getPersistInfo(member.getMemberNo());
+
+    assertTrue(responseDto.isPresent());
+
+    MemberPersistInfoDto actual = responseDto.orElseThrow();
+
+    assertAll(
+            () -> assertEquals(member.getName(), actual.getName()),
+            () -> assertEquals(member.getProfileThumb(), actual.getThumb())
+    );
   }
 }

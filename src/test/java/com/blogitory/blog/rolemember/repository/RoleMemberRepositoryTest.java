@@ -51,6 +51,8 @@ class RoleMemberRepositoryTest {
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
             .executeUpdate();
+    entityManager.createNativeQuery("ALTER TABLE `role` ALTER COLUMN `role_no` RESTART")
+            .executeUpdate();
   }
 
   @Test
