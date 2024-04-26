@@ -30,7 +30,7 @@
                     <p>이름</p>
                 </div>
                 <div id="nameAria" class="col-7">
-                    <p id="nameP" th:text="${profiles.getName() == null} ? '' : ${profiles.getName()}"></p>
+                    <p id="nameP" th:text="${profiles.getName()} == null ? '' : ${profiles.getName()}"></p>
                 </div>
                 <div id="nameAriaUpdate" class="col-2 text-center">
                     <button class="btn" onclick="nameAriaInvisible()">
@@ -40,7 +40,7 @@
                 <div id="nameAriaWrite" class="col-9 input-group d-none">
                     <input type="text" class="form-control" id="settingNameInput" aria-describedby="nameAddon"
                            onkeyup="nameValidate(this)"
-                           th:value="${profiles.getName() == null} ? '' : ${profiles.getName()}"/>
+                           th:value="${profiles.getName()} == null ? '' : ${profiles.getName()}"/>
                     <button class="btn btn-outline-secondary" type="button" id="nameAddon" onclick="saveName()">저장</button>
                 </div>
             </div>

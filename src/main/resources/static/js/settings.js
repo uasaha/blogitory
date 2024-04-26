@@ -21,10 +21,6 @@ const homepageAriaWrite = document.getElementById("homepageAriaWrite");
 const thumbInput = document.getElementById("thumbInput");
 const socialLength = 50;
 
-// profileThumb.addEventListener("mouseover", () => {
-//
-// });
-
 function updateThumbOpen() {
     thumbInput.click();
 }
@@ -124,6 +120,11 @@ function saveName() {
     const settingNameInput = document.getElementById("settingNameInput");
     const nameP = document.getElementById("nameP");
 
+    if (settingNameInput.value === nameP.innerText) {
+        nameAriaVisible();
+        return;
+    }
+
     if (!nameValidate(settingNameInput)) {
         alert("이름은 최소 2자, 최대 20자로 한글과 영어만 입력 가능합니다.");
         return;
@@ -145,6 +146,11 @@ function saveName() {
 function saveIntroEmail() {
     const settingIntroEmailInput = document.getElementById("settingIntroEmailInput");
     const introEmailP = document.getElementById("introEmailP");
+
+    if (settingIntroEmailInput.value === introEmailP.innerText) {
+        introEmailAriaVisible();
+        return;
+    }
 
     if (!socialValidate(settingIntroEmailInput)) {
         alert("최대 50자입니다.");
@@ -168,6 +174,11 @@ function saveGithub() {
     const settingGithubInput = document.getElementById("settingGithubInput");
     const githubP = document.getElementById("githubP");
 
+    if (settingGithubInput.value === githubP.innerText) {
+        githubAriaVisible();
+        return;
+    }
+
     if (!socialValidate(settingGithubInput)) {
         alert("최대 50자입니다.");
         return;
@@ -189,6 +200,11 @@ function saveGithub() {
 function saveFacebook() {
     const settingFacebookInput = document.getElementById("settingFacebookInput");
     const facebookP = document.getElementById("facebookP");
+
+    if (settingFacebookInput.value === facebookP.innerText) {
+        facebookAriaVisible();
+        return;
+    }
 
     if (!socialValidate(settingFacebookInput)) {
         alert("최대 50자입니다.");
@@ -212,6 +228,11 @@ function saveX() {
     const settingXInput = document.getElementById("settingXInput");
     const xP = document.getElementById("xP");
 
+    if (settingXInput.value === xP.innerText) {
+        xAriaVisible();
+        return;
+    }
+
     if (!socialValidate(settingXInput)) {
         alert("최대 50자입니다.");
         return;
@@ -233,6 +254,11 @@ function saveX() {
 function saveHomepage() {
     const settingHomepageInput = document.getElementById("settingHomepageInput");
     const homepageP = document.getElementById("homepageP");
+
+    if (settingHomepageInput.value === homepageP.innerText) {
+        homepageAriaVisible();
+        return;
+    }
 
     if (!socialValidate(settingHomepageInput)) {
         alert("최대 50자입니다.");
