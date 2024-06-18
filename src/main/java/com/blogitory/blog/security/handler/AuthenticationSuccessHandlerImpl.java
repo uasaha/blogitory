@@ -1,9 +1,17 @@
 package com.blogitory.blog.security.handler;
 
-import com.blogitory.blog.commons.utils.UrlUtil;
+import static com.blogitory.blog.security.util.JwtUtils.ACCESS_COOKIE_EXPIRE;
+import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
+import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
+
+import com.blogitory.blog.jwt.service.JwtService;
+import com.blogitory.blog.member.dto.MemberLoginResponseDto;
+import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -15,18 +23,28 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * @since 1.0
  **/
 @Slf4j
+@RequiredArgsConstructor
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
-  private static final String FAILED_PARAM = "login-failed";
+  private final JwtService jwtService;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                      Authentication authentication) throws IOException {
-    String refererUrl = UrlUtil.getRefererUrl(request);
+                                      Authentication authentication) {
+    String uuid = UUID.randomUUID().toString();
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getDetails();
+    MemberLoginResponseDto memberLoginResponseDto =
+            new MemberLoginResponseDto(
+                    userDetails.getUserNo(),
+                    userDetails.getUsername(),
+                    userDetails.getIdName(),
+                    userDetails.getName(),
+                    userDetails.getPassword());
+    List<String> roles = authentication.getAuthorities()
+            .stream().map(Object::toString)
+            .toList();
 
-    if (refererUrl.contains(FAILED_PARAM)) {
-      refererUrl = refererUrl.replace(FAILED_PARAM, "");
-    }
-
-    response.sendRedirect(refererUrl);
+    String accessToken = jwtService.issue(uuid, memberLoginResponseDto, roles);
+    response.addCookie(
+            makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE));
   }
 }

@@ -1,9 +1,11 @@
 package com.blogitory.blog.commons.interceptor;
 
+import com.blogitory.blog.member.dto.MemberPersistInfoDto;
 import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,8 +29,16 @@ public class AuthenticatedInterceptor implements HandlerInterceptor {
 
     if (authentication.isAuthenticated()
             && authentication.getDetails() instanceof UserDetailsImpl userDetails) {
-      mav.addObject("members",
-              memberService.persistInfo(userDetails.getUserNo()));
+      String thumbnail = memberService.getThumbnailByNo(userDetails.getUserNo());
+
+      MemberPersistInfoDto infoDto =
+              new MemberPersistInfoDto(userDetails.getIdName(), userDetails.getName(), thumbnail);
+
+      if (Objects.isNull(infoDto.getThumb()) || infoDto.getThumb().isEmpty()) {
+        mav.addObject("thumbIsNull", true);
+      }
+
+      mav.addObject("members", infoDto);
     }
   }
 }

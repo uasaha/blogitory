@@ -47,6 +47,7 @@ public class JwtServiceImpl implements JwtService {
     MemberInfoDto infoDto = new MemberInfoDto(
             responseDto.getMemberNo(),
             responseDto.getEmail(),
+            responseDto.getUsername(),
             responseDto.getName(),
             refreshToken);
 
@@ -55,12 +56,12 @@ public class JwtServiceImpl implements JwtService {
     try  {
       info = objectMapper.writeValueAsString(infoDto);
     } catch (JsonProcessingException e) {
-      throw new AuthenticationException();
+      throw new AuthenticationException("JWT Issue failed");
     }
 
     ValueOperations<String, Object> operations = redisTemplate.opsForValue();
     operations.set(uuid, info);
-    redisTemplate.expire(uuid, 14, TimeUnit.DAYS);
+    redisTemplate.expire(uuid, 7, TimeUnit.DAYS);
 
     return jwtProvider.createToken(
             jwtProperties.getAccessSecret(),

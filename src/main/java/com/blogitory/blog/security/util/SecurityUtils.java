@@ -33,7 +33,7 @@ public class SecurityUtils {
     UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
             .getAuthentication().getDetails();
 
-    return userDetails.getNickname();
+    return userDetails.getUsername();
   }
 
   /**

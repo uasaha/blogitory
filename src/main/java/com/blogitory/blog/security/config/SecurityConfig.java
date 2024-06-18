@@ -3,9 +3,8 @@ package com.blogitory.blog.security.config;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.member.service.MemberService;
-import com.blogitory.blog.security.filter.AuthenticationFailureHandlerFilter;
 import com.blogitory.blog.security.filter.AuthenticationFilterCustom;
-import com.blogitory.blog.security.filter.UsernamePasswordAuthenticationFilterCustom;
+import com.blogitory.blog.security.filter.AuthenticationProcessingFilterCustom;
 import com.blogitory.blog.security.handler.AuthenticationSuccessHandlerImpl;
 import com.blogitory.blog.security.handler.LogoutHandlerImpl;
 import com.blogitory.blog.security.handler.LogoutSuccessHandlerImpl;
@@ -22,7 +21,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -38,11 +39,13 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 @RequiredArgsConstructor
 public class SecurityConfig {
   private final UserDetailsServiceImpl userDetailsService;
-  private final MemberService memberService;
   private final JwtProperties jwtProperties;
   private final RedisTemplate<String, Object> redisTemplate;
   private final ObjectMapper objectMapper;
   private final JwtService jwtService;
+  private final PasswordEncoder passwordEncoder;
+  private final MemberService memberService;
+  private static final String LOGIN_URL = "/api/login";
 
   /**
    * Register SecurityFilterChain bean.
@@ -71,24 +74,11 @@ public class SecurityConfig {
                     registry.requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
                             .requestMatchers("/logout").authenticated()
                             .anyRequest().permitAll())
-            .addFilterAt(usernamePasswordAuthenticationFilterCustom(
-                            authenticationManager, memberService),
+            .addFilterAt(authenticationProcessingFilter(authenticationManager),
                     UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(authenticationFilterCustom(),
                     UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(authenticationFailureHandlerFilter(),
-                    UsernamePasswordAuthenticationFilter.class)
             .build();
-  }
-
-  /**
-   * Register AuthenticationFailureHandlerFilter bean.
-   *
-   * @return AuthenticationFailureHandlerFilter
-   */
-  @Bean
-  public AuthenticationFailureHandlerFilter authenticationFailureHandlerFilter() {
-    return new AuthenticationFailureHandlerFilter();
   }
 
   /**
@@ -118,7 +108,7 @@ public class SecurityConfig {
    */
   @Bean
   public AuthenticationSuccessHandler authenticationSuccessHandler() {
-    return new AuthenticationSuccessHandlerImpl();
+    return new AuthenticationSuccessHandlerImpl(jwtService);
   }
 
   /**
@@ -135,23 +125,16 @@ public class SecurityConfig {
   }
 
   /**
-   * Register UsernamePasswordAuthenticationFilterCustom bean.
+   * Register AbstractAuthenticationProcessingFilter bean.
    *
    * @param authenticationManager AuthenticationManager
-   * @param memberService         MemberService
-   * @return UsernamePasswordAuthenticationFilterCustom
+   * @return AbstractAuthenticationProcessingFilterCustom
    */
   @Bean
-  public UsernamePasswordAuthenticationFilterCustom
-      usernamePasswordAuthenticationFilterCustom(
-          AuthenticationManager authenticationManager, MemberService memberService) {
-    UsernamePasswordAuthenticationFilterCustom loginFilter =
-            new UsernamePasswordAuthenticationFilterCustom(memberService);
+  public AbstractAuthenticationProcessingFilter authenticationProcessingFilter(AuthenticationManager authenticationManager) {
+    AuthenticationProcessingFilterCustom loginFilter =
+            new AuthenticationProcessingFilterCustom(LOGIN_URL, authenticationManager);
 
-    loginFilter.setFilterProcessesUrl("/login");
-    loginFilter.setAuthenticationManager(authenticationManager);
-    loginFilter.setUsernameParameter("id");
-    loginFilter.setPasswordParameter("pwd");
     loginFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
 
     return loginFilter;
@@ -178,7 +161,7 @@ public class SecurityConfig {
   @Bean
   public AuthenticationProvider authenticationProvider() {
 
-    return new AuthenticationProviderImpl(userDetailsService);
+    return new AuthenticationProviderImpl(userDetailsService, memberService, passwordEncoder);
   }
 
 }

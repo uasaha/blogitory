@@ -58,7 +58,14 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
       return;
     }
 
-    Cookie accessTokenCookie = Arrays.stream(request.getCookies())
+    Cookie[] cookies = request.getCookies();
+
+    if (cookies == null) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    Cookie accessTokenCookie = Arrays.stream(cookies)
             .filter(cookie -> ACCESS_TOKEN_COOKIE_NAME.equals(cookie.getName()))
             .findFirst()
             .orElse(null);
@@ -74,7 +81,7 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
     Optional<String> black = Optional.ofNullable(operations.get(BLACK_LIST_KEY, uuid));
 
     if (black.isPresent() && accessToken.equals(black.get())) {
-      throw new AuthenticationException();
+      throw new AuthenticationException("Access token is blocked.");
     }
 
     if (isExpiredToken(jwtProperties.getAccessSecret(), accessToken)) {
@@ -90,8 +97,6 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
             .getRoles(jwtProperties.getAccessSecret(), accessToken)
             .stream().map(SimpleGrantedAuthority::new).toList();
 
-
-
     SecurityContext context = SecurityContextHolder.getContext();
 
     UsernamePasswordAuthenticationToken authentication =
@@ -102,6 +107,7 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
             new UserDetailsImpl(info.getEmail(),
                     PROTECTED,
                     info.getMemberNo(),
+                    info.getUsername(),
                     info.getName(),
                     authorities));
 
