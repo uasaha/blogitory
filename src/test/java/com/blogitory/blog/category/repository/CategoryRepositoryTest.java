@@ -24,26 +24,44 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class CategoryRepositoryTest {
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Blog repository.
+   */
   @Autowired
   BlogRepository blogRepository;
 
+  /**
+   * The Category repository.
+   */
   @Autowired
   CategoryRepository categoryRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
   }
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `category` ALTER COLUMN `category_no` RESTART")
@@ -54,6 +72,9 @@ class CategoryRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Save.
+   */
   @Test
   @DisplayName("카테고리 저장")
   void save() {
@@ -68,7 +89,7 @@ class CategoryRepositoryTest {
 
     assertAll(
             () -> assertEquals(category.getCategoryNo(), actual.getCategoryNo()),
-            () -> assertEquals(category.getBlog().getName(), actual.getBlog().getName()),
+            () -> assertEquals(category.getBlog().getBio(), actual.getBlog().getBio()),
             () -> assertEquals(category.getName(), actual.getName()),
             () -> assertEquals(category.isDeleted(), actual.isDeleted())
     );

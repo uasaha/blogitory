@@ -5,9 +5,14 @@ package com.blogitory.blog.member.dto;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 public class MemberPersistInfoDtoDummy {
+  /**
+   * Dummy member persist info dto.
+   *
+   * @return the member persist info dto
+   */
   public static MemberPersistInfoDto dummy() {
-    return new MemberPersistInfoDto("user", "thumb");
+    return new MemberPersistInfoDto("username", "user", "thumb");
   }
 }

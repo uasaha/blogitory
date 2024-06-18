@@ -12,9 +12,16 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @Configuration
 public class TestSecurityConfig {
+  /**
+   * Filter chain security filter chain.
+   *
+   * @param http the http
+   * @return the security filter chain
+   * @throws Exception the exception
+   */
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http.csrf(AbstractHttpConfigurer::disable)

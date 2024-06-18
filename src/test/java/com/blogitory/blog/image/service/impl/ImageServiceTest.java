@@ -30,15 +30,33 @@ import org.springframework.mock.web.MockMultipartFile;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 class ImageServiceTest {
+  /**
+   * The Object storage service.
+   */
   ObjectStorageService objectStorageService;
+  /**
+   * The Image repository.
+   */
   ImageRepository imageRepository;
+  /**
+   * The Image category repository.
+   */
   ImageCategoryRepository imageCategoryRepository;
+  /**
+   * The Member repository.
+   */
   MemberRepository memberRepository;
 
+  /**
+   * The Image service.
+   */
   ImageService imageService;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     objectStorageService = Mockito.mock(ObjectStorageService.class);
@@ -52,6 +70,9 @@ class ImageServiceTest {
             memberRepository);
   }
 
+  /**
+   * Upload thumbnail.
+   */
   @Test
   @DisplayName("프로필 썸네일 업데이트 성공")
   void uploadThumbnail() {

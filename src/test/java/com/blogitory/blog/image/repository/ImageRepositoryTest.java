@@ -24,22 +24,37 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class ImageRepositoryTest {
 
+  /**
+   * The Image repository.
+   */
   @Autowired
   ImageRepository imageRepository;
 
+  /**
+   * The Image category repository.
+   */
   @Autowired
   ImageCategoryRepository imageCategoryRepository;
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
@@ -50,6 +65,9 @@ class ImageRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Image save.
+   */
   @Test
   @DisplayName("이미지 저장")
   void imageSave() {

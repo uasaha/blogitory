@@ -14,19 +14,31 @@ import org.springframework.test.context.ActiveProfiles;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 class PropertiesTest {
+  /**
+   * The Object storage properties.
+   */
   @Autowired
   ObjectStorageProperties objectStorageProperties;
 
+  /**
+   * The Redis properties.
+   */
   @Autowired
   RedisProperties redisProperties;
 
+  /**
+   * The Jwt properties.
+   */
   @Autowired
   JwtProperties jwtProperties;
 
+  /**
+   * Object storage properties test.
+   */
   @Test
   void objectStoragePropertiesTest() {
     assertAll(
@@ -37,6 +49,9 @@ class PropertiesTest {
             () -> assertEquals("bucket-url", objectStorageProperties.getReturnUrl()));
   }
 
+  /**
+   * Redis properties test.
+   */
   @Test
   void redisPropertiesTest() {
     assertAll(
@@ -44,6 +59,9 @@ class PropertiesTest {
             () -> assertEquals("6379", redisProperties.getPort()));
   }
 
+  /**
+   * Jwt properties test.
+   */
   @Test
   void jwtPropertiesTest() {
     assertAll(

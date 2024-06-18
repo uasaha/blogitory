@@ -17,17 +17,29 @@ import org.junit.jupiter.api.Test;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 class RoleServiceTest {
+  /**
+   * The Role repository.
+   */
   RoleRepository roleRepository;
+  /**
+   * The Role service.
+   */
   RoleService roleService;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     roleRepository = mock(RoleRepository.class);
     roleService = new RoleServiceImpl(roleRepository);
   }
 
+  /**
+   * Gets roles by member no.
+   */
   @Test
   void getRolesByMemberNo() {
     Integer memberNo = 1;

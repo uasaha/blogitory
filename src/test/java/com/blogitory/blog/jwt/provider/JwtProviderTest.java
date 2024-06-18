@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,15 +16,24 @@ import org.junit.jupiter.api.Test;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 class JwtProviderTest {
+  /**
+   * The Jwt provider.
+   */
   JwtProvider jwtProvider;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     jwtProvider = new JwtProvider();
   }
 
+  /**
+   * Create token.
+   */
   @Test
   @DisplayName("토큰 생성")
   void createToken() {
@@ -38,6 +48,26 @@ class JwtProviderTest {
     assertThat(result).contains(expect);
   }
 
+  /**
+   * Testtest.
+   */
+  @Test
+  void testtest() {
+    String secret = "Ny0pm2CWIAST07ElsTAVZgCqJKJd2bE9lpKyewuOhyyKoBApt1Ny0pm2CWIAST07ElsTAVZgCqJKJd2bE9lpKyewuOhyyKoBApt1";
+    String accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjk5OTksImlzcyI6Im5obi1hY2FkZW15LW1hcmNvIiwiaWF0IjoxNzEwNTA4MDQwLCJleHAiOjE4ODMzMDgwNDB9.1W0KJj7mBuYhNPqEwfJzSvQD4JsNY-75qDvvlPqWiwE";
+    String accessToken2 = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEwMCwiaXNzIjoibmhuLWFjYWRlbXktbWFyY28iLCJpYXQiOjE3MTA1MTIyMDgsImV4cCI6MTc5NjkxMjIwOH0.-sx5W47k7xEI24iTPSSFUzxOH8LNLzboDjmJlqykPkE";
+    String accessToken3 = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEwMCwiaXNzIjoibmhuLWFjYWRlbXktbWFyY28iLCJpYXQiOjE2ODk2ODI2OTQsImV4cCI6MTY4OTc2OTA5NH0.xqRwAteYg1u8sFBi9oGrQgUtns25UplflZgunUrN50A";
+
+    assertNotNull(jwtProvider.getClaims(accessToken, secret));
+    System.out.println(jwtProvider.getClaims(accessToken, secret));
+    assertNotNull(jwtProvider.getClaims(accessToken2, secret));
+    System.out.println(jwtProvider.getClaims(accessToken2, secret));
+    assertThrows(ExpiredJwtException.class, () -> jwtProvider.getClaims(accessToken3, secret));
+  }
+
+  /**
+   * Test create token.
+   */
   @Test
   @DisplayName("토큰 생성 2")
   void testCreateToken() {
@@ -53,6 +83,9 @@ class JwtProviderTest {
     assertThat(result).contains(expect);
   }
 
+  /**
+   * Gets claims.
+   */
   @Test
   @DisplayName("클레임 get")
   void getClaims() {
@@ -66,6 +99,9 @@ class JwtProviderTest {
     assertThat(result).isEqualTo(value);
   }
 
+  /**
+   * Is expired.
+   */
   @Test
   @DisplayName("토큰 만료되지 않음")
   void isExpired() {
@@ -76,6 +112,9 @@ class JwtProviderTest {
     assertFalse(jwtProvider.isExpired(testToken, secret));
   }
 
+  /**
+   * Is expired false.
+   */
   @Test
   @DisplayName("토큰 만료됨")
   void isExpiredFalse() {

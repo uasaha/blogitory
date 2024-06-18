@@ -28,19 +28,33 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @WebMvcTest(value = {ImageRestController.class, TestSecurityConfig.class})
 @ActiveProfiles("test")
 class ImageRestControllerTest {
+  /**
+   * The Mvc.
+   */
   @Autowired
   MockMvc mvc;
 
+  /**
+   * The Member service.
+   */
   @MockBean
   MemberService memberService;
 
+  /**
+   * The Image service.
+   */
   @MockBean
   ImageService imageService;
 
+  /**
+   * Update thumbnail.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("프로필 썸네일 업데이트 성공")
   @WithMockUser("1")

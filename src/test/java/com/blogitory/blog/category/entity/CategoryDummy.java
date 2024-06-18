@@ -7,8 +7,14 @@ import com.blogitory.blog.blog.entity.Blog;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 public class CategoryDummy {
+  /**
+   * Dummy category.
+   *
+   * @param blog the blog
+   * @return the category
+   */
   public static Category dummy(Blog blog) {
     return new Category(1, blog, "DummyCategory", false);
   }

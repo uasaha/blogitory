@@ -26,21 +26,38 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @WebMvcTest(value = {MailRestController.class, TestSecurityConfig.class})
 class MailRestControllerTest {
+  /**
+   * The Mvc.
+   */
   @Autowired
   MockMvc mvc;
 
+  /**
+   * The Object mapper.
+   */
   @Autowired
   ObjectMapper objectMapper;
 
+  /**
+   * The Member service.
+   */
   @MockBean
   MemberService memberService;
 
+  /**
+   * The Mail service.
+   */
   @MockBean
   MailService mailService;
 
+  /**
+   * Issue verification code.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("인증번호 발송")
   void issueVerificationCode() throws Exception {
@@ -54,6 +71,11 @@ class MailRestControllerTest {
             .andDo(print());
   }
 
+  /**
+   * Check verification code.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("인증번호 확인")
   void checkVerificationCode() throws Exception {

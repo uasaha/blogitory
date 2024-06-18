@@ -8,8 +8,15 @@ import com.blogitory.blog.posts.entity.Posts;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 public class HeartDummy {
+  /**
+   * Dummy heart.
+   *
+   * @param member the member
+   * @param posts  the posts
+   * @return the heart
+   */
   public static Heart dummy(Member member, Posts posts) {
     Heart.Pk pk = new Heart.Pk(member.getMemberNo(), posts.getPostsNo());
 

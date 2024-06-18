@@ -23,30 +23,55 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class RoleMemberRepositoryTest {
 
+  /**
+   * The Role member repository.
+   */
   @Autowired
   RoleMemberRepository roleMemberRepository;
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Role repository.
+   */
   @Autowired
   RoleRepository roleRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * The Member.
+   */
   Member member;
+  /**
+   * The Role.
+   */
   Role role;
+
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     member = MemberDummy.dummy();
     role = RoleDummy.dummy();
   }
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
@@ -55,6 +80,9 @@ class RoleMemberRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Role member save.
+   */
   @Test
   @DisplayName("회원권한 저장 성공")
   void roleMemberSave() {
@@ -63,16 +91,15 @@ class RoleMemberRepositoryTest {
 
     RoleMember roleMember = new RoleMember(role, member);
 
-    roleMember = roleMemberRepository.save(roleMember);
-
-    RoleMember finalRoleMember = roleMember;
+    RoleMember actual = roleMemberRepository.save(roleMember);
 
     assertAll(
-            () -> assertEquals(role.getRoleName(), finalRoleMember.getRole().getRoleName()),
-            () -> assertEquals(role.getRoleNo(), finalRoleMember.getRole().getRoleNo()),
-            () -> assertEquals(role.getRoleNo(), finalRoleMember.getPk().getRoleNo()),
-            () -> assertEquals(member.getMemberNo(), finalRoleMember.getMember().getMemberNo()),
-            () -> assertEquals(member.getMemberNo(), finalRoleMember.getPk().getMemberNo())
+            () -> assertEquals(role.getRoleName(), actual.getRole().getRoleName()),
+            () -> assertEquals(role.getRoleNo(), actual.getRole().getRoleNo()),
+            () -> assertEquals(role.getRoleNo(), actual.getPk().getRoleNo()),
+            () -> assertEquals(member.getMemberNo(), actual.getMember().getMemberNo()),
+            () -> assertEquals(member.getMemberNo(), actual.getPk().getMemberNo()),
+            () -> assertEquals(roleMember.getPk(), actual.getPk())
     );
   }
 }

@@ -37,14 +37,32 @@ import org.springframework.data.redis.core.ValueOperations;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 class JwtServiceImplTest {
+  /**
+   * The Jwt provider.
+   */
   JwtProvider jwtProvider;
+  /**
+   * The Jwt properties.
+   */
   JwtProperties jwtProperties;
+  /**
+   * The Redis template.
+   */
   RedisTemplate<String, Object> redisTemplate;
+  /**
+   * The Object mapper.
+   */
   ObjectMapper objectMapper;
+  /**
+   * The Jwt service.
+   */
   JwtService jwtService;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     jwtProvider = Mockito.mock(JwtProvider.class);
@@ -55,13 +73,18 @@ class JwtServiceImplTest {
     jwtService = new JwtServiceImpl(jwtProvider, jwtProperties, redisTemplate, objectMapper);
   }
 
+  /**
+   * Issue.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("발급 성공")
   void issue() throws Exception {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
     MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
-            1, "test@email.com", "name", "password");
+            1, "test@email.com", "username", "name", "password");
 
     String expect = "accessToken";
     String uuid = UUID.randomUUID().toString();
@@ -85,13 +108,18 @@ class JwtServiceImplTest {
     assertEquals(expect, result);
   }
 
+  /**
+   * Issue failed.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("발급 실패")
   void issueFailed() throws Exception {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
     MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
-            1, "test@email.com", "name", "password");
+            1, "test@email.com", "username", "name", "password");
 
     String expect = "accessToken";
     String uuid = UUID.randomUUID().toString();
@@ -112,12 +140,17 @@ class JwtServiceImplTest {
     assertThrows(AuthenticationException.class, () -> jwtService.issue(uuid, memberLoginResponseDto, roles));
   }
 
+  /**
+   * Re issue.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("재발급 성공")
   void reIssue() throws Exception {
     String uuid = UUID.randomUUID().toString();
     MemberInfoDto info = new MemberInfoDto(
-            1, "test@email.com", "name", "refreshToken");
+            1, "test@email.com", "username", "name", "refreshToken");
     Claims claims = new DefaultClaims(Map.of());
     String accessToken = "accessToken";
 
@@ -136,10 +169,16 @@ class JwtServiceImplTest {
     assertEquals(accessToken, result);
     assertEquals(1, info.getMemberNo());
     assertEquals("test@email.com", info.getEmail());
+    assertEquals("username", info.getUsername());
     assertEquals("name", info.getName());
     assertEquals("refreshToken", info.getRefreshToken());
   }
 
+  /**
+   * Re issue failed.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("재발급 실패")
   void reIssueFailed() throws Exception {
@@ -160,4 +199,6 @@ class JwtServiceImplTest {
 
     assertThrows(AuthorizationException.class, () -> jwtService.reIssue(uuid));
   }
+
+
 }

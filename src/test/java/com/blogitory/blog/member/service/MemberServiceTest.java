@@ -41,7 +41,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 class MemberServiceTest {
   private MemberRepository memberRepository;
   private RoleRepository roleRepository;
@@ -50,6 +50,9 @@ class MemberServiceTest {
   private MemberService memberService;
   private JwtService jwtService;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     memberRepository = mock(MemberRepository.class);
@@ -62,6 +65,9 @@ class MemberServiceTest {
             memberRepository, roleRepository, roleMemberRepository, jwtService, passwordEncoder);
   }
 
+  /**
+   * Signup.
+   */
   @Test
   @DisplayName("회원가입 - 성공")
   void signup() {
@@ -69,7 +75,7 @@ class MemberServiceTest {
     Role role = new Role(4, "ROLE_DUMMY");
     RoleMember roleMember = RoleMemberDummy.dummy(role, member);
     MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
-            member.getName(), member.getEmail(), member.getPassword());
+            member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
     when(memberRepository.save(any())).thenReturn(member);
     when(roleRepository.findById(4)).thenReturn(Optional.of(role));
@@ -83,6 +89,9 @@ class MemberServiceTest {
     verify(roleMemberRepository, times(1)).save(any());
   }
 
+  /**
+   * Signup fail no roles.
+   */
   @Test
   @DisplayName("회원가입 - 실패(권한 없음)")
   void signupFailNoRoles() {
@@ -90,7 +99,7 @@ class MemberServiceTest {
     Role role = new Role(4, "ROLE_DUMMY");
     RoleMember roleMember = RoleMemberDummy.dummy(role, member);
     MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
-            member.getName(), member.getEmail(), member.getPassword());
+            member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
     when(memberRepository.save(any())).thenReturn(member);
     when(roleRepository.findById(4)).thenThrow(NotFoundException.class);
@@ -101,19 +110,37 @@ class MemberServiceTest {
             .isInstanceOf(NotFoundException.class);
   }
 
+  /**
+   * Signup fail exist email.
+   */
   @Test
   @DisplayName("회원가입 - 실패(이메일 중복)")
   void signupFailExistEmail() {
     Member member = MemberDummy.dummy();
     MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
-            member.getName(), member.getEmail(), member.getPassword());
+            member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
     when(memberRepository.existsMemberByEmail(any())).thenReturn(true);
 
     assertThrows(MemberEmailAlreadyUsedException.class, () -> memberService.signup(requestDto));
   }
 
+  @Test
+  @DisplayName("회원가입 - 실패(유저네임 중복)")
+  void signupFailExistUsername() {
+    Member member = MemberDummy.dummy();
+    MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
+            member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
+    when(memberRepository.existsMemberByUsername(any())).thenReturn(true);
+
+    assertThrows(MemberEmailAlreadyUsedException.class, () -> memberService.signup(requestDto));
+  }
+
+
+  /**
+   * Exist member by email.
+   */
   @Test
   @DisplayName("이메일 중복")
   void existMemberByEmail() {
@@ -129,6 +156,9 @@ class MemberServiceTest {
 
   }
 
+  /**
+   * Not exist member by email.
+   */
   @Test
   @DisplayName("이메일 중복 아님")
   void notExistMemberByEmail() {
@@ -142,9 +172,15 @@ class MemberServiceTest {
     assertFalse(notExistExpect);
   }
 
+  /**
+   * Login.
+   */
   @Test
   @DisplayName("로그인 성공")
   void login() {
+    MemberLoginRequestDto testDto = new MemberLoginRequestDto();
+    ReflectionTestUtils.setField(testDto, "email", "test@email.com");
+    ReflectionTestUtils.setField(testDto, "password", "123456");
     MemberLoginRequestDto requestDto = new MemberLoginRequestDto("test@email.com", "password");
     Member member = MemberDummy.dummy();
     List<String> roles = List.of("ROLE_DUMMY");
@@ -161,6 +197,9 @@ class MemberServiceTest {
     assertEquals(expect, actual);
   }
 
+  /**
+   * Login failed not user.
+   */
   @Test
   @DisplayName("로그인 실패 - 가입안된 이메일")
   void loginFailedNotUser() {
@@ -168,9 +207,12 @@ class MemberServiceTest {
 
     when(memberRepository.findByEmail(any())).thenReturn(Optional.empty());
 
-    assertThrows(AuthenticationException.class, () -> memberService.login(requestDto));
+    assertThrows(NotFoundException.class, () -> memberService.login(requestDto));
   }
 
+  /**
+   * Login failed not matches password.
+   */
   @Test
   @DisplayName("로그인 성공 - 비밀번호 틀림")
   void loginFailedNotMatchesPassword() {
@@ -183,6 +225,9 @@ class MemberServiceTest {
     assertThrows(AuthenticationException.class, () -> memberService.login(requestDto));
   }
 
+  /**
+   * My profile.
+   */
   @Test
   @DisplayName("프로필 조회 성공")
   void myProfile() {
@@ -210,6 +255,9 @@ class MemberServiceTest {
     );
   }
 
+  /**
+   * My profile failed.
+   */
   @Test
   @DisplayName("프로필 조회 실패")
   void myProfileFailed() {
@@ -218,21 +266,28 @@ class MemberServiceTest {
     assertThrows(NotFoundException.class, () -> memberService.myProfile(0));
   }
 
+  /**
+   * Persist info.
+   */
   @Test
   @DisplayName("로그인정보 조회")
   void persistInfo() {
-    MemberPersistInfoDto infoDto = new MemberPersistInfoDto("name", "thumb");
+    MemberPersistInfoDto infoDto = new MemberPersistInfoDto("username", "name", "thumb");
 
     when(memberRepository.getPersistInfo(any())).thenReturn(Optional.of(infoDto));
 
     MemberPersistInfoDto actual = memberService.persistInfo(0);
 
     assertAll(
+            () -> assertEquals(infoDto.getUsername(), actual.getUsername()),
             () -> assertEquals(infoDto.getName(), actual.getName()),
             () -> assertEquals(infoDto.getThumb(), actual.getThumb())
     );
   }
 
+  /**
+   * Persist info failed.
+   */
   @Test
   @DisplayName("로그인정보 조회 실패")
   void persistInfofailed() {
@@ -241,6 +296,9 @@ class MemberServiceTest {
     assertThrows(NotFoundException.class, () -> memberService.persistInfo(0));
   }
 
+  /**
+   * Update name.
+   */
   @Test
   @DisplayName("이름 수정 성공")
   void updateName() {
@@ -255,6 +313,9 @@ class MemberServiceTest {
     assertEquals(member.getName(), requestDto.getName());
   }
 
+  /**
+   * Update name failed.
+   */
   @Test
   @DisplayName("이름 수정 실패")
   void updateNameFailed() {
@@ -267,6 +328,9 @@ class MemberServiceTest {
     assertThrows(NotFoundException.class, () -> memberService.updateName(0, requestDto));
   }
 
+  /**
+   * Update open email.
+   */
   @Test
   @DisplayName("공개이메일 수정 성공")
   void updateOpenEmail() {
@@ -281,6 +345,9 @@ class MemberServiceTest {
     assertEquals(member.getIntroEmail(), requestDto.getContent());
   }
 
+  /**
+   * Update open email failed.
+   */
   @Test
   @DisplayName("공개이메일 수정 실패")
   void updateOpenEmailFailed() {
@@ -292,6 +359,9 @@ class MemberServiceTest {
     assertThrows(NotFoundException.class, () -> memberService.updateOpenEmail(0, requestDto));
   }
 
+  /**
+   * Update GitHub.
+   */
   @Test
   @DisplayName("깃허브 수정 성공")
   void updateGithub() {
@@ -306,6 +376,9 @@ class MemberServiceTest {
     assertEquals(member.getGithub(), requestDto.getContent());
   }
 
+  /**
+   * Update GitHub failed.
+   */
   @Test
   @DisplayName("깃허브 수정 실패")
   void updateGithubFailed() {
@@ -317,6 +390,9 @@ class MemberServiceTest {
     assertThrows(NotFoundException.class, () -> memberService.updateGithub(0, requestDto));
   }
 
+  /**
+   * Update facebook.
+   */
   @Test
   @DisplayName("페이스북 수정 성공")
   void updateFacebook() {
@@ -331,6 +407,9 @@ class MemberServiceTest {
     assertEquals(member.getFacebook(), requestDto.getContent());
   }
 
+  /**
+   * Update facebook failed.
+   */
   @Test
   @DisplayName("페이스북 수정 실패")
   void updateFacebookFailed() {
@@ -342,6 +421,9 @@ class MemberServiceTest {
     assertThrows(NotFoundException.class, () -> memberService.updateFacebook(0, requestDto));
   }
 
+  /**
+   * Update x.
+   */
   @Test
   @DisplayName("X 수정 성공")
   void updateX() {
@@ -356,6 +438,9 @@ class MemberServiceTest {
     assertEquals(member.getTwitter(), requestDto.getContent());
   }
 
+  /**
+   * Update x failed.
+   */
   @Test
   @DisplayName("X 수정 실패")
   void updateXFailed() {
@@ -367,6 +452,9 @@ class MemberServiceTest {
     assertThrows(NotFoundException.class, () -> memberService.updateX(0, requestDto));
   }
 
+  /**
+   * Update homepage.
+   */
   @Test
   @DisplayName("홈페이지 수정 성공")
   void updateHomepage() {
@@ -381,6 +469,9 @@ class MemberServiceTest {
     assertEquals(member.getHomepage(), requestDto.getContent());
   }
 
+  /**
+   * Update homepage failed.
+   */
   @Test
   @DisplayName("홈페이지 수정 실패")
   void updateHomepageFailed() {
@@ -390,5 +481,94 @@ class MemberServiceTest {
     when(memberRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThrows(NotFoundException.class, () -> memberService.updateHomepage(0, requestDto));
+  }
+
+  /**
+   * Is duplicated name.
+   */
+  @Test
+  @DisplayName("회원 이름 중복 검사")
+  void isDuplicatedName() {
+    String name = "name";
+
+    when(memberRepository.existsMemberByUsername(name)).thenReturn(true);
+
+    assertTrue(memberService.isDuplicateUsername(name));
+  }
+
+  /**
+   * Is duplicated name false.
+   */
+  @Test
+  @DisplayName("회원 유저네임 중복 검사")
+  void isDuplicatedNameFalse() {
+    String name = "name";
+
+    when(memberRepository.existsMemberByUsername(name)).thenReturn(false);
+
+    assertFalse(memberService.isDuplicateUsername(name));
+  }
+
+  @Test
+  @DisplayName("회원 한줄소개 수정 성공")
+  void updateBio() {
+    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
+    ReflectionTestUtils.setField(requestDto, "content", "bio_test");
+    Member member = MemberDummy.dummy();
+
+    when(memberRepository.findById(member.getMemberNo()))
+            .thenReturn(Optional.of(member));
+
+    memberService.updateBio(member.getMemberNo(), requestDto);
+
+    assertEquals(member.getBio(), requestDto.getContent());
+  }
+
+  @Test
+  @DisplayName("회원 한줄소개 수정 실패")
+  void updateBioFailed() {
+    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
+    ReflectionTestUtils.setField(requestDto, "content", "bio_test");
+
+    when(memberRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> memberService.updateBio(0, requestDto));
+  }
+
+  @Test
+  @DisplayName("회원번호로 썸네일 조회 성공")
+  void getThumbnailByNo() {
+    Member member = MemberDummy.dummy();
+
+    when(memberRepository.findProfileThumbByMemberNo(member.getMemberNo()))
+            .thenReturn(member.getProfileThumb());
+
+    String thumbnail = memberService.getThumbnailByNo(member.getMemberNo());
+
+    assertEquals(thumbnail, member.getProfileThumb());
+  }
+
+  @Test
+  @DisplayName("이메일로 비밀번호 조회 성공")
+  void getPasswordByEmail() {
+    Member member = MemberDummy.dummy();
+
+    when(memberRepository.findByEmail(member.getEmail()))
+            .thenReturn(Optional.of(member));
+
+    String password = memberService.getPasswordByEmail(member.getEmail());
+
+    assertEquals(password, member.getPassword());
+  }
+
+  @Test
+  @DisplayName("이메일로 비밀번호 조회 실패")
+  void getPasswordByEmailFailed() {
+    String email = "email@email.com";
+
+    when(memberRepository.findByEmail(email))
+            .thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> memberService.getPasswordByEmail(email));
   }
 }

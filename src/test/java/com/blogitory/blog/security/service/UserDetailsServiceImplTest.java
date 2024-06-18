@@ -18,21 +18,37 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * UserDetailsService test.
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 class UserDetailsServiceImplTest {
+  /**
+   * The Member repository.
+   */
   MemberRepository memberRepository;
+  /**
+   * The Role repository.
+   */
   RoleRepository roleRepository;
+  /**
+   * The Password encoder.
+   */
+  PasswordEncoder passwordEncoder;
 
+  /**
+   * Load user by username.
+   */
   @Test
   void loadUserByUsername() {
     memberRepository = mock(MemberRepository.class);
     roleRepository = mock(RoleRepository.class);
+    passwordEncoder = mock(PasswordEncoder.class);
+
     UserDetailsServiceImpl userDetailsService =
             new UserDetailsServiceImpl(memberRepository, roleRepository);
 
@@ -49,6 +65,7 @@ class UserDetailsServiceImplTest {
             member.getEmail(),
             member.getPassword(),
             member.getMemberNo(),
+            member.getUsername(),
             member.getName(),
             grantedRoles);
 
@@ -62,7 +79,8 @@ class UserDetailsServiceImplTest {
             () -> assertTrue(expect.isAccountNonLocked()),
             () -> assertTrue(expect.isCredentialsNonExpired()),
             () -> assertTrue(expect.isEnabled()),
-            () -> assertEquals(expect.getNickname(), member.getName()),
+            () -> assertEquals(expect.getIdName(), member.getUsername()),
+            () -> assertEquals(expect.getName(), member.getName()),
             () -> assertEquals(expect.getUserNo(), member.getMemberNo())
     );
   }

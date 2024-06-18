@@ -30,33 +30,57 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class HeartRepositoryTest {
 
+  /**
+   * The Heart repository.
+   */
   @Autowired
   HeartRepository heartRepository;
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Blog repository.
+   */
   @Autowired
   BlogRepository blogRepository;
 
+  /**
+   * The Category repository.
+   */
   @Autowired
   CategoryRepository categoryRepository;
 
+  /**
+   * The Posts repository.
+   */
   @Autowired
   PostsRepository postsRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
 
   }
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
@@ -69,6 +93,9 @@ class HeartRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Heart save.
+   */
   @Test
   @DisplayName("좋아요 저장")
   void heartSave() {

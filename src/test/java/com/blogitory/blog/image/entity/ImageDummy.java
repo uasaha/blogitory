@@ -10,8 +10,15 @@ import com.blogitory.blog.posts.entity.Posts;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 public class ImageDummy {
+  /**
+   * Thumbnail dummy image.
+   *
+   * @param imageCategory the image category
+   * @param member        the member
+   * @return the image
+   */
   public static Image thumbnailDummy(ImageCategory imageCategory, Member member) {
     return new Image(
             1L,
@@ -26,6 +33,13 @@ public class ImageDummy {
             "savePath");
   }
 
+  /**
+   * Posts dummy image.
+   *
+   * @param imageCategory the image category
+   * @param posts         the posts
+   * @return the image
+   */
   public static Image postsDummy(ImageCategory imageCategory, Posts posts) {
     return new Image(
             1L,
@@ -40,6 +54,13 @@ public class ImageDummy {
             "savePath");
   }
 
+  /**
+   * Blog dummy image.
+   *
+   * @param imageCategory the image category
+   * @param blog          the blog
+   * @return the image
+   */
   public static Image blogDummy(ImageCategory imageCategory, Blog blog) {
     return new Image(
             1L,

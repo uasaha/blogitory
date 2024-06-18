@@ -22,30 +22,51 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class MemberRepositoryTest {
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * The Member.
+   */
   Member member;
+  /**
+   * The Role.
+   */
   Role role;
 
+  /**
+   * Before each.
+   */
   @BeforeEach
   void beforeEach() {
     member = MemberDummy.dummy();
     role = RoleDummy.dummy();
   }
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
             .executeUpdate();
   }
 
+  /**
+   * Member save.
+   */
   @Test
   @DisplayName("회원 저장 성공")
   void memberSave() {
@@ -55,6 +76,7 @@ class MemberRepositoryTest {
             () -> assertEquals(member.getMemberNo(), savedMember.getMemberNo()),
             () -> assertEquals(member.getEmail(), savedMember.getEmail()),
             () -> assertEquals(member.getPassword(), savedMember.getPassword()),
+            () -> assertEquals(member.getUsername(), savedMember.getUsername()),
             () -> assertEquals(member.getName(), savedMember.getName()),
             () -> assertEquals(member.getProfileThumb(), savedMember.getProfileThumb()),
             () -> assertEquals(member.getIntroEmail(), savedMember.getIntroEmail()),
@@ -63,10 +85,14 @@ class MemberRepositoryTest {
             () -> assertEquals(member.getFacebook(), savedMember.getFacebook()),
             () -> assertEquals(member.getHomepage(), savedMember.getHomepage()),
             () -> assertEquals(member.isBlocked(), savedMember.isBlocked()),
-            () -> assertEquals(member.isLeft(), savedMember.isLeft())
+            () -> assertEquals(member.isLeft(), savedMember.isLeft()),
+            () -> assertEquals(member.isOauth(), savedMember.isOauth())
     );
   }
 
+  /**
+   * Exists member by email.
+   */
   @Test
   @DisplayName("회원 이메일 중복 조회")
   void existsMemberByEmail() {
@@ -79,6 +105,9 @@ class MemberRepositoryTest {
     assertFalse(notExistResult);
   }
 
+  /**
+   * Gets my profile.
+   */
   @Test
   @DisplayName("내 프로필 조회")
   void getMyProfile() {
@@ -104,6 +133,9 @@ class MemberRepositoryTest {
     );
   }
 
+  /**
+   * Gets persist info.
+   */
   @Test
   @DisplayName("로그인 정보 조회")
   void getPersistInfo() {

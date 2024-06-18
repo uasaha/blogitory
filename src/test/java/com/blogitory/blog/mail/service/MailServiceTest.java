@@ -29,14 +29,32 @@ import org.springframework.mail.javamail.JavaMailSender;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 class MailServiceTest {
+  /**
+   * The Mail service.
+   */
   MailService mailService;
+  /**
+   * The Member service.
+   */
   MemberService memberService;
+  /**
+   * The Java mail sender.
+   */
   JavaMailSender javaMailSender;
+  /**
+   * The Redis template.
+   */
   RedisTemplate redisTemplate;
+  /**
+   * The Random.
+   */
   Random random;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
     memberService = mock(MemberService.class);
@@ -46,6 +64,9 @@ class MailServiceTest {
     mailService = new MailServiceImpl(memberService, javaMailSender, redisTemplate, random);
   }
 
+  /**
+   * Send verification code.
+   */
   @Test
   @DisplayName("메일 발송 성공")
   void sendVerificationCode() {
@@ -61,6 +82,9 @@ class MailServiceTest {
     verify(javaMailSender, times(1)).send(any(SimpleMailMessage.class));
   }
 
+  /**
+   * Send verification code failed.
+   */
   @Test
   @DisplayName("메일 발송 실패 - 중복 이메일")
   void sendVerificationCodeFailed() {
@@ -70,6 +94,9 @@ class MailServiceTest {
             () -> mailService.sendVerificationCode("email"));
   }
 
+  /**
+   * Check verification code.
+   */
   @Test
   @DisplayName("인증번호 확인")
   void checkVerificationCode() {
@@ -85,6 +112,9 @@ class MailServiceTest {
     assertTrue(mailService.checkVerificationCode(requestDto));
   }
 
+  /**
+   * Check verification code failed.
+   */
   @Test
   @DisplayName("인증번호 확인 실패 - 인증번호 틀림")
   void checkVerificationCodeFailed() {

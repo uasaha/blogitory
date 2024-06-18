@@ -9,8 +9,15 @@ import java.time.LocalDateTime;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 public class CommentDummy {
+  /**
+   * Dummy comment.
+   *
+   * @param member the member
+   * @param posts  the posts
+   * @return the comment
+   */
   public static Comment dummy(Member member, Posts posts) {
     return new Comment(
             1L,
@@ -22,6 +29,14 @@ public class CommentDummy {
             false);
   }
 
+  /**
+   * Dummy comment.
+   *
+   * @param member the member
+   * @param posts  the posts
+   * @param parent the parent
+   * @return the comment
+   */
   public static Comment dummy(Member member, Posts posts, Comment parent) {
     return new Comment(
             1L,

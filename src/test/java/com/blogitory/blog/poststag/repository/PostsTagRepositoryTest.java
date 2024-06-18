@@ -32,31 +32,55 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class PostsTagRepositoryTest {
 
+  /**
+   * The Posts tag repository.
+   */
   @Autowired
   PostsTagRepository postsTagRepository;
 
+  /**
+   * The Tag repository.
+   */
   @Autowired
   TagRepository tagRepository;
 
+  /**
+   * The Posts repository.
+   */
   @Autowired
   PostsRepository postsRepository;
 
+  /**
+   * The Blog repository.
+   */
   @Autowired
   BlogRepository blogRepository;
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Category repository.
+   */
   @Autowired
   CategoryRepository categoryRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
@@ -73,6 +97,9 @@ class PostsTagRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Posts tag save.
+   */
   @Test
   @DisplayName("PostsTag 저장")
   void PostsTagSave() {

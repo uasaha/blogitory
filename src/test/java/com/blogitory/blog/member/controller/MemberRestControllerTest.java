@@ -1,10 +1,13 @@
 package com.blogitory.blog.member.controller;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.config.TestSecurityConfig;
@@ -32,40 +35,39 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @WebMvcTest(value = {MemberRestController.class, TestSecurityConfig.class})
 class MemberRestControllerTest {
+  /**
+   * The Mvc.
+   */
   @Autowired
   MockMvc mvc;
 
+  /**
+   * The Object mapper.
+   */
   @Autowired
   ObjectMapper objectMapper;
 
+  /**
+   * The Member service.
+   */
   @MockBean
   MemberService memberService;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
   }
 
-  @Test
-  @DisplayName("로그인")
-  void login() throws Exception {
-    MemberLoginRequestDto requestDto = new MemberLoginRequestDto("email", "password");
-    String accessToken = "accessToken";
-    Cookie cookie = new Cookie("uids", accessToken);
-    HttpServletResponse response = mock(HttpServletResponse.class);
-
-    doNothing().when(response).addCookie(cookie);
-    when(memberService.login(requestDto)).thenReturn(accessToken);
-
-    mvc.perform(MockMvcRequestBuilders.post("/api/v1/users/login")
-            .content(objectMapper.writeValueAsString(requestDto))
-            .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andDo(print());
-  }
-
+  /**
+   * Update name.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("이름 수정")
   @WithMockUser("1")
@@ -82,6 +84,11 @@ class MemberRestControllerTest {
             .andDo(print());
   }
 
+  /**
+   * Update open email.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("이메일 수정")
   @WithMockUser("1")
@@ -98,6 +105,11 @@ class MemberRestControllerTest {
             .andDo(print());
   }
 
+  /**
+   * Update github.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("깃허브 수정")
   @WithMockUser("1")
@@ -114,6 +126,11 @@ class MemberRestControllerTest {
             .andDo(print());
   }
 
+  /**
+   * Update facebook.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("페이스북 수정")
   @WithMockUser("1")
@@ -130,6 +147,11 @@ class MemberRestControllerTest {
             .andDo(print());
   }
 
+  /**
+   * Update x.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("X 수정")
   @WithMockUser("1")
@@ -146,6 +168,11 @@ class MemberRestControllerTest {
             .andDo(print());
   }
 
+  /**
+   * Update homepage.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("홈페이지 수정")
   @WithMockUser("1")
@@ -159,6 +186,46 @@ class MemberRestControllerTest {
                     .content(objectMapper.writeValueAsString(requestDto))
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent())
+            .andDo(print());
+  }
+
+  /**
+   * In duplicated name.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  @DisplayName("name 중복 검사")
+  void inDuplicatedName() throws Exception {
+    String name = "name";
+
+    when(memberService.isDuplicateUsername(anyString())).thenReturn(false);
+
+    mvc.perform(get("/api/v1/users/username/verification")
+            .param("username", name)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string("false"))
+            .andDo(print());
+  }
+
+  /**
+   * In duplicated name true.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  @DisplayName("name 중복 검사 true")
+  void inDuplicatedNameTrue() throws Exception {
+    String name = "name";
+
+    when(memberService.isDuplicateUsername(anyString())).thenReturn(true);
+
+    mvc.perform(get("/api/v1/users/username/verification")
+                    .param("username", name)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string("true"))
             .andDo(print());
   }
 }

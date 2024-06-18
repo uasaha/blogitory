@@ -25,15 +25,29 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  */
 @WebMvcTest(value = {MemberController.class, TestSecurityConfig.class})
 class MemberControllerTest {
+  /**
+   * The Mvc.
+   */
   @Autowired
   MockMvc mvc;
 
+  /**
+   * The Object mapper.
+   */
   @Autowired
   ObjectMapper objectMapper;
 
+  /**
+   * The Member service.
+   */
   @MockBean
   MemberService memberService;
 
+  /**
+   * Signup.
+   *
+   * @throws Exception the exception
+   */
   @Test
   @DisplayName("회원가입 페이지")
   void signup() throws Exception {
@@ -43,6 +57,7 @@ class MemberControllerTest {
 
     mvc.perform(MockMvcRequestBuilders.post("/signup").with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
+            .param("username", member.getUsername())
             .param("name", member.getName())
             .param("email", member.getEmail())
             .param("pwd", member.getPassword()))

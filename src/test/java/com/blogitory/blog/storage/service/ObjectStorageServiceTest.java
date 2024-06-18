@@ -30,13 +30,25 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @Slf4j
 class ObjectStorageServiceTest {
+  /**
+   * The S 3 client.
+   */
   S3Client s3Client;
+  /**
+   * The Properties.
+   */
   ObjectStorageProperties properties;
+  /**
+   * The Object storage service.
+   */
   ObjectStorageService objectStorageService;
 
+  /**
+   * Sets .
+   */
   @BeforeEach
   void setup() {
     s3Client = mock(S3Client.class);
@@ -44,6 +56,9 @@ class ObjectStorageServiceTest {
     objectStorageService = new ObjectStorageServiceImpl(s3Client, properties);
   }
 
+  /**
+   * Upload file.
+   */
   @Test
   @DisplayName("파일업로드 성공")
   void uploadFile() {
@@ -67,6 +82,9 @@ class ObjectStorageServiceTest {
     );
   }
 
+  /**
+   * Upload file failed is empty.
+   */
   @Test
   @DisplayName("파일 업로드 실패 - file.isEmpty")
   void uploadFileFailedIsEmpty() {
@@ -80,6 +98,9 @@ class ObjectStorageServiceTest {
     assertNull(responseDto);
   }
 
+  /**
+   * Upload file failed name is null.
+   */
   @Test
   @DisplayName("파일 업로드 실패 - originName is null")
   void uploadFileFailedNameIsNull() {
@@ -94,6 +115,11 @@ class ObjectStorageServiceTest {
     assertNull(responseDto);
   }
 
+  /**
+   * Upload file failed io exception.
+   *
+   * @throws IOException the io exception
+   */
   @Test
   @DisplayName("파일업로드 실패 - IOException")
   void uploadFileFailedIOException() throws IOException {

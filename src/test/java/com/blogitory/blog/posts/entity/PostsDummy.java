@@ -8,8 +8,14 @@ import java.time.LocalDateTime;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 public class PostsDummy {
+  /**
+   * Dummy posts.
+   *
+   * @param category the category
+   * @return the posts
+   */
   public static Posts dummy(Category category) {
     return new Posts(
             1L, category,

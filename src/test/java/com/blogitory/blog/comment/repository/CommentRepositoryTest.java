@@ -31,32 +31,56 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class CommentRepositoryTest {
 
+  /**
+   * The Comment repository.
+   */
   @Autowired
   CommentRepository commentRepository;
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Posts repository.
+   */
   @Autowired
   PostsRepository postsRepository;
 
+  /**
+   * The Blog repository.
+   */
   @Autowired
   BlogRepository blogRepository;
 
+  /**
+   * The Category repository.
+   */
   @Autowired
   CategoryRepository categoryRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
   }
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
@@ -71,6 +95,9 @@ class CommentRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Comment save.
+   */
   @Test
   @DisplayName("댓글 저장")
   void commentSave() {

@@ -27,22 +27,37 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class RoleRepositoryTest {
 
+  /**
+   * The Role repository.
+   */
   @Autowired
   RoleRepository roleRepository;
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Role member repository.
+   */
   @Autowired
   RoleMemberRepository roleMemberRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `role` ALTER COLUMN `role_no` RESTART")
@@ -51,6 +66,9 @@ class RoleRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Role save.
+   */
   @Test
   @DisplayName("권한 저장")
   void roleSave() {
@@ -63,6 +81,9 @@ class RoleRepositoryTest {
     );
   }
 
+  /**
+   * Find roles by member no.
+   */
   @Test
   @DisplayName("회원으로 조회")
   void findRolesByMemberNo() {

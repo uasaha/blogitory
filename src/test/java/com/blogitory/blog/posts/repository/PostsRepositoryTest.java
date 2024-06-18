@@ -27,29 +27,50 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class PostsRepositoryTest {
 
+  /**
+   * The Posts repository.
+   */
   @Autowired
   PostsRepository postsRepository;
 
+  /**
+   * The Category repository.
+   */
   @Autowired
   CategoryRepository categoryRepository;
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Blog repository.
+   */
   @Autowired
   BlogRepository blogRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
   }
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `posts` ALTER COLUMN `posts_no` RESTART")
@@ -62,6 +83,9 @@ class PostsRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Posts save.
+   */
   @Test
   @DisplayName("글 저장")
   void postsSave() {

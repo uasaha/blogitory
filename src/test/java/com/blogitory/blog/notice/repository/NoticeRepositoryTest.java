@@ -21,23 +21,38 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class NoticeRepositoryTest {
 
+  /**
+   * The Member repository.
+   */
   @Autowired
   MemberRepository memberRepository;
 
+  /**
+   * The Notice repository.
+   */
   @Autowired
   NoticeRepository noticeRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
   }
 
+  /**
+   * Teardown.
+   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
@@ -46,6 +61,9 @@ class NoticeRepositoryTest {
             .executeUpdate();
   }
 
+  /**
+   * Notice save.
+   */
   @Test
   @DisplayName("알림 저장")
   void noticeSave() {

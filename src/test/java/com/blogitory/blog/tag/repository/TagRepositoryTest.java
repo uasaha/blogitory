@@ -18,26 +18,41 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  *
  * @author woonseok
  * @since 1.0
- **/
+ */
 @DataJpaTest
 class TagRepositoryTest {
 
+  /**
+   * The Tag repository.
+   */
   @Autowired
   TagRepository tagRepository;
 
+  /**
+   * The Entity manager.
+   */
   @Autowired
   EntityManager entityManager;
 
+  /**
+   * Sets up.
+   */
   @BeforeEach
   void setUp() {
   }
 
+  /**
+   * Tear down.
+   */
   @AfterEach
   void tearDown() {
     entityManager.createNativeQuery("ALTER TABLE `tag` ALTER COLUMN `tag_no` RESTART")
             .executeUpdate();
   }
 
+  /**
+   * Tag save.
+   */
   @Test
   @DisplayName("태그 저장")
   void tagSave() {
