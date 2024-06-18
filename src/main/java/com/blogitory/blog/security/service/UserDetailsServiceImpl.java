@@ -30,15 +30,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
     Member member = memberRepository.findByEmail(email)
-            .orElseThrow(AuthenticationException::new);
+            .orElseThrow(() -> new AuthenticationException(
+                    this.getClass().getName() + ": LoadUserByUsername failed"));
+
     List<SimpleGrantedAuthority> roles = roleRepository.findRolesByMemberNo(member.getMemberNo())
             .stream().map(SimpleGrantedAuthority::new).toList();
-
 
     return new UserDetailsImpl(
             member.getEmail(),
             member.getPassword(),
             member.getMemberNo(),
+            member.getUsername(),
             member.getName(),
             roles);
   }

@@ -1,6 +1,5 @@
 package com.blogitory.blog.member.controller;
 
-import com.blogitory.blog.commons.utils.UrlUtil;
 import com.blogitory.blog.member.dto.MemberSignupRequestDto;
 import com.blogitory.blog.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,8 +31,6 @@ public class MemberController {
   public String signup(HttpServletRequest request, @Valid MemberSignupRequestDto requestDto) {
     memberService.signup(requestDto);
 
-    String refererUrl = UrlUtil.getRefererUrl(request);
-
-    return "redirect:/" + refererUrl;
+    return "redirect:/";
   }
 }

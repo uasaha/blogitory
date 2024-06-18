@@ -54,6 +54,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
             from(member)
                     .select(Projections.constructor(
                             MemberPersistInfoDto.class,
+                            member.username,
                             member.name,
                             member.profileThumb
                     ))

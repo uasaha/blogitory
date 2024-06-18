@@ -1,21 +1,18 @@
 package com.blogitory.blog.member.controller;
 
-import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
-
-import com.blogitory.blog.member.dto.MemberLoginRequestDto;
 import com.blogitory.blog.member.dto.MemberUpdateNameRequestDto;
 import com.blogitory.blog.member.dto.MemberUpdateProfileRequestDto;
 import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.util.SecurityUtils;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -30,23 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberRestController {
   private final MemberService memberService;
 
-  /**
-   * Login for user using rest services.
-   *
-   * @param response   HttpServletResponse
-   * @param requestDto login info
-   * @return JWT
-   */
-  @PostMapping("/login")
-  public ResponseEntity<String> login(HttpServletResponse response,
-                                      @RequestBody @Valid MemberLoginRequestDto requestDto) {
-    String accessToken = memberService.login(requestDto);
-
-    Cookie cookie = new Cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
-
-    response.addCookie(cookie);
-
-    return ResponseEntity.ok(accessToken);
+  @GetMapping("/username/verification")
+  public ResponseEntity<Boolean> isDuplicatedName(
+          @RequestParam @Valid @Size(min = 2, max = 20) String username) {
+    return ResponseEntity.ok(memberService.isDuplicateUsername(username));
   }
 
   /**

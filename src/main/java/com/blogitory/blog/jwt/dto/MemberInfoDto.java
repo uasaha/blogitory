@@ -14,6 +14,7 @@ import lombok.Getter;
 public class MemberInfoDto {
   private Integer memberNo;
   private String email;
+  private String username;
   private String name;
   private String refreshToken;
 }

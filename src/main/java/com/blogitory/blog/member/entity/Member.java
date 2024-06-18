@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 public class Member extends BaseCreatedAtEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column
+  @Column(name = "member_no")
   private Integer memberNo;
 
   @Column(name = "member_email")
@@ -36,8 +36,14 @@ public class Member extends BaseCreatedAtEntity {
   @Column(name = "member_password")
   private String password;
 
+  @Column(name = "member_username")
+  private String username;
+
   @Column(name = "member_name")
   private String name;
+
+  @Column(name = "member_bio")
+  private String bio;
 
   @Column(name = "member_profile_thumb")
   private String profileThumb;
@@ -62,6 +68,9 @@ public class Member extends BaseCreatedAtEntity {
 
   @Column(name = "member_left")
   private boolean left;
+
+  @Column(name = "oauth")
+  private boolean oauth;
 
   /**
    * Constructor of Member for Signup.
@@ -103,5 +112,9 @@ public class Member extends BaseCreatedAtEntity {
 
   public void updateHomepage(String homepage) {
     this.homepage = homepage;
+  }
+
+  public void updateBio(String bio) {
+    this.bio = bio;
   }
 }

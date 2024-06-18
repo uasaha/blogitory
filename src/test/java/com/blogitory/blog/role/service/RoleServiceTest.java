@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import com.blogitory.blog.role.repository.RoleRepository;
 import com.blogitory.blog.role.service.impl.RoleServiceImpl;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author woonseok
  * @since 1.0
  **/
-public interface BlogRepository extends JpaRepository<Blog, Integer> {
+public interface BlogRepository extends JpaRepository<Blog, Integer>, BlogRepositoryCustom {
 }

@@ -2,6 +2,7 @@ package com.blogitory.blog.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Dto for login request.
@@ -11,6 +12,7 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MemberLoginRequestDto {
   private String email;
   private String password;

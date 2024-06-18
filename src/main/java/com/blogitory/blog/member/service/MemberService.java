@@ -6,6 +6,7 @@ import com.blogitory.blog.member.dto.MemberPersistInfoDto;
 import com.blogitory.blog.member.dto.MemberSignupRequestDto;
 import com.blogitory.blog.member.dto.MemberUpdateNameRequestDto;
 import com.blogitory.blog.member.dto.MemberUpdateProfileRequestDto;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service of Member.
@@ -101,4 +102,13 @@ public interface MemberService {
    * @param requestDto new homepage url
    */
   void updateHomepage(Integer memberNo, MemberUpdateProfileRequestDto requestDto);
+
+  @Transactional
+  void updateBio(Integer memberNo, MemberUpdateProfileRequestDto requestDto);
+
+  Boolean isDuplicateUsername(String username);
+
+  String getPasswordByEmail(String email);
+
+  String getThumbnailByNo(Integer memberNo);
 }

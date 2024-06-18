@@ -18,6 +18,7 @@ import com.blogitory.blog.role.repository.RoleRepository;
 import com.blogitory.blog.rolemember.entity.RoleMember;
 import com.blogitory.blog.rolemember.repository.RoleMemberRepository;
 import com.blogitory.blog.security.exception.AuthenticationException;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,7 +50,8 @@ public class MemberServiceImpl implements MemberService {
   @Override
   @Transactional
   public void signup(MemberSignupRequestDto requestDto) {
-    if (memberRepository.existsMemberByEmail(requestDto.getEmail())) {
+    if (memberRepository.existsMemberByEmail(requestDto.getEmail())
+            || memberRepository.existsMemberByUsername(requestDto.getUsername())) {
       throw new MemberEmailAlreadyUsedException(requestDto.getEmail());
     }
 
@@ -81,22 +83,23 @@ public class MemberServiceImpl implements MemberService {
   @Transactional
   public String login(MemberLoginRequestDto requestDto) {
     Member member = memberRepository.findByEmail(requestDto.getEmail())
-            .orElseThrow(AuthenticationException::new);
+            .orElseThrow(() -> new NotFoundException(Member.class));
 
     if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
-      throw new AuthenticationException();
+      throw new AuthenticationException("Passwords do not match");
     }
 
     MemberLoginResponseDto responseDto = new MemberLoginResponseDto(
             member.getMemberNo(),
             member.getEmail(),
+            member.getUsername(),
             member.getName(),
             member.getPassword());
 
     String uuid = UUID.randomUUID().toString();
+    List<String> roles = roleRepository.findRolesByMemberNo(member.getMemberNo());
 
-    return jwtService.issue(uuid, responseDto,
-            roleRepository.findRolesByMemberNo(member.getMemberNo()));
+    return jwtService.issue(uuid, responseDto, roles);
   }
 
   /**
@@ -187,5 +190,31 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(() -> new NotFoundException(Member.class));
 
     member.updateHomepage(requestDto.getContent());
+  }
+
+  @Override
+  @Transactional
+  public void updateBio(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
+    Member member = memberRepository.findById(memberNo)
+            .orElseThrow(() -> new NotFoundException(Member.class));
+
+    member.updateBio(requestDto.getContent());
+  }
+
+  @Override
+  public Boolean isDuplicateUsername(String username) {
+    return memberRepository.existsMemberByUsername(username);
+  }
+
+  @Override
+  public String getPasswordByEmail(String email) {
+    return memberRepository.findByEmail(email)
+            .orElseThrow(() -> new NotFoundException(Member.class))
+            .getPassword();
+  }
+
+  @Override
+  public String getThumbnailByNo(Integer memberNo) {
+    return memberRepository.findProfileThumbByMemberNo(memberNo);
   }
 }

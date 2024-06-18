@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,8 +37,8 @@ public class Blog extends BaseCreatedAtEntity {
   @JoinColumn(name = "member_no")
   private Member member;
 
-  @Column(name = "blog_name")
-  private String name;
+  @Column(name = "blog_bio")
+  private String bio;
 
   @Column(name = "blog_url_name")
   private String urlName;
@@ -50,4 +51,10 @@ public class Blog extends BaseCreatedAtEntity {
 
   @Column(name = "blog_theme")
   private String theme;
+
+  @Column(name = "blog_deleted")
+  private boolean deleted;
+
+  @Column(name = "blog_url_modified_at")
+  private LocalDateTime modifiedAt;
 }

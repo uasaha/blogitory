@@ -15,14 +15,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 public class UserDetailsImpl implements UserDetails {
   private final String username; //email
-  private final String nickname;
+  private final String idName; //username
+  private final String name;
   private final Integer userNo;
   private final String password;
-  private final boolean accountNonLocked = true;
-  private final boolean accountNonExpired = true;
-  private final boolean credentialsNonExpired = true;
-  private final boolean enabled = true;
-  private Collection<? extends GrantedAuthority> authorities;
+  private final boolean accountNonLocked;
+  private final boolean accountNonExpired;
+  private final boolean credentialsNonExpired;
+  private final boolean enabled;
+  private final Collection<? extends GrantedAuthority> authorities;
 
   /**
    * Constructor of UserDetailsImpl.
@@ -30,18 +31,25 @@ public class UserDetailsImpl implements UserDetails {
    * @param email       email
    * @param password    password
    * @param userNo      user no
-   * @param nickname    username
+   * @param username    username
+   * @param name        name
    * @param authorities authorities
    */
   public UserDetailsImpl(String email,
                          String password,
                          Integer userNo,
-                         String nickname,
+                         String username,
+                         String name,
                          List<? extends GrantedAuthority> authorities) {
     this.username = email;
     this.password = password;
     this.userNo = userNo;
-    this.nickname = nickname;
+    this.idName = username;
+    this.name = name;
     this.authorities = authorities;
+    this.accountNonLocked = true;
+    this.accountNonExpired = true;
+    this.credentialsNonExpired = true;
+    this.enabled = true;
   }
 }

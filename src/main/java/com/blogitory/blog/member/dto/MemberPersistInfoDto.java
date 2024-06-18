@@ -12,6 +12,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class MemberPersistInfoDto {
+  private String username;
   private String name;
   private String thumb;
 }

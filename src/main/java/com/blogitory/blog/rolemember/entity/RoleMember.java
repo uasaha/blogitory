@@ -2,6 +2,7 @@ package com.blogitory.blog.rolemember.entity;
 
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.role.entity.Role;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -51,7 +52,9 @@ public class RoleMember {
   @AllArgsConstructor
   @Embeddable
   public static class Pk implements Serializable {
+    @Column(name = "role_no")
     private Integer roleNo;
+    @Column(name = "member_no")
     private Integer memberNo;
   }
 
