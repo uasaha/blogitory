@@ -1,4 +1,5 @@
-let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,20}$/;
+let usernameReg = /^[a-zA-Z0-9_-]{2,30}$/;
+let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,50}$/;
 let emailReg = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/;
 let pwdReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=?<>.,/|~`])[A-Za-z\d!@#$%^&*()_+=?<>.,/|~`]{8,}$/
 let isEmailVerified = false;
@@ -38,8 +39,29 @@ function emailVerification() {
         })
 }
 
-function nameValidate(element) {
-    if (!nameReg.test(element.value)) {
+async function usernameValidate() {
+    let isDuplicated = true;
+    let usernameInput = document.getElementById("username-input");
+
+    await axios.get("/api/v1/users/username/verification?username=" + usernameInput.value,)
+        .then((result) => {
+            isDuplicated = result.data;
+
+            if (nameReg.test(usernameInput.value) && !isDuplicated) {
+                usernameInput.className = "form-control is-valid";
+                return true;
+            } else {
+                usernameInput.className = "form-control is-invalid";
+                return false;
+            }
+        })
+        .catch(() => {
+            usernameInput.className = "form-control is-invalid";
+        })
+}
+
+function emailValidate(element) {
+    if (!emailReg.test(element.value)) {
         element.className = "form-control is-invalid";
         return false;
     } else {
@@ -48,8 +70,8 @@ function nameValidate(element) {
     }
 }
 
-function emailValidate(element) {
-    if (!emailReg.test(element.value)) {
+function nameValidate(element) {
+    if (!nameReg.test(element.value)) {
         element.className = "form-control is-invalid";
         return false;
     } else {
@@ -85,12 +107,14 @@ function pwdCheckValidate(element) {
 function memberSignup(element) {
     element.disabled = true;
 
+    let usernameInput = document.getElementById("username-input");
     let nameInput = document.getElementById("name-input");
     let emailInput = document.getElementById("email-input");
     let pwdInput = document.getElementById("pwd-input");
     let pwdCheckInput = document.getElementById("pwd-check-input");
 
-    if (nameValidate(nameInput)
+    if (usernameValidate(usernameInput)
+        && nameValidate(nameInput)
         && emailValidate(emailInput)
         && pwdValidate(pwdInput)
         && pwdCheckValidate(pwdCheckInput)
@@ -103,3 +127,15 @@ function memberSignup(element) {
         alert("실패하였습니다. 잠시 후 다시 시도해주세요.");
     }
 }
+
+function debounce(func, timeout = 200) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, timeout);
+    };
+}
+
+const usernameCheck = debounce(() => usernameValidate());

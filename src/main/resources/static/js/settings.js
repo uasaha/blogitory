@@ -1,5 +1,5 @@
 const profileThumb = document.getElementById("profile-thumb");
-const nameReq = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,20}$/;
+const settingNameReq = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,20}$/;
 const nameAria = document.getElementById("nameAria");
 const nameAriaUpdate = document.getElementById("nameAriaUpdate");
 const nameAriaWrite = document.getElementById("nameAriaWrite");
@@ -125,7 +125,7 @@ function saveName() {
         return;
     }
 
-    if (!nameValidate(settingNameInput)) {
+    if (!settingNameValidate()) {
         alert("이름은 최소 2자, 최대 20자로 한글과 영어만 입력 가능합니다.");
         return;
     }
@@ -278,14 +278,24 @@ function saveHomepage() {
         })
 }
 
-function nameValidate(element) {
-    if (!nameReq.test(element.value)) {
-        element.className = "form-control is-invalid";
-        return false;
-    } else {
-        element.className = "form-control is-valid";
-        return true;
-    }
+async function settingNameValidate() {
+    let isDuplicated = true;
+    let settingNameInput = document.getElementById("settingNameInput");
+    console.log(settingNameInput.value);
+
+    await axios.get("/api/v1/users/name/verification?name=" + settingNameInput.value,)
+        .then((result) => {
+            isDuplicated = result.data;
+            console.log(isDuplicated);
+
+            if (settingNameReq.test(settingNameInput.value) && !isDuplicated) {
+                settingNameInput.className = "form-control is-valid";
+                return true;
+            } else {
+                settingNameInput.className = "form-control is-invalid";
+                return false;
+            }
+        })
 }
 
 function socialValidate(element) {
@@ -296,3 +306,15 @@ function socialValidate(element) {
     element.className = "form-control is-valid";
     return true;
 }
+
+function debounce(func, timeout = 200) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, timeout);
+    };
+}
+
+const settingNameCheck = debounce(() => settingNameValidate());
