@@ -80,3 +80,12 @@ hr {
     border: 0;
     border-top: 1px solid rgba(0, 0, 0, 0.6);
 }
+
+span .size-20 {
+    font-size: 20px;
+    font-variation-settings: 'OPSZ' 20;
+}
+
+.icon {
+    vertical-align: bottom;
+}

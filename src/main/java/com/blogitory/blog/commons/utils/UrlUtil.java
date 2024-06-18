@@ -1,6 +1,7 @@
 package com.blogitory.blog.commons.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UrlUtil {
   private static final String REFERER = "Referer";
+  private static final String INDEX_PAGE = "/";
 
   /**
    * Get base url on request.
@@ -21,13 +23,21 @@ public class UrlUtil {
    * @return Base URL.
    */
   public static String getBaseUrl(HttpServletRequest request) {
-    return request.getRequestURL().substring(0,
-            request.getRequestURL().length()
+    return request.getRequestURL()
+            .substring(0, request.getRequestURL().length()
                     - request.getRequestURI().length())
             + request.getContextPath();
   }
 
+  /**
+   * Get referer url.
+   *
+   * @param request HttpServletRequest
+   * @return url
+   */
   public static String getRefererUrl(HttpServletRequest request) {
-    return request.getHeader(REFERER);
+    String refererUrl = request.getHeader(REFERER);
+
+    return Objects.isNull(refererUrl) ? INDEX_PAGE : refererUrl;
   }
 }

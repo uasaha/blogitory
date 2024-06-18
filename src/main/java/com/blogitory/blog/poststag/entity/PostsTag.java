@@ -5,6 +5,8 @@ import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.tag.entity.Tag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -27,6 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostsTag {
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "posts_tag_no")
   private Long postsTagNo;
 

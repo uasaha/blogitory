@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.dto.BlogListInSettingsResponseDto;
-import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.member.dto.MemberMyProfileResponseDto;
@@ -29,7 +28,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -154,7 +152,7 @@ class IndexControllerTest {
             "name",
             "url",
             "intro",
-            LocalDateTime.of(2000, 02, 02, 02, 02, 02),
+            LocalDateTime.of(2000, 2, 2, 2, 2, 2),
             "",
             "");
 

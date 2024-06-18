@@ -1,15 +1,13 @@
 package com.blogitory.blog.main;
 
+import com.blogitory.blog.blog.dto.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.util.SecurityUtils;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class IndexController {
   private final MemberService memberService;
+  private final BlogService blogService;
 
   /**
    * Go to main page.
@@ -44,24 +43,6 @@ public class IndexController {
   @GetMapping("/signup")
   public String signupPage() {
     return "index/main/signup";
-  }
-
-  /**
-   * User Logout.
-   *
-   * @param request  HttpServletRequest
-   * @param response HttpServletResponse
-   * @return Index page
-   */
-  @GetMapping("/logout")
-  public String logout(HttpServletRequest request, HttpServletResponse response) {
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication != null) {
-      new SecurityContextLogoutHandler().logout(request, response, authentication);
-    }
-
-    return "redirect:/";
   }
 
   /**
@@ -105,7 +86,18 @@ public class IndexController {
    */
   @RoleUser
   @GetMapping("/settings/blog")
-  public String blogSettings() {
+  public String blogSettings(Model model) {
+    List<BlogListInSettingsResponseDto> blogs =
+            blogService.getBlogListByMemberNo(SecurityUtils.getCurrentUserNo());
+
+    if (blogs.isEmpty()) {
+      model.addAttribute("noBlog", true);
+      return "index/settings/blog";
+    }
+
+    model.addAttribute("noBlog", false);
+    model.addAttribute("blogs", blogs);
+
     return "index/settings/blog";
   }
 }
