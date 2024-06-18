@@ -10,9 +10,29 @@
 <div class="container-md" layout:fragment="main-content" style="padding-top: 5em; max-width: 600px">
     <div class="row">
         <div th:replace="~{index/fragments/settings-sidebar :: settings-sidebar}"></div>
-        <div class="col" style="height: 500px;">
-
-            <span>블로그 설정!</span>
+        <div th:if="${noBlog}" class="col" style="height: 500px;">
+            <div class="row justify-content-center" style="margin-top: 1em;">
+                <button type="button" style="max-width: 300px;" class="btn btn-outline-secondary" onclick="location.href='/blogs/open'">기록 시작하기</button>
+            </div>
+        </div>
+        <div th:unless="${noBlog}" class="col" style="height: 500px;">
+<!--            <div class="row" th:each="blog : ${blogs}" style="margin-top: 1em">-->
+<!--                <div class="col-12 text-left">-->
+<!--                    <div class="card">-->
+<!--                        <div th:if="${!blog.isThumbIsNull()}" style="width: 100%; height: 250px; overflow: hidden; margin: 0 auto">-->
+<!--                            <img class="card-image-top" style="width: 100%; height: 100%; object-fit: cover" th:src="${blog.getThumbUrl()}"  th:alt="${blog.getThumbOriginName()}">-->
+<!--                        </div>-->
+<!--                        <div class="card-header" th:blog-url="${blog.getBlogUrl()}" th:onclick="|location.href='/@'+this.getAttribute('blog-url')|">-->
+<!--                            <h5 th:text="${blog.getBlogName()}"></h5>-->
+<!--                        </div>-->
+<!--                        <div class="card-body">-->
+<!--                            <a style="text-decoration: none; color: black" th:href="'/@' + ${blog.getBlogUrl()}"><h5 class="card-title" th:text="'@' + ${blog.getBlogUrl()}"></h5></a>-->
+<!--                            <p class="card-text" th:text="${blog.getBlogIntro()}"></p>-->
+<!--                            <span class="blockquote-footer">개설일: <span th:text="${#temporals.format(blog.getCreatedAt(), 'yyyy.MM.dd')}"></span></span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </div>
 </div>

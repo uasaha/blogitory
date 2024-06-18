@@ -16,39 +16,40 @@
             <div class="collapse navbar-collapse float-end" id="navbarNavAltMarkup">
                 <div class="navbar-nav" style="font-size: 18px">
                     <a class="nav-link" href="#">
-                        <img class="nav-icon" src="/static/icons/update.svg" alt="update">
+                        <span class="icon material-symbols-outlined">update</span>
                         <span>최신</span>
                     </a>
                     <a class="nav-link" href="#">
-                        <img class="nav-icon" src="/static/icons/shuffle.svg" alt="trending_up">
+                        <span class="icon material-symbols-outlined">shuffle</span>
                         <span>셔플</span>
                     </a>
                     <a class="nav-link" href="#">
-                        <img class="nav-icon" src="/static/icons/reorder.svg" alt="feed">
+                        <span class="icon material-symbols-outlined">reorder</span>
                         <span>피드</span>
                     </a>
                 </div>
                 <div class="navbar-nav ms-md-auto">
                     <a class="nav-link d-none" href="#">
-                        <img class="nav-icon" src="/static/icons/notice.svg" alt="notice">
+                        <span class="material-symbols-outlined">notification</span>
                     </a>
                     <a class="nav-link d-none" href="#">
-                        <img class="nav-icon" src="/static/icons/write.svg" alt="write">
+                        <span class="material-symbols-outlined">edit</span>
                     </a>
                     <button sec:authorize="isAnonymous()" id="login-modal-btn" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#loginModal">
-                        <a class="nav-link"><img class="nav-icon" src="/static/icons/login.svg" alt="login"> 로그인
+                        <a class="nav-link">
+                            <span class="icon material-symbols-outlined">login</span>
+                            <span style="font-size: 18px">로그인</span>
                         </a>
                     </button>
                     <div sec:authorize="isAuthenticated()" class="dropdown">
                         <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                            <img class="img-profile rounded-circle" style="height: 25px; width: 25px"
-                                 th:src="${members.getThumb().equals('')} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="profile">
-                            <span th:text="${members.getName()}"></span>
+                            <img class="img-profile rounded-circle" style="height: 30px; width: 30px"
+                                 th:src="${thumbIsNull} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="profile">
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
-                            <li><a class="dropdown-item" href="#">내 블로그</a></li>
+                            <li><a class="dropdown-item" onclick="logout()">로그아웃</a></li>
+                            <li><a class="dropdown-item" href="#">내 프로필</a></li>
                             <li><a class="dropdown-item" href="/settings">설정</a></li>
                         </ul>
                     </div>
@@ -65,7 +66,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST" action="/login">
+                    <form>
                         <div class="form-group mb-4">
                             <label for="login-id-input">이메일</label>
                             <input id="login-id-input" name="id" type="email" class="form-control" required>
@@ -76,11 +77,11 @@
                                    required>
                         </div>
                         <div id="failed-reason" class="mb-4 d-none">
-                            <span style="color: firebrick">아이디 혹은 비밀번호가 일치하지 않습니다.</span>
+                            <span style="color: firebrick">이메일 혹은 비밀번호가 일치하지 않습니다.</span>
                         </div>
                         <a href="/signup">회원가입</a> /
                         <a href="#">비밀번호 찾기</a>
-                        <button type="submit" class="btn btn-outline-secondary ms-md-auto float-end">로그인</button>
+                        <button type="button" class="btn btn-outline-secondary ms-md-auto float-end" onclick="login()">로그인</button>
                     </form>
                 </div>
                 <div class="modal-footer justify-content-center">
@@ -99,7 +100,7 @@
                             </a>
                         </div>
                         <div class="col">
-                            <a href="#">
+                            <a href="https://github.com/login/oauth/authorize?client_id=ee49c7b2e2685765b152">
                                 <img class="oauth-icon" src="/static/icons/github-icon.png" alt="github">
                             </a>
                         </div>

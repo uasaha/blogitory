@@ -14,10 +14,13 @@
             <figure>
                 <img id="settingProfileThumb" class="img-profile rounded-circle"
                      style="height: 10em; width: 10em"
-                     th:src="${members.getThumb().equals('')} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="profile">
+                     th:src="${thumbIsNull} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="profile">
                 <figcaption class="figure-caption">
                     <button class="btn" type="button" onclick="updateThumbOpen()">
-                        <img src="/static/icons/write.svg" alt="edit" style="width: 20px; height: 20px">
+                        <!--                        <img src="/static/icons/write.svg" alt="edit" style="width: 20px; height: 20px">-->
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
                         <span>변경</span>
                     </button>
                 </figcaption>
@@ -34,14 +37,17 @@
                 </div>
                 <div id="nameAriaUpdate" class="col-2 text-center">
                     <button class="btn" onclick="nameAriaInvisible()">
-                        <img src="/static/icons/write.svg" alt="edit">
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
                     </button>
                 </div>
                 <div id="nameAriaWrite" class="col-9 input-group d-none">
                     <input type="text" class="form-control" id="settingNameInput" aria-describedby="nameAddon"
-                           onkeyup="nameValidate(this)"
+                           onkeyup="settingNameCheck()"
                            th:value="${profiles.getName()} == null ? '' : ${profiles.getName()}"/>
-                    <button class="btn btn-outline-secondary" type="button" id="nameAddon" onclick="saveName()">저장</button>
+                    <button class="btn btn-outline-secondary" type="button" id="nameAddon" onclick="saveName()">저장
+                    </button>
                 </div>
             </div>
             <hr/>
@@ -50,18 +56,24 @@
                     <p>공개 이메일</p>
                 </div>
                 <div id="introEmailAria" class="col-7">
-                    <p id="introEmailP" th:text="${profiles.getIntroEmail() == null} ? '' : ${profiles.getIntroEmail()}"></p>
+                    <p id="introEmailP"
+                       th:text="${profiles.getIntroEmail() == null} ? '' : ${profiles.getIntroEmail()}"></p>
                 </div>
                 <div id="introEmailAriaUpdate" class="col-2 text-center">
                     <button class="btn" onclick="introEmailAriaInvisible()">
-                        <img src="/static/icons/write.svg" alt="edit">
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
                     </button>
                 </div>
                 <div id="introEmailAriaWrite" class="col-9 input-group d-none">
-                    <input type="text" class="form-control" id="settingIntroEmailInput" aria-describedby="introEmailAddon"
+                    <input type="text" class="form-control" id="settingIntroEmailInput"
+                           aria-describedby="introEmailAddon"
                            onkeyup="socialValidate(this)"
                            th:value="${profiles.getIntroEmail() == null} ? '' : ${profiles.getIntroEmail()}"/>
-                    <button class="btn btn-outline-secondary" type="button" id="introEmailAddon" onclick="saveIntroEmail()">저장</button>
+                    <button class="btn btn-outline-secondary" type="button" id="introEmailAddon"
+                            onclick="saveIntroEmail()">저장
+                    </button>
                 </div>
             </div>
             <hr/>
@@ -74,14 +86,17 @@
                 </div>
                 <div id="githubAriaUpdate" class="col-2 text-center">
                     <button class="btn" onclick="githubAriaInvisible()">
-                        <img src="/static/icons/write.svg" alt="edit">
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
                     </button>
                 </div>
                 <div id="githubAriaWrite" class="col-9 input-group d-none">
                     <input type="text" class="form-control" id="settingGithubInput" aria-describedby="githubAddon"
                            onkeyup="socialValidate(this)"
                            th:value="${profiles.getGithub() == null} ? '' : ${profiles.getGithub()}"/>
-                    <button class="btn btn-outline-secondary" type="button" id="githubAddon" onclick="saveGithub()">저장</button>
+                    <button class="btn btn-outline-secondary" type="button" id="githubAddon" onclick="saveGithub()">저장
+                    </button>
                 </div>
             </div>
             <hr/>
@@ -94,14 +109,18 @@
                 </div>
                 <div id="facebookAriaUpdate" class="col-2 text-center">
                     <button class="btn" onclick="facebookAriaInvisible()">
-                        <img src="/static/icons/write.svg" alt="edit">
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
                     </button>
                 </div>
                 <div id="facebookAriaWrite" class="col-9 input-group d-none">
                     <input type="text" class="form-control" id="settingFacebookInput" aria-describedby="facebookAddon"
                            onkeyup="socialValidate(this)"
                            th:value="${profiles.getFacebook() == null} ? '' : ${profiles.getFacebook()}"/>
-                    <button class="btn btn-outline-secondary" type="button" id="facebookAddon" onclick="saveFacebook()">저장</button>
+                    <button class="btn btn-outline-secondary" type="button" id="facebookAddon" onclick="saveFacebook()">
+                        저장
+                    </button>
                 </div>
             </div>
             <hr/>
@@ -114,7 +133,9 @@
                 </div>
                 <div id="xAriaUpdate" class="col-2 text-center">
                     <button class="btn" onclick="xAriaInvisible()">
-                        <img src="/static/icons/write.svg" alt="edit">
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
                     </button>
                 </div>
                 <div id="xAriaWrite" class="col-9 input-group d-none">
@@ -134,14 +155,18 @@
                 </div>
                 <div id="homepageAriaUpdate" class="col-2 text-center">
                     <button class="btn" onclick="homepageAriaInvisible()">
-                        <img src="/static/icons/write.svg" alt="edit">
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
                     </button>
                 </div>
                 <div id="homepageAriaWrite" class="col-9 input-group d-none">
                     <input type="text" class="form-control" id="settingHomepageInput" aria-describedby="homepageAddon"
                            onkeyup="socialValidate(this)"
                            th:value="${profiles.getHomepage() == null} ? '' : ${profiles.getHomepage()}"/>
-                    <button class="btn btn-outline-secondary" type="button" id="homepageAddon" onclick="saveHomepage()">저장</button>
+                    <button class="btn btn-outline-secondary" type="button" id="homepageAddon" onclick="saveHomepage()">
+                        저장
+                    </button>
                 </div>
             </div>
         </div>
