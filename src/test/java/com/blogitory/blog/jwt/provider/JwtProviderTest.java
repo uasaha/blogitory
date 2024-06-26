@@ -39,7 +39,6 @@ class JwtProviderTest {
   void createToken() {
     String secret = "f639aebf4fe7ab4f8bc8fd1e545cc9e0a968fa2c9e125c99b8a0b04deeab54eb6ba5c1a9c09b09c263d145eaffa6011809352efa3945c869af7f8944ca5df342";
     String value = "value";
-    List<String> roles = List.of("ROLE_DUMMY");
     Long expire = 1000L;
 
     String expect = "eyJhbGciOiJIUzUxMiJ9";
