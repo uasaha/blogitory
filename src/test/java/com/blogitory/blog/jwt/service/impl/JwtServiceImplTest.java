@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -84,7 +85,7 @@ class JwtServiceImplTest {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
     MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
-            1, "test@email.com", "username", "name", "password");
+            1, "test@email.com", "username", "name", "password", List.of("ROLE_TEST"));
 
     String expect = "accessToken";
     String uuid = UUID.randomUUID().toString();
@@ -95,7 +96,7 @@ class JwtServiceImplTest {
 
     when(jwtProperties.getRefreshSecret()).thenReturn(secret);
     when(jwtProperties.getRefreshExpire()).thenReturn(expire);
-    when(jwtProvider.createToken(any(), any(), any(), any())).thenReturn(expect);
+    when(jwtProvider.createToken(any(), anyString(), anyLong())).thenReturn(expect);
     when(jwtProperties.getAccessSecret()).thenReturn(secret);
     when(jwtProperties.getAccessExpire()).thenReturn(expire);
     doNothing().when(operations).set(any(), any());
@@ -103,7 +104,7 @@ class JwtServiceImplTest {
     when(redisTemplate.expire(uuid, 14, TimeUnit.DAYS)).thenReturn(true);
     when(objectMapper.writeValueAsString(any())).thenReturn(info);
 
-    String result = jwtService.issue(uuid, memberLoginResponseDto, roles);
+    String result = jwtService.issue(uuid, memberLoginResponseDto);
 
     assertEquals(expect, result);
   }
@@ -119,7 +120,7 @@ class JwtServiceImplTest {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
     MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
-            1, "test@email.com", "username", "name", "password");
+            1, "test@email.com", "username", "name", "password", List.of("ROLE_TEST"));
 
     String expect = "accessToken";
     String uuid = UUID.randomUUID().toString();
@@ -129,7 +130,7 @@ class JwtServiceImplTest {
 
     when(jwtProperties.getRefreshSecret()).thenReturn(secret);
     when(jwtProperties.getRefreshExpire()).thenReturn(expire);
-    when(jwtProvider.createToken(any(), any(), any(), any())).thenReturn(expect);
+    when(jwtProvider.createToken(any(), anyString(), anyLong())).thenReturn(expect);
     when(jwtProperties.getAccessSecret()).thenReturn(secret);
     when(jwtProperties.getAccessExpire()).thenReturn(expire);
     doNothing().when(operations).set(any(), any());
@@ -137,7 +138,7 @@ class JwtServiceImplTest {
     when(redisTemplate.expire(uuid, 14, TimeUnit.DAYS)).thenReturn(true);
     when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
-    assertThrows(AuthenticationException.class, () -> jwtService.issue(uuid, memberLoginResponseDto, roles));
+    assertThrows(AuthenticationException.class, () -> jwtService.issue(uuid, memberLoginResponseDto));
   }
 
   /**
@@ -150,23 +151,23 @@ class JwtServiceImplTest {
   void reIssue() throws Exception {
     String uuid = UUID.randomUUID().toString();
     MemberInfoDto info = new MemberInfoDto(
-            1, "test@email.com", "username", "name", "refreshToken");
+            1, "test@email.com", "username", "name", List.of("ROLE_TEST"), "refreshToken");
     Claims claims = new DefaultClaims(Map.of());
     String accessToken = "accessToken";
 
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
 
     when(redisTemplate.opsForValue()).thenReturn(operations);
-    when(operations.get(any())).thenReturn(info.toString());
+    when(operations.getAndDelete(any())).thenReturn(info.toString());
     when(objectMapper.readValue(anyString(), (Class<Object>) any())).thenReturn(info);
     when(jwtProvider.isExpired(any(), any())).thenReturn(false);
     when(jwtProperties.getRefreshSecret()).thenReturn("secret");
     when(jwtProvider.getClaims(any(), any())).thenReturn(claims);
-    when(jwtProvider.createToken(any(), any(), anyLong())).thenReturn(accessToken);
+    when(jwtProvider.createToken(any(), anyString(), anyLong())).thenReturn(accessToken);
 
-    String result = jwtService.reIssue(uuid);
+    Map<String, String> result = jwtService.reIssue(uuid);
 
-    assertEquals(accessToken, result);
+    assertEquals(accessToken, result.get("accessToken"));
     assertEquals(1, info.getMemberNo());
     assertEquals("test@email.com", info.getEmail());
     assertEquals("username", info.getUsername());
@@ -177,10 +178,10 @@ class JwtServiceImplTest {
   /**
    * Re issue failed.
    *
-   * @throws Exception the exception
+   * @throws Exception AuthenticationException
    */
   @Test
-  @DisplayName("재발급 실패")
+  @DisplayName("재발급 실패 - redis get null")
   void reIssueFailed() throws Exception {
     String uuid = UUID.randomUUID().toString();
 
@@ -190,15 +191,41 @@ class JwtServiceImplTest {
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
 
     when(redisTemplate.opsForValue()).thenReturn(operations);
-    when(operations.get(any())).thenReturn(null);
+    when(operations.getAndDelete(any())).thenReturn(null);
     when(objectMapper.readValue(anyString(), (Class<Object>) any())).thenReturn(null);
     when(jwtProvider.isExpired(any(), any())).thenReturn(false);
     when(jwtProperties.getRefreshSecret()).thenReturn("secret");
     when(jwtProvider.getClaims(any(), any())).thenReturn(claims);
-    when(jwtProvider.createToken(any(), any(), anyLong())).thenReturn(accessToken);
+    when(jwtProvider.createToken(any(), anyString(), anyLong())).thenReturn(accessToken);
 
-    assertThrows(AuthorizationException.class, () -> jwtService.reIssue(uuid));
+    assertThrows(AuthenticationException.class, () -> jwtService.reIssue(uuid));
   }
 
+  /**
+   * Re issue Failed.
+   *
+   * @throws Exception IllegalArgumentException
+   */
+  @Test
+  @DisplayName("재발급 실패 - object mapper")
+  void reIssueFailedObjectMapper() throws Exception {
+    String uuid = UUID.randomUUID().toString();
+    MemberInfoDto info = new MemberInfoDto(
+            1, "test@email.com", "username", "name", List.of("ROLE_TEST"), "refreshToken");
+    Claims claims = new DefaultClaims(Map.of());
+    String accessToken = "accessToken";
 
+    ValueOperations<String, Object> operations = mock(ValueOperations.class);
+
+    when(redisTemplate.opsForValue()).thenReturn(operations);
+    when(operations.getAndDelete(any())).thenReturn(info.toString());
+    when(objectMapper.readValue(anyString(), (Class<Object>) any())).thenThrow(IllegalArgumentException.class);
+    when(jwtProvider.isExpired(any(), any())).thenReturn(false);
+    when(jwtProperties.getRefreshSecret()).thenReturn("secret");
+    when(jwtProvider.getClaims(any(), any())).thenReturn(claims);
+    when(jwtProvider.createToken(any(), anyString(), anyLong())).thenReturn(accessToken);
+
+    assertThrows(AuthenticationException.class, () -> jwtService.reIssue(uuid));
+
+  }
 }

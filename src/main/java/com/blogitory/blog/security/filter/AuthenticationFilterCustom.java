@@ -3,6 +3,7 @@ package com.blogitory.blog.security.filter;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_COOKIE_EXPIRE;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
 import static com.blogitory.blog.security.util.JwtUtils.BLACK_LIST_KEY;
+import static com.blogitory.blog.security.util.JwtUtils.canReissue;
 import static com.blogitory.blog.security.util.JwtUtils.getUuid;
 import static com.blogitory.blog.security.util.JwtUtils.isExpiredToken;
 import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
@@ -12,7 +13,6 @@ import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.users.UserDetailsImpl;
-import com.blogitory.blog.security.util.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +22,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
@@ -50,9 +52,10 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
   private static final String PROTECTED = "[PROTECTED]";
 
   @Override
-  protected void doFilterInternal(HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  FilterChain filterChain) throws ServletException, IOException {
+  protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                  @NonNull HttpServletResponse response,
+                                  @NonNull FilterChain filterChain)
+          throws ServletException, IOException {
     if (isPassingUrl(request)) {
       filterChain.doFilter(request, response);
       return;
@@ -70,7 +73,8 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
             .findFirst()
             .orElse(null);
 
-    if (accessTokenCookie == null) {
+    if (accessTokenCookie == null
+            || isExpiredToken(jwtProperties.getAccessSecret(), accessTokenCookie.getValue())) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -84,17 +88,18 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
       throw new AuthenticationException("Access token is blocked.");
     }
 
-    if (isExpiredToken(jwtProperties.getAccessSecret(), accessToken)) {
-      accessToken = jwtService.reIssue(uuid);
-      response.addCookie(
-              makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE));
+    if (canReissue(jwtProperties.getAccessSecret(), accessToken)) {
+      Map<String, String> tokenMap = jwtService.reIssue(uuid);
+      response.addCookie(makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME,
+              tokenMap.get("accessToken"), ACCESS_COOKIE_EXPIRE));
+
+      uuid = tokenMap.get("uuid");
     }
 
     MemberInfoDto info = objectMapper.readValue(
             (String) redisTemplate.opsForValue().get(uuid), MemberInfoDto.class);
 
-    List<SimpleGrantedAuthority> authorities = JwtUtils
-            .getRoles(jwtProperties.getAccessSecret(), accessToken)
+    List<SimpleGrantedAuthority> authorities = info.getRoles()
             .stream().map(SimpleGrantedAuthority::new).toList();
 
     SecurityContext context = SecurityContextHolder.getContext();

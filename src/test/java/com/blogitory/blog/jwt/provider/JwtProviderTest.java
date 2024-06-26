@@ -43,7 +43,7 @@ class JwtProviderTest {
     Long expire = 1000L;
 
     String expect = "eyJhbGciOiJIUzUxMiJ9";
-    String result = jwtProvider.createToken(secret, value, roles, expire);
+    String result = jwtProvider.createToken(secret, value, expire);
 
     assertThat(result).contains(expect);
   }
@@ -91,7 +91,7 @@ class JwtProviderTest {
   void getClaims() {
     String secret = "f639aebf4fe7ab4f8bc8fd1e545cc9e0a968fa2c9e125c99b8a0b04deeab54eb6ba5c1a9c09b09c263d145eaffa6011809352efa3945c869af7f8944ca5df342";
     String value = "value";
-    String testToken = jwtProvider.createToken(secret, value, List.of(), 100000L);
+    String testToken = jwtProvider.createToken(secret, value, 100000L);
 
     Claims claims = jwtProvider.getClaims(testToken, secret);
     String result = claims.getSubject();
@@ -107,7 +107,7 @@ class JwtProviderTest {
   void isExpired() {
     String secret = "f639aebf4fe7ab4f8bc8fd1e545cc9e0a968fa2c9e125c99b8a0b04deeab54eb6ba5c1a9c09b09c263d145eaffa6011809352efa3945c869af7f8944ca5df342";
     String value = "value";
-    String testToken = jwtProvider.createToken(secret, value, List.of(), 100000L);
+    String testToken = jwtProvider.createToken(secret, value, 100000L);
 
     assertFalse(jwtProvider.isExpired(testToken, secret));
   }
@@ -120,7 +120,7 @@ class JwtProviderTest {
   void isExpiredFalse() {
     String secret = "f639aebf4fe7ab4f8bc8fd1e545cc9e0a968fa2c9e125c99b8a0b04deeab54eb6ba5c1a9c09b09c263d145eaffa6011809352efa3945c869af7f8944ca5df342";
     String value = "value";
-    String testToken = jwtProvider.createToken(secret, value, List.of(), 0L);
+    String testToken = jwtProvider.createToken(secret, value, 0L);
 
     assertTrue(jwtProvider.isExpired(testToken, secret));
   }

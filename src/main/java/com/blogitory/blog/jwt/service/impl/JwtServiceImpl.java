@@ -9,8 +9,9 @@ import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,11 +38,10 @@ public class JwtServiceImpl implements JwtService {
    * {@inheritDoc}
    */
   @Override
-  public String issue(String uuid, MemberLoginResponseDto responseDto, List<String> roles) {
+  public String issue(String uuid, MemberLoginResponseDto responseDto) {
     String refreshToken = jwtProvider.createToken(
             jwtProperties.getRefreshSecret(),
             uuid,
-            roles,
             jwtProperties.getRefreshExpire().toMillis());
 
     MemberInfoDto infoDto = new MemberInfoDto(
@@ -49,6 +49,7 @@ public class JwtServiceImpl implements JwtService {
             responseDto.getEmail(),
             responseDto.getUsername(),
             responseDto.getName(),
+            responseDto.getRoles(),
             refreshToken);
 
     String info;
@@ -66,7 +67,6 @@ public class JwtServiceImpl implements JwtService {
     return jwtProvider.createToken(
             jwtProperties.getAccessSecret(),
             uuid,
-            roles,
             jwtProperties.getAccessExpire().toMillis());
   }
 
@@ -74,21 +74,41 @@ public class JwtServiceImpl implements JwtService {
    * {@inheritDoc}
    */
   @Override
-  public String reIssue(String uuid) throws JsonProcessingException {
-    MemberInfoDto info = objectMapper.readValue(
-            (String) redisTemplate.opsForValue().get(uuid), MemberInfoDto.class);
+  public Map<String, String> reIssue(String uuid) throws JsonProcessingException {
+    String info = (String) redisTemplate.opsForValue().getAndDelete(uuid);
 
-    if (info == null
-            || jwtProvider.isExpired(info.getRefreshToken(), jwtProperties.getRefreshSecret())) {
+    if (info == null) {
+      throw new AuthenticationException("JWT reissue failed");
+    }
+
+    MemberInfoDto infoDto;
+    try {
+      infoDto = objectMapper.readValue(
+              info, MemberInfoDto.class);
+    } catch (IllegalArgumentException e) {
+      throw new AuthenticationException("JWT reissue failed");
+    }
+
+    if (infoDto == null
+            || jwtProvider.isExpired(infoDto.getRefreshToken(), jwtProperties.getRefreshSecret())) {
       throw new AuthorizationException();
     }
 
-    Claims claims = jwtProvider.getClaims(
-            info.getRefreshToken(), jwtProperties.getRefreshSecret());
+    String reUuid = UUID.randomUUID().toString();
 
-    return jwtProvider.createToken(
+    ValueOperations<String, Object> operations = redisTemplate.opsForValue();
+    operations.set(reUuid, info);
+    redisTemplate.expire(reUuid, 7, TimeUnit.DAYS);
+
+    String accessToken = jwtProvider.createToken(
             jwtProperties.getAccessSecret(),
-            claims,
+            reUuid,
             jwtProperties.getAccessExpire().toMillis());
+
+    Map<String, String> result = new HashMap<>();
+    result.put("uuid", reUuid);
+    result.put("accessToken", accessToken);
+
+    return result;
   }
 }

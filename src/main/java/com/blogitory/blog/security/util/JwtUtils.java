@@ -6,8 +6,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import jakarta.servlet.http.Cookie;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.json.simple.JSONObject;
@@ -23,7 +24,7 @@ import org.json.simple.parser.ParseException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtils {
   public static final String ACCESS_TOKEN_COOKIE_NAME = "uids";
-  public static final Integer ACCESS_COOKIE_EXPIRE = 90000;
+  public static final Integer ACCESS_COOKIE_EXPIRE = 14400;
   public static final String BLACK_LIST_KEY = "Black-List";
 
   /**
@@ -109,15 +110,23 @@ public class JwtUtils {
   }
 
   /**
-   * Get roles from JWT.
+   * Checking JWT can reissue.
    *
-   * @param secret      secret
-   * @param accessToken JWT
-   * @return roles
+   * @param secret secret
+   * @param token  accessToken
+   * @return can reissue
    */
-  public static List<String> getRoles(String secret, String accessToken) {
-    Claims claims = parseToken(secret, accessToken);
+  public static boolean canReissue(String secret, String token) {
+    if (isExpiredToken(secret, token)) {
+      return false;
+    }
 
-    return (List<String>) claims.get("roles");
+    Claims claims = parseToken(secret, token);
+
+    LocalDateTime exp = claims.getExpiration().toInstant()
+            .atZone(ZoneId.systemDefault()).toLocalDateTime();
+    LocalDateTime now = LocalDateTime.now().minusHours(1);
+
+    return now.isAfter(exp) && now.isBefore(now.plusHours(1));
   }
 }

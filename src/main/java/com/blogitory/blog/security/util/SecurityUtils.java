@@ -1,6 +1,5 @@
 package com.blogitory.blog.security.util;
 
-import com.blogitory.blog.security.users.UserDetailsImpl;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -25,18 +24,6 @@ public class SecurityUtils {
   }
 
   /**
-   * Get username from security context.
-   *
-   * @return username
-   */
-  public static String getCurrentUsername() {
-    UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext()
-            .getAuthentication().getDetails();
-
-    return userDetails.getUsername();
-  }
-
-  /**
    * Get roles from security context.
    *
    * @return roles
@@ -44,14 +31,5 @@ public class SecurityUtils {
   public static List<? extends GrantedAuthority> getCurrentAuthorities() {
     return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
             .stream().toList();
-  }
-
-  /**
-   * Get email from security context.
-   *
-   * @return email
-   */
-  public static String getCurrentUserEmail() {
-    return SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
   }
 }

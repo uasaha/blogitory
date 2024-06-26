@@ -2,7 +2,7 @@ package com.blogitory.blog.jwt.service;
 
 import com.blogitory.blog.member.dto.MemberLoginResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.List;
+import java.util.Map;
 
 /**
  * Service of JWT.
@@ -14,12 +14,10 @@ public interface JwtService {
   /**
    * Issue JWT Token.
    *
-   * @param uuid the identifier of login member
    * @param responseDto infos of login member
-   * @param roles roles of login member
    * @return new Access Token
    */
-  String issue(String uuid, MemberLoginResponseDto responseDto, List<String> roles);
+  String issue(String uuid, MemberLoginResponseDto responseDto);
 
   /**
    * ReIssue JWT Token.
@@ -27,5 +25,5 @@ public interface JwtService {
    * @param uuid the identifier of login member
    * @return new Access Token
    */
-  String reIssue(String uuid) throws JsonProcessingException;
+  Map<String, String> reIssue(String uuid) throws JsonProcessingException;
 }

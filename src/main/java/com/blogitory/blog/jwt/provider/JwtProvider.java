@@ -7,7 +7,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
-import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,14 +22,12 @@ public class JwtProvider {
    *
    * @param secret secret
    * @param value  subject
-   * @param roles  roles
    * @param expire expire time
    * @return new JWT
    */
-  public String createToken(String secret, String value, List<String> roles, Long expire) {
+  public String createToken(String secret, String value, Long expire) {
     Claims claims = Jwts.claims();
     claims.setSubject(value);
-    claims.put("roles", roles);
 
     return createToken(secret, claims, expire);
   }

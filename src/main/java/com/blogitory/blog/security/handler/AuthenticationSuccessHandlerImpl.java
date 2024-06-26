@@ -9,7 +9,6 @@ import com.blogitory.blog.member.dto.MemberLoginResponseDto;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +37,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                     userDetails.getUsername(),
                     userDetails.getIdName(),
                     userDetails.getName(),
-                    userDetails.getPassword());
-    List<String> roles = authentication.getAuthorities()
-            .stream().map(Object::toString)
-            .toList();
+                    userDetails.getPassword(),
+                    authentication.getAuthorities()
+                            .stream().map(Object::toString)
+                            .toList());
 
-    String accessToken = jwtService.issue(uuid, memberLoginResponseDto, roles);
+    String accessToken = jwtService.issue(uuid, memberLoginResponseDto);
     response.addCookie(
             makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE));
   }
