@@ -1,6 +1,5 @@
 package com.blogitory.blog.security.handler;
 
-import com.blogitory.blog.commons.utils.UrlUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,8 +19,6 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
                               HttpServletResponse response,
                               Authentication authentication)
           throws IOException {
-    String refererUrl = UrlUtil.getRefererUrl(request);
-
-    response.sendRedirect(refererUrl);
+    response.setContentType("application/json;charset=UTF-8");
   }
 }

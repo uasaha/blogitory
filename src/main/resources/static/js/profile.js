@@ -52,7 +52,13 @@ function saveProfiles() {
         "bio" : profileBioUpdatable.value,
         "email" : profileEmailUpdatable.value,
         "linkList" : links
-    }).then(() => {
+    },
+        {
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                [_csrf_header]: _csrf
+            }
+        }).then(() => {
         showProfiles();
         document.location.reload();
     })
@@ -116,7 +122,13 @@ function saveProfilesMobile() {
         "bio" : profileBioUpdatable.value,
         "email" : profileEmailUpdatable.value,
         "linkList" : links
-    }).then(() => {
+    },
+        {
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                [_csrf_header]: _csrf
+            }
+        }).then(() => {
         showProfiles();
         document.location.reload();
     })

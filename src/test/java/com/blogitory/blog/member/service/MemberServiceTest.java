@@ -364,7 +364,7 @@ class MemberServiceTest {
 
     when(memberRepository.findByUsername(any())).thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> memberService.getProfileByUsername(member.getUsername()));
+    assertThrows(NotFoundException.class, () -> memberService.getProfileByUsername("username"));
   }
 
   @Test
@@ -407,10 +407,10 @@ class MemberServiceTest {
     ReflectionTestUtils.setField(requestDto, "email", "newEmail@email.com");
     ReflectionTestUtils.setField(requestDto, "linkList", List.of("new links"));
 
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
+    when(memberRepository.findById(1)).thenReturn(Optional.empty());
 
     assertThrows(NotFoundException.class,
-            () -> memberService.updateProfile(member.getMemberNo(), requestDto));
+            () -> memberService.updateProfile(1, requestDto));
 
   }
 }

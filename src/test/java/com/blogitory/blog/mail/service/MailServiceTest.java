@@ -47,10 +47,6 @@ class MailServiceTest {
    * The Redis template.
    */
   RedisTemplate redisTemplate;
-  /**
-   * The Random.
-   */
-  Random random;
 
   /**
    * Sets up.
@@ -60,8 +56,7 @@ class MailServiceTest {
     memberService = mock(MemberService.class);
     javaMailSender = mock(JavaMailSender.class);
     redisTemplate = mock(RedisTemplate.class);
-    random = mock(Random.class);
-    mailService = new MailServiceImpl(memberService, javaMailSender, redisTemplate, random);
+    mailService = new MailServiceImpl(memberService, javaMailSender, redisTemplate);
   }
 
   /**

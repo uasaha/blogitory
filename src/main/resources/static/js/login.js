@@ -3,18 +3,35 @@ function login() {
     const pwd = document.getElementById('login-pwd-input').value;
     const failedDiv = document.getElementById('failed-reason');
 
-    axios.post('/api/login', {
-        "email": email,
-        "password": pwd
-    }).then((response) => {
+    axios.post('/api/login',
+        {
+            "email": email,
+            "password": pwd
+        },
+        {
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                [_csrf_header]: _csrf
+            }
+        }).then((response) => {
         document.location.reload();
-    }).catch((error) => {
+        }).catch((error) => {
+            console.log(error);
         failedDiv.className = "mb-4";
-    })
+        })
 }
 
 function logout() {
-    axios.get('/logout')
+    axios.post('/api/logout',
+        {
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                [_csrf_header]: _csrf
+            }
+        })
+        .catch((error) => {
+            console.log(error)
+        })
         .finally((response) => {
             document.location.reload();
         });

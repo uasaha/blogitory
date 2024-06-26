@@ -46,6 +46,7 @@ public class SecurityConfig {
   private final PasswordEncoder passwordEncoder;
   private final MemberService memberService;
   private static final String LOGIN_URL = "/api/login";
+  private static final String LOGOUT_URL = "/api/logout";
 
   /**
    * Register SecurityFilterChain bean.
@@ -59,20 +60,21 @@ public class SecurityConfig {
     AuthenticationManager authenticationManager
             = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
 
-    return http.csrf(AbstractHttpConfigurer::disable)
-            .cors(AbstractHttpConfigurer::disable)
+    return http
+            .csrf(csrf -> csrf.ignoringRequestMatchers(LOGOUT_URL))
             .formLogin(login -> login
                     .successHandler(authenticationSuccessHandler())
                     .disable())
             .logout(logout ->
                     logout.addLogoutHandler(logoutHandler())
-                            .logoutSuccessHandler(logoutSuccessHandler()))
+                            .logoutSuccessHandler(logoutSuccessHandler())
+                            .logoutUrl(LOGOUT_URL))
             .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(configurer ->
                     configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(registry ->
                     registry.requestMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                            .requestMatchers("/logout").authenticated()
+                            .requestMatchers(LOGOUT_URL).authenticated()
                             .anyRequest().permitAll())
             .addFilterAt(authenticationProcessingFilter(authenticationManager),
                     UsernamePasswordAuthenticationFilter.class)

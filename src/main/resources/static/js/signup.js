@@ -1,4 +1,4 @@
-let usernameReg = /^[a-zA-Z0-9-]{2,30}$/;
+let usernameReg = /^[a-z0-9-]{2,30}$/;
 let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,50}$/;
 let emailReg = /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/;
 let pwdReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=?<>.,/|~`])[A-Za-z\d!@#$%^&*()_+=?<>.,/|~`]{8,}$/
@@ -10,13 +10,24 @@ function emailVerificationFormOpen () {
     sendButton.disabled = true;
 
     axios
-        .get("/api/v1/mail/verification?email=" + email)
+        .get("/api/v1/mail/verification?email=" + email,
+            {
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8",
+                    [_csrf_header]: _csrf
+                }
+            })
         .then((result) => {
             alert("인증번호는 10분간 유효합니다.");
             document.getElementById("email-verify-div").className = "form-group mb-4";
         })
-        .catch(() => {
-            alert("발송에 실패하였습니다. 다시 시도해주세요.");
+        .catch((error) => {
+            console.log(error);
+            if (error.response.status === 409) {
+                alert("사용중인 이메일입니다.");
+            } else {
+                alert("발송에 실패하였습니다. 다시 시도해주세요.");
+            }
             sendButton.disabled = false;
         })
 }
@@ -27,7 +38,13 @@ function emailVerification() {
     axios.post("/api/v1/mail/verification", {
         "email" : nowEmail,
         "verificationCode" : verificationCode
-    })
+    },
+        {
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                [_csrf_header]: _csrf
+            }
+        })
         .then((result) => {
             alert("인증에 성공하였습니다.");
             document.getElementById("email-input").readOnly = true;
@@ -43,11 +60,17 @@ async function usernameValidate() {
     let isDuplicated = true;
     let usernameInput = document.getElementById("username-input");
 
-    await axios.get("/api/v1/users/username/verification?username=" + usernameInput.value,)
+    await axios.get("/api/v1/users/username/verification?username=" + usernameInput.value,
+        {
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8",
+                [_csrf_header]: _csrf
+            }
+        })
         .then((result) => {
             isDuplicated = result.data;
 
-            if (nameReg.test(usernameInput.value) && !isDuplicated) {
+            if (usernameReg.test(usernameInput.value) && !isDuplicated) {
                 usernameInput.className = "form-control is-valid";
                 return true;
             } else {

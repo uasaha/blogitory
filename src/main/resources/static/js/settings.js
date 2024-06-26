@@ -33,7 +33,9 @@ function updateThumb() {
     axios.post("/api/v1/image/thumbnail", formData, {
         headers: {
             'Content-Type': `multipart/form-data;`,
-        },})
+            [_csrf_header_setting]: _csrf_setting
+        }
+    })
         .then((result) => {
             settingProfileThumb.src = result.data.url;
             settingProfileThumb.alt = result.data.originName;

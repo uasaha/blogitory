@@ -29,7 +29,7 @@ public class MailServiceImpl implements MailService {
   private final MemberService memberService;
   private final JavaMailSender javaMailSender;
   private final RedisTemplate<String, Object> redisTemplate;
-  private final Random random;
+  private final Random random = new Random();
 
   /**
    * {@inheritDoc}
