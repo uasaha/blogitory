@@ -4,8 +4,8 @@ function login() {
     const failedDiv = document.getElementById('failed-reason');
 
     axios.post('/api/login', {
-        "email" : email,
-        "password" : pwd
+        "email": email,
+        "password": pwd
     }).then((response) => {
         document.location.reload();
     }).catch((error) => {
@@ -16,6 +16,15 @@ function login() {
 function logout() {
     axios.get('/logout')
         .finally((response) => {
-        document.location.reload();
-    });
+            document.location.reload();
+        });
+}
+
+function isEnterPress() {
+    const email = document.getElementById('login-id-input').value;
+    const pwd = document.getElementById('login-pwd-input').value;
+
+    if (window.event.keyCode == 13) {
+        this.login();
+    }
 }

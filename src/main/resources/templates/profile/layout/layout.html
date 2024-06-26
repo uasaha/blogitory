@@ -15,20 +15,13 @@
     <link href="/static/css/commons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" /></head>
 <body style="font-family: 'NanumBarunGothic', sans-serif">
-<div th:replace="~{index/fragments/header :: header}"></div>
+<div th:replace="~{profile/fragments/header :: header}"></div>
 <div layout:fragment="main-content"></div>
 
 <script>
     const currentUrl = document.URL;
-    const failedReason = document.getElementById("failed-reason");
-    let loginModalBtn = document.getElementById( "login-modal-btn");
 
     window.addEventListener("load", () => {
-        if (currentUrl.includes("login-failed")) {
-            loginModalBtn.click();
-            failedReason.className = "mb-4";
-        }
-
         if (currentUrl.includes("/settings/blog")) {
             document.getElementById("settings-blog").className = "nav-link active";
         } else if (currentUrl.includes("/settings/profile")) {
@@ -44,6 +37,7 @@
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/static/js/settings.js"></script>
+<script src="/static/js/profile.js"></script>
 <script src="/static/js/login.js"></script>
 </body>
 </html>

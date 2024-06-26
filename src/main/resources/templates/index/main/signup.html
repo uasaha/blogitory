@@ -7,8 +7,8 @@
     <title>Blogitory - 회원가입</title>
     <script src="/static/js/signup.js"></script>
 </head>
-<body style="background-color: #EEEEEE">
-<div class="container-md" layout:fragment="main-content" style="padding-top: 5em">
+<body class="body-background">
+<div class="container-md padding-top-5" layout:fragment="main-content">
     <div class="row ms-md-auto justify-content-center">
         <div class="col-3 d-none d-lg-block" style="height: 300px">
 
@@ -17,7 +17,7 @@
             <h2 class="text-center">회원가입</h2>
             <form id="signupForm" name="requestDto" method="POST" action="/signup" class="ol-12">
                 <div class="form-group mb-4">
-                    <label for="username-input" class="col-3">유저이름</label>
+                    <label for="username-input" class="col-3">유저네임</label>
                     <input id="username-input" name="username" type="text" class="form-control" maxlength="20"
                            onkeyup="usernameCheck()" required>
                 </div>
