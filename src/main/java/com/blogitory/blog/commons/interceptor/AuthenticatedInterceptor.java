@@ -6,6 +6,7 @@ import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,8 +24,8 @@ public class AuthenticatedInterceptor implements HandlerInterceptor {
   private final MemberService memberService;
 
   @Override
-  public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                         ModelAndView mav) throws Exception {
+  public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+                         @NonNull Object handler, ModelAndView mav) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication.isAuthenticated()

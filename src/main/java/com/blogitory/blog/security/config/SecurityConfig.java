@@ -131,7 +131,8 @@ public class SecurityConfig {
    * @return AbstractAuthenticationProcessingFilterCustom
    */
   @Bean
-  public AbstractAuthenticationProcessingFilter authenticationProcessingFilter(AuthenticationManager authenticationManager) {
+  public AbstractAuthenticationProcessingFilter authenticationProcessingFilter(
+          AuthenticationManager authenticationManager) {
     AuthenticationProcessingFilterCustom loginFilter =
             new AuthenticationProcessingFilterCustom(LOGIN_URL, authenticationManager);
 

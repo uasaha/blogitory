@@ -1,6 +1,5 @@
 package com.blogitory.blog.member.repository.impl;
 
-import com.blogitory.blog.follow.entity.QFollow;
 import com.blogitory.blog.member.dto.MemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.QMember;
@@ -22,7 +21,6 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
   }
 
   QMember member = QMember.member;
-  QFollow follow = QFollow.follow;
 
   /**
    * {@inheritDoc}

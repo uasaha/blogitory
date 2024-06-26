@@ -87,8 +87,17 @@ public class Member extends BaseCreatedAtEntity {
    * @param oauth        isOauth
    */
   @Builder
-  public Member(Integer memberNo, String email, String password, String username, String name, String bio,
-                String profileThumb, String introEmail, boolean blocked, boolean left, boolean oauth) {
+  public Member(Integer memberNo,
+                String email,
+                String password,
+                String username,
+                String name,
+                String bio,
+                String profileThumb,
+                String introEmail,
+                boolean blocked,
+                boolean left,
+                boolean oauth) {
     this.memberNo = memberNo;
     this.email = email;
     this.password = password;

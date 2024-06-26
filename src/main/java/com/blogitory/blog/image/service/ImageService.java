@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 1.0
  **/
 public interface ImageService {
+
   /**
    * Update user's thumbnail image.
    *

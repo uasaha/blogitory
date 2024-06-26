@@ -51,6 +51,15 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
 
   private static final String PROTECTED = "[PROTECTED]";
 
+  /**
+   * Set Authentication with JWT.
+   *
+   * @param request     HttpServletRequest
+   * @param response    HttpServletResponse
+   * @param filterChain FilterChain
+   * @throws ServletException ServletException
+   * @throws IOException      IOException
+   */
   @Override
   protected void doFilterInternal(@NonNull HttpServletRequest request,
                                   @NonNull HttpServletResponse response,
@@ -123,6 +132,12 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
     SecurityContextHolder.clearContext();
   }
 
+  /**
+   * Checking Not need url.
+   *
+   * @param request HttpServletRequest
+   * @return is needed
+   */
   private static boolean isPassingUrl(HttpServletRequest request) {
     return request.getRequestURI().contains("/static")
             || request.getRequestURI().equals("/error");

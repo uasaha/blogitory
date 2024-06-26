@@ -118,11 +118,17 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(() -> new NotFoundException(Member.class));
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Boolean isDuplicateUsername(String username) {
     return memberRepository.existsMemberByUsername(username);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String getPasswordByEmail(String email) {
     return memberRepository.findByEmail(email)
@@ -130,11 +136,17 @@ public class MemberServiceImpl implements MemberService {
             .getPassword();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String getThumbnailByNo(Integer memberNo) {
     return memberRepository.findProfileThumbByMemberNo(memberNo);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public MemberProfileResponseDto getProfileByUsername(String username) {
     Member member = memberRepository.findByUsername(username)
@@ -158,6 +170,9 @@ public class MemberServiceImpl implements MemberService {
             followee);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   @Transactional
   public void updateProfile(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {

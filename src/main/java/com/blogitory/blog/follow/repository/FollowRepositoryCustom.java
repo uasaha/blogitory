@@ -3,7 +3,7 @@ package com.blogitory.blog.follow.repository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
- * 설명 작성 필!
+ * Custom Follow Repository for using querydsl.
  *
  * @author woonseok
  * @since 1.0

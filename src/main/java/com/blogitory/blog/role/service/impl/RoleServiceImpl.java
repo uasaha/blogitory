@@ -19,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleServiceImpl implements RoleService {
   private final RoleRepository roleRepository;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<String> getRolesByMemberNo(Integer memberNo) {
     return roleRepository.findRolesByMemberNo(memberNo);

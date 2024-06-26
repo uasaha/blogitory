@@ -46,7 +46,8 @@ public class MemberRestController {
    * @return isUpdated
    */
   @PutMapping("/profiles")
-  public ResponseEntity<Void> updateProfile(@RequestBody @Valid MemberUpdateProfileRequestDto requestDto) {
+  public ResponseEntity<Void> updateProfile(
+          @RequestBody @Valid MemberUpdateProfileRequestDto requestDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     memberService.updateProfile(memberNo, requestDto);

@@ -20,6 +20,9 @@ public class RoleRepositoryImpl extends QuerydslRepositorySupport implements Rol
     super(Role.class);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public List<String> findRolesByMemberNo(Integer memberNo) {
     QRoleMember roleMember = QRoleMember.roleMember;

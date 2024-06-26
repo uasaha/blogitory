@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Member
+ * Dto for MemberProfile view.
  *
  * @author woonseok
  * @since 1.0

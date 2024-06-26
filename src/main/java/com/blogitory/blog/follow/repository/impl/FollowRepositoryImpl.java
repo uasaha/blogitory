@@ -7,7 +7,7 @@ import com.blogitory.blog.member.entity.QMember;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 /**
- * 설명 작성 필!
+ * Implementation of Follow Repository for querydsl.
  *
  * @author woonseok
  * @since 1.0

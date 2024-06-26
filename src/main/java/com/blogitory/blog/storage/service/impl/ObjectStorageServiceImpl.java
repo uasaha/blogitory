@@ -3,6 +3,7 @@ package com.blogitory.blog.storage.service.impl;
 import com.blogitory.blog.commons.properties.ObjectStorageProperties;
 import com.blogitory.blog.storage.dto.FileUploadResponseDto;
 import com.blogitory.blog.storage.exception.FileUploadException;
+import com.blogitory.blog.storage.exception.NoOriginalFileNameException;
 import com.blogitory.blog.storage.service.ObjectStorageService;
 import java.io.IOException;
 import java.util.Objects;
@@ -36,8 +37,14 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
       return null;
     }
 
-    String originalFileName = file.getOriginalFilename();
-    Integer imageIdx = originalFileName.lastIndexOf(".");
+    String originalFileName;
+
+    if (file.getOriginalFilename() == null) {
+      throw new NoOriginalFileNameException();
+    }
+
+    originalFileName = file.getOriginalFilename();
+    int imageIdx = originalFileName.lastIndexOf(".");
     String fileEx = originalFileName.substring(imageIdx);
     String fileName = UUID.randomUUID() + fileEx;
     String keyPrefix = type + "/";

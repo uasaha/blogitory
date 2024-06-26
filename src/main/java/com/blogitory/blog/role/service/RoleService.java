@@ -9,5 +9,12 @@ import java.util.List;
  * @since 1.0
  **/
 public interface RoleService {
+
+  /**
+   * Get roles by memberNo.
+   *
+   * @param memberNo memberNo
+   * @return roles
+   */
   List<String> getRolesByMemberNo(Integer memberNo);
 }

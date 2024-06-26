@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 public class JwtProvider {
+
   /**
    * Create new JWT.
    *

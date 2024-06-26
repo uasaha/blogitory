@@ -25,8 +25,10 @@ public class MemberSignupRequestDto {
   @Size(min = 2, max = 50, message = "Name must be between 2 and 20 characters long")
   @Pattern(regexp = "^[a-zA-Zㄱ-힣0-9]*$")
   private String name;
+
   @Email
   private String email;
+
   @NotBlank
   @Size(min = 8, message = "Password must be between 8 and 100 characters long")
   private String pwd;

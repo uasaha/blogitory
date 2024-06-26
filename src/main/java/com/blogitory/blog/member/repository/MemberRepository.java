@@ -36,8 +36,20 @@ public interface MemberRepository extends JpaRepository<Member, Integer>, Member
    */
   boolean existsMemberByUsername(String username);
 
+  /**
+   * find pfp by memberNo.
+   *
+   * @param memberNo memberNo
+   * @return pfp URL
+   */
   @Query("select m.profileThumb from Member m where m.memberNo = ?1")
   String findProfileThumbByMemberNo(Integer memberNo);
 
+  /**
+   * Find Member By Username.
+   *
+   * @param username username
+   * @return Wrapped Member
+   */
   Optional<Member> findByUsername(String username);
 }

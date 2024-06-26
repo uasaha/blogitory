@@ -4,7 +4,7 @@ import com.blogitory.blog.link.entity.Link;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * 설명 작성 필!
+ * Link Repository for using JPA.
  *
  * @author woonseok
  * @since 1.0

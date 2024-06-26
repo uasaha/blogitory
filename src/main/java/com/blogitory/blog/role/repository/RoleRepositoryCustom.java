@@ -11,5 +11,11 @@ import org.springframework.data.repository.NoRepositoryBean;
  **/
 @NoRepositoryBean
 public interface RoleRepositoryCustom {
+  /**
+   * Find roles by memberNo.
+   *
+   * @param memberNo memberNo
+   * @return roles
+   */
   List<String> findRolesByMemberNo(Integer memberNo);
 }

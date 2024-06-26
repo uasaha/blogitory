@@ -45,13 +45,43 @@ public interface MemberService {
    */
   MemberPersistInfoDto persistInfo(Integer memberNo);
 
+  /**
+   * Checking for duplication of username.
+   *
+   * @param username username
+   * @return is duplicated
+   */
   Boolean isDuplicateUsername(String username);
 
+  /**
+   * Get member's password for Login by email.
+   *
+   * @param email email
+   * @return password
+   */
   String getPasswordByEmail(String email);
 
+  /**
+   * Get pfp by memberNo.
+   *
+   * @param memberNo memberNo
+   * @return pfp URL
+   */
   String getThumbnailByNo(Integer memberNo);
 
+  /**
+   * Get Profiles by username.
+   *
+   * @param username username
+   * @return Profile content
+   */
   MemberProfileResponseDto getProfileByUsername(String username);
 
+  /**
+   * Update Profile.
+   *
+   * @param memberNo   memberNo
+   * @param requestDto needed
+   */
   void updateProfile(Integer memberNo, MemberUpdateProfileRequestDto requestDto);
 }

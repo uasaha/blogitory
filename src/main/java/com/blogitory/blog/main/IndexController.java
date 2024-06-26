@@ -3,7 +3,6 @@ package com.blogitory.blog.main;
 import com.blogitory.blog.blog.dto.BlogListInSettingsResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
-import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 public class IndexController {
-  private final MemberService memberService;
   private final BlogService blogService;
 
   /**
