@@ -1,5 +1,8 @@
 package com.blogitory.blog.member.entity;
 
+import com.blogitory.blog.link.entity.Link;
+import java.util.List;
+
 /**
  * Test data of Member.
  *
@@ -22,10 +25,6 @@ public class MemberDummy {
             "dummy bio",
             "profileThumb",
             "test@test.com",
-            "github",
-            "twitter",
-            "facebook",
-            "homepage",
             false,
             false,
             false);

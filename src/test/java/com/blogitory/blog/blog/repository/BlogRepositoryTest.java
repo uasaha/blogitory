@@ -93,6 +93,7 @@ class BlogRepositoryTest {
     assertAll(
             () -> assertEquals(blog.getBlogNo(), actual.getBlogNo()),
             () -> assertEquals(blog.getMember().getMemberNo(), actual.getMember().getMemberNo()),
+            () -> assertEquals(blog.getName(), actual.getName()),
             () -> assertEquals(blog.getBio(), actual.getBio()),
             () -> assertEquals(blog.getUrlName(), actual.getUrlName()),
             () -> assertEquals(blog.getBackground(), actual.getBackground()),

@@ -20,6 +20,7 @@ public class BlogDummy {
     return new Blog(
             1L,
             member,
+            "blog_name",
             "blog bio",
             "urlName",
             "background",

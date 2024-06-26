@@ -77,10 +77,6 @@ class FollowRepositoryTest {
             "follower",
             "leader_profile",
             "intro@email.com",
-            "github",
-            "twitter",
-            "facebook",
-            "homepage",
             false,
             false,
             false
@@ -96,10 +92,6 @@ class FollowRepositoryTest {
             "leader",
             "leader_profile",
             "intro@email.com",
-            "gitgit",
-            "twitwit",
-            "faceface",
-            "home",
             false,
             false,
             false
@@ -110,8 +102,8 @@ class FollowRepositoryTest {
     Follow actual = followRepository.save(follow);
 
     assertAll(
-            () -> assertEquals(follow.getFollower().getMemberNo(), actual.getFollower().getMemberNo()),
-            () -> assertEquals(follow.getLeader().getMemberNo(), actual.getLeader().getMemberNo()),
+            () -> assertEquals(follow.getFollowTo().getMemberNo(), actual.getFollowTo().getMemberNo()),
+            () -> assertEquals(follow.getFollowFrom().getMemberNo(), actual.getFollowFrom().getMemberNo()),
             () -> assertEquals(follow.getFollowNo(), actual.getFollowNo())
     );
   }

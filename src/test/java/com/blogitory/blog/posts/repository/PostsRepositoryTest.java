@@ -105,6 +105,7 @@ class PostsRepositoryTest {
             () -> assertEquals(posts.getPostsNo(), actual.getPostsNo()),
             () -> assertEquals(posts.getCategory().getCategoryNo(), actual.getCategory().getCategoryNo()),
             () -> assertEquals(posts.getSubject(), actual.getSubject()),
+            () -> assertEquals(posts.getUrl(), actual.getUrl()),
             () -> assertEquals(posts.getSummary(), actual.getSummary()),
             () -> assertEquals(posts.getThumbnail(), actual.getThumbnail()),
             () -> assertEquals(posts.getDetail(), actual.getDetail()),

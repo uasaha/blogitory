@@ -2,7 +2,6 @@ package com.blogitory.blog.member.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.blogitory.blog.member.dto.MemberMyProfileResponseDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
@@ -80,10 +79,6 @@ class MemberRepositoryTest {
             () -> assertEquals(member.getName(), savedMember.getName()),
             () -> assertEquals(member.getProfileThumb(), savedMember.getProfileThumb()),
             () -> assertEquals(member.getIntroEmail(), savedMember.getIntroEmail()),
-            () -> assertEquals(member.getGithub(), savedMember.getGithub()),
-            () -> assertEquals(member.getTwitter(), savedMember.getTwitter()),
-            () -> assertEquals(member.getFacebook(), savedMember.getFacebook()),
-            () -> assertEquals(member.getHomepage(), savedMember.getHomepage()),
             () -> assertEquals(member.isBlocked(), savedMember.isBlocked()),
             () -> assertEquals(member.isLeft(), savedMember.isLeft()),
             () -> assertEquals(member.isOauth(), savedMember.isOauth())
@@ -103,34 +98,6 @@ class MemberRepositoryTest {
 
     assertTrue(existResult);
     assertFalse(notExistResult);
-  }
-
-  /**
-   * Gets my profile.
-   */
-  @Test
-  @DisplayName("내 프로필 조회")
-  void getMyProfile() {
-    memberRepository.save(member);
-
-    Optional<MemberMyProfileResponseDto> responseDto =
-            memberRepository.getMyProfile(member.getMemberNo());
-
-    assertTrue(responseDto.isPresent());
-
-    MemberMyProfileResponseDto actual = responseDto.orElseThrow();
-
-    assertAll(
-            () -> assertEquals(member.getEmail(), actual.getEmail()),
-            () -> assertEquals(member.getName(), actual.getName()),
-            () -> assertEquals(member.getProfileThumb(), actual.getProfileThumb()),
-            () -> assertEquals(member.getIntroEmail(), actual.getIntroEmail()),
-            () -> assertEquals(member.getGithub(), actual.getGithub()),
-            () -> assertEquals(member.getTwitter(), actual.getTwitter()),
-            () -> assertEquals(member.getFacebook(), actual.getFacebook()),
-            () -> assertEquals(member.getHomepage(), actual.getHomepage()),
-            () -> assertEquals(member.getCreatedAt(), actual.getCreatedAt())
-    );
   }
 
   /**

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 설명 작성 필!
+ * Member
  *
  * @author woonseok
  * @since 1.0

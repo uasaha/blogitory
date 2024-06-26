@@ -2,17 +2,14 @@ package com.blogitory.blog.main;
 
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.dto.BlogListInSettingsResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.member.dto.MemberMyProfileResponseDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
 import com.blogitory.blog.member.service.MemberService;
@@ -85,56 +82,6 @@ class IndexControllerTest {
     mvc.perform(MockMvcRequestBuilders.get("/signup"))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("Blogitory")));
-  }
-
-  /**
-   * Sets .
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  @DisplayName("설정 페이지")
-  @WithMockUser("1")
-  void settings() throws Exception {
-    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
-
-    mvc.perform(MockMvcRequestBuilders.get("/settings")
-                    .flashAttr("members", persistInfoDto))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("profile")))
-            .andDo(print());
-  }
-
-  /**
-   * Profile settings.
-   *
-   * @throws Exception the exception
-   */
-  @Test
-  @DisplayName("프로필 설정 페이지")
-  @WithMockUser("1")
-  void profileSettings() throws Exception {
-    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
-    MemberMyProfileResponseDto responseDto = new MemberMyProfileResponseDto(
-            "test@email.com",
-            "name",
-            "profileThumb",
-            "introEmail",
-            "github",
-            "twitter",
-            "facebook",
-            "homepage",
-            LocalDateTime.now());
-
-    when(memberService.myProfile(any())).thenReturn(responseDto);
-
-    Map<String, Object> attrs = new HashMap<>();
-    attrs.put("members", persistInfoDto);
-
-    mvc.perform(MockMvcRequestBuilders.get("/settings/profile")
-                    .flashAttrs(attrs))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("profile")));
   }
 
   /**

@@ -3,18 +3,25 @@ package com.blogitory.blog.member.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.blogitory.blog.blog.entity.Blog;
+import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.jwt.service.JwtService;
+import com.blogitory.blog.link.entity.Link;
+import com.blogitory.blog.link.repository.LinkRepository;
 import com.blogitory.blog.member.dto.MemberLoginRequestDto;
-import com.blogitory.blog.member.dto.MemberMyProfileResponseDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.MemberProfileResponseDto;
 import com.blogitory.blog.member.dto.MemberSignupRequestDto;
-import com.blogitory.blog.member.dto.MemberUpdateNameRequestDto;
 import com.blogitory.blog.member.dto.MemberUpdateProfileRequestDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
@@ -27,7 +34,6 @@ import com.blogitory.blog.rolemember.entity.RoleMember;
 import com.blogitory.blog.rolemember.entity.RoleMemberDummy;
 import com.blogitory.blog.rolemember.repository.RoleMemberRepository;
 import com.blogitory.blog.security.exception.AuthenticationException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +55,8 @@ class MemberServiceTest {
   private PasswordEncoder passwordEncoder;
   private MemberService memberService;
   private JwtService jwtService;
+  private FollowRepository followRepository;
+  private LinkRepository linkRepository;
 
   /**
    * Sets up.
@@ -60,9 +68,12 @@ class MemberServiceTest {
     roleMemberRepository = mock(RoleMemberRepository.class);
     passwordEncoder = mock(PasswordEncoder.class);
     jwtService = mock(JwtService.class);
+    followRepository = mock(FollowRepository.class);
+    linkRepository = mock(LinkRepository.class);
+
 
     memberService = new MemberServiceImpl(
-            memberRepository, roleRepository, roleMemberRepository, jwtService, passwordEncoder);
+            memberRepository, roleRepository, roleMemberRepository, followRepository, linkRepository, jwtService, passwordEncoder);
   }
 
   /**
@@ -190,7 +201,7 @@ class MemberServiceTest {
     when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
     when(passwordEncoder.matches(any(), any())).thenReturn(true);
     when(roleRepository.findRolesByMemberNo(any())).thenReturn(roles);
-    when(jwtService.issue(any(), any(), any())).thenReturn(expect);
+    when(jwtService.issue(any(), any())).thenReturn(expect);
 
     String actual = memberService.login(requestDto);
 
@@ -226,47 +237,6 @@ class MemberServiceTest {
   }
 
   /**
-   * My profile.
-   */
-  @Test
-  @DisplayName("프로필 조회 성공")
-  void myProfile() {
-    MemberMyProfileResponseDto responseDto =
-            new MemberMyProfileResponseDto("email", "name",
-                    "profileThumb", "introEmail",
-                    "github", "x",
-                    "facebook", "homepage",
-                    LocalDateTime.of(2024, 4, 25, 0, 0));
-
-    when(memberRepository.getMyProfile(any())).thenReturn(Optional.of(responseDto));
-
-    MemberMyProfileResponseDto actual = memberService.myProfile(0);
-
-    assertAll(
-            () -> assertEquals(responseDto.getEmail(), actual.getEmail()),
-            () -> assertEquals(responseDto.getName(), actual.getName()),
-            () -> assertEquals(responseDto.getProfileThumb(), actual.getProfileThumb()),
-            () -> assertEquals(responseDto.getIntroEmail(), actual.getIntroEmail()),
-            () -> assertEquals(responseDto.getGithub(), actual.getGithub()),
-            () -> assertEquals(responseDto.getTwitter(), actual.getTwitter()),
-            () -> assertEquals(responseDto.getFacebook(), actual.getFacebook()),
-            () -> assertEquals(responseDto.getHomepage(), actual.getHomepage()),
-            () -> assertEquals(responseDto.getCreatedAt(), actual.getCreatedAt())
-    );
-  }
-
-  /**
-   * My profile failed.
-   */
-  @Test
-  @DisplayName("프로필 조회 실패")
-  void myProfileFailed() {
-    when(memberRepository.getMyProfile(any())).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class, () -> memberService.myProfile(0));
-  }
-
-  /**
    * Persist info.
    */
   @Test
@@ -290,197 +260,10 @@ class MemberServiceTest {
    */
   @Test
   @DisplayName("로그인정보 조회 실패")
-  void persistInfofailed() {
+  void persistInfoFailed() {
     when(memberRepository.getPersistInfo(any())).thenReturn(Optional.empty());
 
     assertThrows(NotFoundException.class, () -> memberService.persistInfo(0));
-  }
-
-  /**
-   * Update name.
-   */
-  @Test
-  @DisplayName("이름 수정 성공")
-  void updateName() {
-    Member member = MemberDummy.dummy();
-    MemberUpdateNameRequestDto requestDto = new MemberUpdateNameRequestDto();
-    ReflectionTestUtils.setField(requestDto, "name", "updatedName");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
-
-    memberService.updateName(0, requestDto);
-
-    assertEquals(member.getName(), requestDto.getName());
-  }
-
-  /**
-   * Update name failed.
-   */
-  @Test
-  @DisplayName("이름 수정 실패")
-  void updateNameFailed() {
-    MemberUpdateNameRequestDto requestDto = new MemberUpdateNameRequestDto();
-    ReflectionTestUtils.setField(requestDto, "name", "updatedName");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
-
-
-    assertThrows(NotFoundException.class, () -> memberService.updateName(0, requestDto));
-  }
-
-  /**
-   * Update open email.
-   */
-  @Test
-  @DisplayName("공개이메일 수정 성공")
-  void updateOpenEmail() {
-    Member member = MemberDummy.dummy();
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
-
-    memberService.updateOpenEmail(0, requestDto);
-
-    assertEquals(member.getIntroEmail(), requestDto.getContent());
-  }
-
-  /**
-   * Update open email failed.
-   */
-  @Test
-  @DisplayName("공개이메일 수정 실패")
-  void updateOpenEmailFailed() {
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class, () -> memberService.updateOpenEmail(0, requestDto));
-  }
-
-  /**
-   * Update GitHub.
-   */
-  @Test
-  @DisplayName("깃허브 수정 성공")
-  void updateGithub() {
-    Member member = MemberDummy.dummy();
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
-
-    memberService.updateGithub(0, requestDto);
-
-    assertEquals(member.getGithub(), requestDto.getContent());
-  }
-
-  /**
-   * Update GitHub failed.
-   */
-  @Test
-  @DisplayName("깃허브 수정 실패")
-  void updateGithubFailed() {
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class, () -> memberService.updateGithub(0, requestDto));
-  }
-
-  /**
-   * Update facebook.
-   */
-  @Test
-  @DisplayName("페이스북 수정 성공")
-  void updateFacebook() {
-    Member member = MemberDummy.dummy();
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
-
-    memberService.updateFacebook(0, requestDto);
-
-    assertEquals(member.getFacebook(), requestDto.getContent());
-  }
-
-  /**
-   * Update facebook failed.
-   */
-  @Test
-  @DisplayName("페이스북 수정 실패")
-  void updateFacebookFailed() {
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class, () -> memberService.updateFacebook(0, requestDto));
-  }
-
-  /**
-   * Update x.
-   */
-  @Test
-  @DisplayName("X 수정 성공")
-  void updateX() {
-    Member member = MemberDummy.dummy();
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
-
-    memberService.updateX(0, requestDto);
-
-    assertEquals(member.getTwitter(), requestDto.getContent());
-  }
-
-  /**
-   * Update x failed.
-   */
-  @Test
-  @DisplayName("X 수정 실패")
-  void updateXFailed() {
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class, () -> memberService.updateX(0, requestDto));
-  }
-
-  /**
-   * Update homepage.
-   */
-  @Test
-  @DisplayName("홈페이지 수정 성공")
-  void updateHomepage() {
-    Member member = MemberDummy.dummy();
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
-
-    memberService.updateHomepage(0, requestDto);
-
-    assertEquals(member.getHomepage(), requestDto.getContent());
-  }
-
-  /**
-   * Update homepage failed.
-   */
-  @Test
-  @DisplayName("홈페이지 수정 실패")
-  void updateHomepageFailed() {
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "updated");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class, () -> memberService.updateHomepage(0, requestDto));
   }
 
   /**
@@ -507,32 +290,6 @@ class MemberServiceTest {
     when(memberRepository.existsMemberByUsername(name)).thenReturn(false);
 
     assertFalse(memberService.isDuplicateUsername(name));
-  }
-
-  @Test
-  @DisplayName("회원 한줄소개 수정 성공")
-  void updateBio() {
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "bio_test");
-    Member member = MemberDummy.dummy();
-
-    when(memberRepository.findById(member.getMemberNo()))
-            .thenReturn(Optional.of(member));
-
-    memberService.updateBio(member.getMemberNo(), requestDto);
-
-    assertEquals(member.getBio(), requestDto.getContent());
-  }
-
-  @Test
-  @DisplayName("회원 한줄소개 수정 실패")
-  void updateBioFailed() {
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
-    ReflectionTestUtils.setField(requestDto, "content", "bio_test");
-
-    when(memberRepository.findById(any())).thenReturn(Optional.empty());
-
-    assertThrows(NotFoundException.class, () -> memberService.updateBio(0, requestDto));
   }
 
   @Test
@@ -570,5 +327,91 @@ class MemberServiceTest {
             .thenReturn(Optional.empty());
 
     assertThrows(NotFoundException.class, () -> memberService.getPasswordByEmail(email));
+  }
+
+  @Test
+  @DisplayName("프로필 조회 성공")
+  void getProfileByUsername() {
+    Member member = MemberDummy.dummy();
+    Long follower = 1L;
+    Long followee = 1L;
+
+    ReflectionTestUtils.setField(member, "links", List.of(new Link(1L, member, "link")));
+    ReflectionTestUtils.setField(member, "blogs", List.of(BlogDummy.dummy(member)));
+
+    when(memberRepository.findByUsername(any())).thenReturn(Optional.of(member));
+    when(followRepository.countFollower(anyInt())).thenReturn(follower);
+    when(followRepository.countFollowee(anyInt())).thenReturn(followee);
+
+    MemberProfileResponseDto responseDto = memberService.getProfileByUsername(member.getUsername());
+
+    assertEquals(responseDto.getUsername(), member.getUsername());
+    assertEquals(responseDto.getName(), member.getName());
+    assertEquals(responseDto.getBio(), member.getBio());
+    assertEquals(responseDto.getProfileThumb(), member.getProfileThumb());
+    assertEquals(responseDto.getIntroEmail(), member.getIntroEmail());
+    assertEquals(responseDto.getFolloweeCnt(), followee);
+    assertEquals(responseDto.getFollowerCnt(), follower);
+    assertEquals(1, responseDto.getBlogs().size());
+    assertEquals(1, responseDto.getLinks().size());
+  }
+
+  @Test
+  @DisplayName("프로필 조회 실패")
+  void getProfileByUsernameFailed() {
+    Member member = MemberDummy.dummy();
+    ReflectionTestUtils.setField(member, "links", List.of());
+    ReflectionTestUtils.setField(member, "blogs", List.of());
+
+    when(memberRepository.findByUsername(any())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> memberService.getProfileByUsername(member.getUsername()));
+  }
+
+  @Test
+  @DisplayName("프로필 업데이트 성공")
+  void updateProfile() {
+    Member member = MemberDummy.dummy();
+
+    ReflectionTestUtils.setField(member, "links", List.of(new Link(1L, member, "link")));
+    ReflectionTestUtils.setField(member, "blogs", List.of());
+
+    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
+    ReflectionTestUtils.setField(requestDto, "name", "newName");
+    ReflectionTestUtils.setField(requestDto, "bio", "newBio");
+    ReflectionTestUtils.setField(requestDto, "email", "newEmail@email.com");
+    ReflectionTestUtils.setField(requestDto, "linkList", List.of("new links"));
+
+    Link link = new Link(2L, member, "new links");
+
+    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+    doNothing().when(linkRepository).deleteById(any());
+    when(linkRepository.save(any())).thenReturn(link);
+
+    memberService.updateProfile(member.getMemberNo(), requestDto);
+
+    verify(linkRepository, times(1)).deleteById(anyLong());
+    verify(linkRepository, times(1)).save(any(Link.class));
+  }
+
+  @Test
+  @DisplayName("프로필 업데이트 실패")
+  void updateProfileFailed() {
+    Member member = MemberDummy.dummy();
+
+    ReflectionTestUtils.setField(member, "links", List.of(new Link(1L, member, "link")));
+    ReflectionTestUtils.setField(member, "blogs", List.of());
+
+    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
+    ReflectionTestUtils.setField(requestDto, "name", "newName");
+    ReflectionTestUtils.setField(requestDto, "bio", "newBio");
+    ReflectionTestUtils.setField(requestDto, "email", "newEmail@email.com");
+    ReflectionTestUtils.setField(requestDto, "linkList", List.of("new links"));
+
+    when(memberRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class,
+            () -> memberService.updateProfile(member.getMemberNo(), requestDto));
+
   }
 }
