@@ -11,7 +11,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.follow.repository.FollowRepository;

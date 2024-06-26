@@ -27,9 +27,8 @@ public class I18nConfig implements WebMvcConfigurer {
    */
   @Bean
   public LocaleResolver localeResolver() {
-    CookieLocaleResolver resolver = new CookieLocaleResolver();
+    CookieLocaleResolver resolver = new CookieLocaleResolver("locale");
     resolver.setDefaultLocale(Locale.KOREAN);
-    resolver.setCookieName("locale");
     resolver.setCookieHttpOnly(true);
 
     return resolver;
