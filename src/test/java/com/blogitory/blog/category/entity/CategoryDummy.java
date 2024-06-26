@@ -16,6 +16,6 @@ public class CategoryDummy {
    * @return the category
    */
   public static Category dummy(Blog blog) {
-    return new Category(1, blog, "DummyCategory", false);
+    return new Category(1L, blog, "DummyCategory", false);
   }
 }

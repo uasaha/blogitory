@@ -1,13 +1,17 @@
 package com.blogitory.blog.member.service.impl;
 
+import com.blogitory.blog.blog.dto.BlogProfileResponseDto;
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.jwt.service.JwtService;
+import com.blogitory.blog.link.entity.Link;
+import com.blogitory.blog.link.repository.LinkRepository;
 import com.blogitory.blog.member.dto.MemberLoginRequestDto;
 import com.blogitory.blog.member.dto.MemberLoginResponseDto;
-import com.blogitory.blog.member.dto.MemberMyProfileResponseDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.MemberProfileLinkResponseDto;
+import com.blogitory.blog.member.dto.MemberProfileResponseDto;
 import com.blogitory.blog.member.dto.MemberSignupRequestDto;
-import com.blogitory.blog.member.dto.MemberUpdateNameRequestDto;
 import com.blogitory.blog.member.dto.MemberUpdateProfileRequestDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
@@ -38,8 +42,9 @@ public class MemberServiceImpl implements MemberService {
   private final MemberRepository memberRepository;
   private final RoleRepository roleRepository;
   private final RoleMemberRepository roleMemberRepository;
+  private final FollowRepository followRepository;
+  private final LinkRepository linkRepository;
   private final JwtService jwtService;
-
   private final PasswordEncoder passwordEncoder;
 
   private static final Integer DEFAULT_ROLE_NO = 4;
@@ -89,26 +94,19 @@ public class MemberServiceImpl implements MemberService {
       throw new AuthenticationException("Passwords do not match");
     }
 
+    List<String> roles = roleRepository.findRolesByMemberNo(member.getMemberNo());
+
     MemberLoginResponseDto responseDto = new MemberLoginResponseDto(
             member.getMemberNo(),
             member.getEmail(),
             member.getUsername(),
             member.getName(),
-            member.getPassword());
+            member.getPassword(),
+            roles);
 
     String uuid = UUID.randomUUID().toString();
-    List<String> roles = roleRepository.findRolesByMemberNo(member.getMemberNo());
 
-    return jwtService.issue(uuid, responseDto, roles);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public MemberMyProfileResponseDto myProfile(Integer memberNo) {
-    return memberRepository.getMyProfile(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
+    return jwtService.issue(uuid, responseDto);
   }
 
   /**
@@ -118,87 +116,6 @@ public class MemberServiceImpl implements MemberService {
   public MemberPersistInfoDto persistInfo(Integer memberNo) {
     return memberRepository.getPersistInfo(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  @Transactional
-  public void updateName(Integer memberNo, MemberUpdateNameRequestDto requestDto) {
-    Member member = memberRepository.findById(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
-
-    member.updateName(requestDto.getName());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  @Transactional
-  public void updateOpenEmail(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
-    Member member = memberRepository.findById(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
-
-    member.updateOpenEmail(requestDto.getContent());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  @Transactional
-  public void updateGithub(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
-    Member member = memberRepository.findById(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
-
-    member.updateGithub(requestDto.getContent());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  @Transactional
-  public void updateFacebook(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
-    Member member = memberRepository.findById(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
-
-    member.updateFacebook(requestDto.getContent());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  @Transactional
-  public void updateX(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
-    Member member = memberRepository.findById(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
-
-    member.updateX(requestDto.getContent());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  @Transactional
-  public void updateHomepage(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
-    Member member = memberRepository.findById(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
-
-    member.updateHomepage(requestDto.getContent());
-  }
-
-  @Override
-  @Transactional
-  public void updateBio(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
-    Member member = memberRepository.findById(memberNo)
-            .orElseThrow(() -> new NotFoundException(Member.class));
-
-    member.updateBio(requestDto.getContent());
   }
 
   @Override
@@ -216,5 +133,50 @@ public class MemberServiceImpl implements MemberService {
   @Override
   public String getThumbnailByNo(Integer memberNo) {
     return memberRepository.findProfileThumbByMemberNo(memberNo);
+  }
+
+  @Override
+  public MemberProfileResponseDto getProfileByUsername(String username) {
+    Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new NotFoundException(Member.class));
+
+    Long follower = followRepository.countFollower(member.getMemberNo());
+    Long followee = followRepository.countFollowee(member.getMemberNo());
+
+    return new MemberProfileResponseDto(member.getUsername(),
+            member.getName(),
+            member.getBio(),
+            member.getProfileThumb(),
+            member.getIntroEmail(),
+            member.getLinks().stream().map(link ->
+                    new MemberProfileLinkResponseDto(link.getLinkNo(), link.getUrl())).toList(),
+            member.getBlogs().stream().map(blog ->
+                            new BlogProfileResponseDto(blog.getUrlName(),
+                                    blog.getName(), blog.getBio()))
+                    .toList(),
+            follower,
+            followee);
+  }
+
+  @Override
+  @Transactional
+  public void updateProfile(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
+    Member member = memberRepository.findById(memberNo)
+            .orElseThrow(() -> new NotFoundException(Member.class));
+
+    member.updateName(requestDto.getName());
+    member.updateBio(requestDto.getBio());
+    member.updateOpenEmail(requestDto.getEmail());
+
+    for (Link link : member.getLinks()) {
+      linkRepository.deleteById(link.getLinkNo());
+    }
+
+    for (String newLinkUrl : requestDto.getLinkList()) {
+      if (!newLinkUrl.isEmpty()) {
+        Link link = new Link(null, member, newLinkUrl);
+        linkRepository.save(link);
+      }
+    }
   }
 }

@@ -38,4 +38,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer>, Member
 
   @Query("select m.profileThumb from Member m where m.memberNo = ?1")
   String findProfileThumbByMemberNo(Integer memberNo);
+
+  Optional<Member> findByUsername(String username);
 }

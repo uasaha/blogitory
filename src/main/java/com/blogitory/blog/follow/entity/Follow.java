@@ -32,10 +32,10 @@ public class Follow {
   private Long followNo;
 
   @ManyToOne
-  @JoinColumn(name = "follower_no")
-  private Member follower;
+  @JoinColumn(name = "follow_to_no")
+  private Member followTo;
 
   @ManyToOne
-  @JoinColumn(name = "leader_no")
-  private Member leader;
+  @JoinColumn(name = "follow_from_no")
+  private Member followFrom;
 }

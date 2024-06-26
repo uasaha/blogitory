@@ -1,6 +1,6 @@
 package com.blogitory.blog.member.repository.impl;
 
-import com.blogitory.blog.member.dto.MemberMyProfileResponseDto;
+import com.blogitory.blog.follow.entity.QFollow;
 import com.blogitory.blog.member.dto.MemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.QMember;
@@ -22,28 +22,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
   }
 
   QMember member = QMember.member;
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Optional<MemberMyProfileResponseDto> getMyProfile(Integer memberNo) {
-    return Optional.ofNullable(
-            from(member)
-                    .select(Projections.constructor(
-                            MemberMyProfileResponseDto.class,
-                            member.email,
-                            member.name,
-                            member.profileThumb,
-                            member.introEmail,
-                            member.github,
-                            member.twitter,
-                            member.facebook,
-                            member.homepage,
-                            member.createdAt))
-                    .where(member.memberNo.eq(memberNo))
-                    .fetchOne());
-  }
+  QFollow follow = QFollow.follow;
 
   /**
    * {@inheritDoc}

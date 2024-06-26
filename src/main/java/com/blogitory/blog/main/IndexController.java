@@ -46,40 +46,6 @@ public class IndexController {
   }
 
   /**
-   * Go to Settings page.
-   *
-   * @param model Model
-   * @return Settings page
-   */
-  @RoleUser
-  @GetMapping("/settings")
-  public String settings(Model model) {
-    Integer memberNo = SecurityUtils.getCurrentUserNo();
-
-    model.addAttribute("profiles",
-            memberService.myProfile(memberNo));
-
-    return "index/settings/index";
-  }
-
-  /**
-   * Go to Settings profile page.
-   *
-   * @param model Model
-   * @return Settings profile page
-   */
-  @RoleUser
-  @GetMapping("/settings/profile")
-  public String profileSettings(Model model) {
-    Integer memberNo = SecurityUtils.getCurrentUserNo();
-
-    model.addAttribute("profiles",
-            memberService.myProfile(memberNo));
-
-    return "index/settings/profile";
-  }
-
-  /**
    * Go to Settings blog page.
    *
    * @return Settings blog page

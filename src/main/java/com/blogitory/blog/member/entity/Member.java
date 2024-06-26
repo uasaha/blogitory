@@ -1,12 +1,17 @@
 package com.blogitory.blog.member.entity;
 
+import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.commons.base.BaseCreatedAtEntity;
+import com.blogitory.blog.link.entity.Link;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,17 +56,11 @@ public class Member extends BaseCreatedAtEntity {
   @Column(name = "member_intro_email")
   private String introEmail;
 
-  @Column(name = "member_github")
-  private String github;
+  @OneToMany(mappedBy = "member")
+  private List<Link> links = new ArrayList<>();
 
-  @Column(name = "member_twitter")
-  private String twitter;
-
-  @Column(name = "member_facebook")
-  private String facebook;
-
-  @Column(name = "member_homepage")
-  private String homepage;
+  @OneToMany(mappedBy = "member")
+  private List<Blog> blogs = new ArrayList<>();
 
   @Column(name = "member_blocked")
   private boolean blocked;
@@ -69,21 +68,38 @@ public class Member extends BaseCreatedAtEntity {
   @Column(name = "member_left")
   private boolean left;
 
-  @Column(name = "oauth")
+  @Column(name = "member_oauth")
   private boolean oauth;
 
   /**
-   * Constructor of Member for Signup.
+   * Constructor no links, no roles, no blog.
    *
-   * @param email email.
-   * @param password password.
-   * @param name name.
+   * @param memberNo     memberNo
+   * @param email        email
+   * @param password     password
+   * @param username     username
+   * @param name         name
+   * @param bio          bio
+   * @param profileThumb profileThumb
+   * @param introEmail   introEmail
+   * @param blocked      isBlocked
+   * @param left         isLeft
+   * @param oauth        isOauth
    */
   @Builder
-  public Member(String email, String password, String name) {
+  public Member(Integer memberNo, String email, String password, String username, String name, String bio,
+                String profileThumb, String introEmail, boolean blocked, boolean left, boolean oauth) {
+    this.memberNo = memberNo;
     this.email = email;
     this.password = password;
+    this.username = username;
     this.name = name;
+    this.bio = bio;
+    this.profileThumb = profileThumb;
+    this.introEmail = introEmail;
+    this.blocked = blocked;
+    this.left = left;
+    this.oauth = oauth;
   }
 
   public void updateThumbnail(String url) {
@@ -96,22 +112,6 @@ public class Member extends BaseCreatedAtEntity {
 
   public void updateOpenEmail(String email) {
     this.introEmail = email;
-  }
-
-  public void updateGithub(String github) {
-    this.github = github;
-  }
-
-  public void updateFacebook(String facebook) {
-    this.facebook = facebook;
-  }
-
-  public void updateX(String x) {
-    this.twitter = x;
-  }
-
-  public void updateHomepage(String homepage) {
-    this.homepage = homepage;
   }
 
   public void updateBio(String bio) {

@@ -1,9 +1,8 @@
-package com.blogitory.blog.category.entity;
+package com.blogitory.blog.link.entity;
 
-import com.blogitory.blog.blog.entity.Blog;
+import com.blogitory.blog.member.entity.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,29 +15,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Category entity.
+ * Link entity.
  *
  * @author woonseok
  * @since 1.0
  **/
 @Entity
-@Table(name = "category")
+@Table(name = "link")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category {
+public class Link {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "category_no")
-  private Long categoryNo;
+  @Column(name = "link_no")
+  private Long linkNo;
 
-  @JoinColumn(name = "blog_no")
-  @ManyToOne(fetch = FetchType.LAZY)
-  private Blog blog;
+  @ManyToOne
+  @JoinColumn(name = "member_no")
+  private Member member;
 
-  @Column(name = "category_name")
-  private String name;
-
-  @Column(name = "category_deleted")
-  private boolean deleted;
+  @Column(name = "link_url")
+  private String url;
 }

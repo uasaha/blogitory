@@ -37,6 +37,9 @@ public class Blog extends BaseCreatedAtEntity {
   @JoinColumn(name = "member_no")
   private Member member;
 
+  @Column(name = "blog_name")
+  private String name;
+
   @Column(name = "blog_bio")
   private String bio;
 

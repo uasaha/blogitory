@@ -38,6 +38,9 @@ public class Posts extends BaseCreatedAtEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   private Category category;
 
+  @Column(name = "posts_url")
+  private String url;
+
   @Column(name = "posts_subject")
   private String subject;
 
