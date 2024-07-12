@@ -5,7 +5,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Blogitory - 회원가입</title>
-    <script src="/static/js/signup.js"></script>
 </head>
 <body class="body-background">
 <div class="container-md padding-top-5" layout:fragment="main-content">
@@ -14,59 +13,69 @@
 
         </div>
         <div class="col" style="max-width: 500px">
-            <h2 class="text-center">회원가입</h2>
-            <form id="signupForm" name="requestDto" method="POST" action="/signup" class="ol-12">
-                <div class="form-group mb-4">
-                    <label for="username-input" class="col-3">유저네임</label>
-                    <input id="username-input" name="username" type="text" class="form-control" maxlength="20"
-                           onkeyup="usernameCheck()" required>
+            <div class="card mt-8">
+                <div class="card-header">
+                    <h2 class="text-center">회원가입</h2>
                 </div>
-                <div class="form-group mb-4">
-                    <label for="name-input" class="col-3">이름</label>
-                    <input id="name-input" name="name" type="text" class="form-control" maxlength="20"
-                           onkeyup="nameValidate(this)" required>
-                </div>
-                <div class="form-group mb-4">
-                    <label for="email-input" class="col-3">이메일</label>
-                    <div class="input-group mb-3">
-                        <input id="email-input" name="email" type="email" aria-describedby="send-button"
-                               class="form-control" maxlength="50" onkeyup="emailValidate(this)" required>
-                        <button class="btn btn-outline-secondary" type="button" id="send-button"
-                                onclick="emailVerificationFormOpen()">
-                            인증
+                <div class="card-body">
+                    <form id="signupForm" name="requestDto" method="POST" action="/signup" class="ol-12">
+                        <div class="form-group mb-4">
+                            <label for="username-input" class="col-3">유저네임</label>
+                            <input id="username-input" name="username" type="text" class="form-control" maxlength="20"
+                                   onkeyup="usernameCheck()" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="name-input" class="col-3">이름</label>
+                            <input id="name-input" name="name" type="text" class="form-control" maxlength="20"
+                                   onkeyup="nameValidate(this)" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="email-input" class="col-3">이메일</label>
+                            <div class="input-group mb-3">
+                                <input id="email-input" name="email" type="email" aria-describedby="send-button"
+                                       class="form-control" maxlength="50" onkeyup="emailValidate(this)" required>
+                                <button class="btn btn-outline-secondary" type="button" id="send-button"
+                                        onclick="emailVerificationFormOpen()">
+                                    인증
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4 d-none" id="email-verify-div">
+                            <label for="email-verify">인증번호</label>
+                            <div class="input-group mb-3">
+                                <input class="form-control" id="email-verify" maxlength="6"
+                                       aria-describedby="email-verify-button" required>
+                                <button id="email-verify-button" type="button" class="btn btn-outline-secondary"
+                                        onclick="emailVerification()">확인
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="pwd-input">비밀번호</label>
+                            <input id="pwd-input" name="pwd" type="password" class="form-control"
+                                   onkeyup="pwdValidate(this)" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="pwd-check-input">비밀번호 확인</label>
+                            <input id="pwd-check-input" type="password" class="form-control"
+                                   onkeyup="pwdCheckValidate(this)" required>
+                        </div>
+                        <button id="submitButton" type="button"
+                                class="btn btn-outline-secondary ms-md-auto float-end" onclick="memberSignup(this)">
+                            가입하기
                         </button>
-                    </div>
+                    </form>
                 </div>
-                <div class="form-group mb-4 d-none" id="email-verify-div">
-                    <label for="email-verify">인증번호</label>
-                    <div class="input-group mb-3">
-                        <input class="form-control" id="email-verify" maxlength="6"
-                               aria-describedby="email-verify-button" required>
-                        <button id="email-verify-button" type="button" class="btn btn-outline-secondary"
-                                onclick="emailVerification()">확인
-                        </button>
-                    </div>
-                </div>
-                <div class="form-group mb-4">
-                    <label for="pwd-input">비밀번호</label>
-                    <input id="pwd-input" name="pwd" type="password" class="form-control"
-                           onkeyup="pwdValidate(this)" required>
-                </div>
-                <div class="form-group mb-4">
-                    <label for="pwd-check-input">비밀번호 확인</label>
-                    <input id="pwd-check-input" type="password" class="form-control"
-                           onkeyup="pwdCheckValidate(this)" required>
-                </div>
-                <button id="submitButton" type="button"
-                        class="btn btn-outline-secondary ms-md-auto float-end" onclick="memberSignup(this)">
-                    가입하기
-                </button>
-            </form>
+            </div>
         </div>
         <div class="col-3 d-none d-lg-block" style="height: 300px">
 
         </div>
     </div>
 </div>
+
+<th:block layout:fragment="script">
+    <script src="/static/js/my/signup.js" defer></script>
+</th:block>
 </body>
 </html>

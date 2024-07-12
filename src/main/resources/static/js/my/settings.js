@@ -26,20 +26,28 @@ function updateThumbOpen() {
 }
 
 function updateThumb() {
-    let settingProfileThumb = document.getElementById("settingProfileThumb");
+    let settingProfileThumb = document.getElementById("profile-pfp");
+    let settingProfileThumbUpdatable = document.getElementById("profile-pfp-updatable");
+    let profilePfpUpdatableMobile = document.getElementById("profile-pfp-updatable-mobile");
+    let profilePfpMobile = document.getElementById("profile-pfp-updatable-mobile");
+
     let formData = new FormData();
     formData.append("file", thumbInput.files[0]);
 
     axios.post("/api/v1/image/thumbnail", formData, {
         headers: {
             'Content-Type': `multipart/form-data;`,
-            [_csrf_header_setting]: _csrf_setting
         }
     })
         .then((result) => {
             settingProfileThumb.src = result.data.url;
             settingProfileThumb.alt = result.data.originName;
-            console.log(result);
+            settingProfileThumbUpdatable.src = result.data.url;
+            settingProfileThumbUpdatable.alt = result.data.originName;
+            profilePfpUpdatableMobile.src = result.data.url;
+            profilePfpUpdatableMobile.alt = result.data.originName;
+            profilePfpMobile.src = result.data.url;
+            profilePfpMobile.alt = result.data.originName;
         })
         .catch(() => {
             console.log("실패하였습니다.");

@@ -61,7 +61,7 @@ public class SecurityConfig {
             = authenticationManager(http.getSharedObject(AuthenticationConfiguration.class));
 
     return http
-            .csrf(csrf -> csrf.ignoringRequestMatchers(LOGOUT_URL))
+            .csrf(AbstractHttpConfigurer::disable)
             .formLogin(login -> login
                     .successHandler(authenticationSuccessHandler())
                     .disable())
@@ -69,6 +69,7 @@ public class SecurityConfig {
                     logout.addLogoutHandler(logoutHandler())
                             .logoutSuccessHandler(logoutSuccessHandler())
                             .logoutUrl(LOGOUT_URL))
+
             .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(configurer ->
                     configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

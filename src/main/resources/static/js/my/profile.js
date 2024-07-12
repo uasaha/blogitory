@@ -14,8 +14,8 @@ function disappearProfiles() {
     profileFollow.className = "col-12 d-none";
     profileButton.className = "row justify-content-center d-none";
     profileEmail.className = "row justify-content-center d-none";
-    profilePfp.className = "img-profile rounded-circle d-none";
-    profilePfpUpdatable.className = "img-profile rounded-circle cursor-pointer";
+    profilePfp.className = "avatar avatar-md d-none";
+    profilePfpUpdatable.className = "avatar avatar-md cursor-pointer";
     profileUpdatable.className = "row justify-content-center";
     profileButtonUpdatable.className = "row justify-content-end";
 }
@@ -26,8 +26,8 @@ function showProfiles() {
     profileFollow.className = "col-12";
     profileButton.className = "row justify-content-center";
     profileEmail.className = "row justify-content-center";
-    profilePfp.className = "img-profile rounded-circle";
-    profilePfpUpdatable.className = "img-profile rounded-circle cursor-pointer d-none";
+    profilePfp.className = "avatar avatar-md";
+    profilePfpUpdatable.className = "avatar avatar-md cursor-pointer d-none";
     profileUpdatable.className = "row justify-content-center d-none";
     profileButtonUpdatable.className = "row justify-content-end d-none";
 }
@@ -52,13 +52,7 @@ function saveProfiles() {
         "bio" : profileBioUpdatable.value,
         "email" : profileEmailUpdatable.value,
         "linkList" : links
-    },
-        {
-            headers: {
-                "Content-Type": "application/json; charset=UTF-8",
-                [_csrf_header]: _csrf
-            }
-        }).then(() => {
+    }).then(() => {
         showProfiles();
         document.location.reload();
     })
@@ -85,8 +79,8 @@ function disappearProfilesMobile() {
     profileBioMobile.className = "row justify-content-center d-none";
     profileFollowMobile.className = "col-12 d-none";
     profileButtonMobile.className = "row justify-content-center d-none";
-    profilePfpMobile.className = "img-profile rounded-circle d-none";
-    profilePfpUpdatableMobile.className = "img-profile rounded-circle cursor-pointer";
+    profilePfpMobile.className = "avatar avatar-md d-none";
+    profilePfpUpdatableMobile.className = "avatar avatar-md cursor-pointer";
     profileUpdatableMobile.className = "row justify-content-center";
     profileButtonUpdatableMobile.className = "row justify-content-end";
 }
@@ -96,8 +90,8 @@ function showProfilesMobile() {
     profileBioMobile.className = "row justify-content-center";
     profileFollowMobile.className = "col-12";
     profileButtonMobile.className = "row justify-content-center";
-    profilePfpMobile.className = "img-profile rounded-circle";
-    profilePfpUpdatableMobile.className = "img-profile rounded-circle cursor-pointer d-none";
+    profilePfpMobile.className = "avatar avatar-md";
+    profilePfpUpdatableMobile.className = "avatar avatar-md cursor-pointer d-none";
     profileUpdatableMobile.className = "row justify-content-center d-none";
     profileButtonUpdatableMobile.className = "row justify-content-end d-none";
 }
@@ -122,14 +116,41 @@ function saveProfilesMobile() {
         "bio" : profileBioUpdatable.value,
         "email" : profileEmailUpdatable.value,
         "linkList" : links
-    },
-        {
-            headers: {
-                "Content-Type": "application/json; charset=UTF-8",
-                [_csrf_header]: _csrf
-            }
-        }).then(() => {
+    }).then(() => {
         showProfiles();
         document.location.reload();
     })
+}
+
+function updateThumbOpen() {
+    thumbInput.click();
+}
+
+function updateThumb() {
+    let settingProfileThumb = document.getElementById("profile-pfp");
+    let settingProfileThumbUpdatable = document.getElementById("profile-pfp-updatable");
+    let profilePfpUpdatableMobile = document.getElementById("profile-pfp-updatable-mobile");
+    let profilePfpMobile = document.getElementById("profile-pfp-updatable-mobile");
+
+    let formData = new FormData();
+    formData.append("file", thumbInput.files[0]);
+
+    axios.post("/api/v1/image/thumbnail", formData, {
+        headers: {
+            'Content-Type': `multipart/form-data;`,
+        }
+    })
+        .then((result) => {
+            settingProfileThumb.src = result.data.url;
+            settingProfileThumb.alt = result.data.originName;
+            settingProfileThumbUpdatable.src = result.data.url;
+            settingProfileThumbUpdatable.alt = result.data.originName;
+            profilePfpUpdatableMobile.src = result.data.url;
+            profilePfpUpdatableMobile.alt = result.data.originName;
+            profilePfpMobile.src = result.data.url;
+            profilePfpMobile.alt = result.data.originName;
+        })
+        .catch(() => {
+            console.log("실패하였습니다.");
+        })
 }
