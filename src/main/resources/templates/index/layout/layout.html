@@ -4,52 +4,94 @@
       xmlns:xmls="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-          crossorigin="anonymous">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <link rel="apple-touch-icon" href="/static/logo/logo-BE81F7.svg">
     <link rel="icon" href="/static/logo/logo-BE81F7.svg">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumBarunGothic@latest/nanumbarungothicsubset.css">
-    <link href="/static/css/light.css" rel="stylesheet">
-    <link href="/static/css/commons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" /></head>
-<body style="font-family: 'NanumBarunGothic', sans-serif">
-<div th:replace="~{index/fragments/header :: header}"></div>
-<div layout:fragment="main-content"></div>
-
-<script>
-    const currentUrl = document.URL;
-    const failedReason = document.getElementById("failed-reason");
-    let loginModalBtn = document.getElementById( "login-modal-btn");
-
-    window.addEventListener("load", () => {
-        if (currentUrl.includes("login-failed")) {
-            loginModalBtn.click();
-            failedReason.className = "mb-4";
+    <link href="/static/css/lib/tabler.css" rel="stylesheet"/>
+    <link href="/static/css/lib/tabler-vendors.min.css" rel="stylesheet"/>
+    <style>
+        @font-face {
+            font-family: "Nanum Gothic";
+            src: url("/static/fonts/NanumGothic.otf") format("woff"), url("/static/fonts/NanumGothic.ttf")  format("truetype");
         }
 
-        if (currentUrl.includes("/settings/blog")) {
-            document.getElementById("settings-blog").className = "nav-link active";
-        } else if (currentUrl.includes("/settings/profile")) {
-            document.getElementById("settings-profile").className = "nav-link active";
-        } else if (currentUrl.includes("/settings")) {
-            document.getElementById("settings-index").className = "nav-link active";
+        @font-face {
+            font-family: "Nanum Gothic Bold";
+            font-weight: bold;
+            src: url("/static/fonts/NanumGothicBold.otf") format("woff"), url("/static/fonts/NanumGothicBold.ttf")  format("truetype");
         }
 
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="/static/js/settings.js"></script>
-<script src="/static/js/login.js"></script>
-<script>
-    const _csrf = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-    const _csrf_header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-</script>
+        :root {
+            --tblr-font-sans-serif: "Nanum Gothic";
+            --tblr-font-weight-bold: "Nanum Gothic Bold";
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div th:replace="~{index/fragments/header :: header}"></div>
+    <div class="page-wrapper">
+        <div layout:fragment="main-content"></div>
+    </div>
+    <div class="mb-6"></div>
+</div>
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <img class="navbar-brand-image" src="/static/logo/logo-BE81F7.svg" width="25" height="25" alt="">
+                        <p class="navbar-brand">Blogitory&nbsp;로그인</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">이메일</label>
+                        <input type="email" id="login-id-input" name="id" class="form-control" placeholder="email" onkeyup="isEnterPress()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" id="login-pwd-input" name="pwd" class="form-control" placeholder="password" onkeyup="isEnterPress()">
+                    </div>
+                    <div id="failed-reason" class="mb-3 d-none">
+                        <span style="color: firebrick">이메일 혹은 비밀번호가 일치하지 않습니다.</span>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <div>
+                            <a class="text-body" href="/signup">회원가입</a> /
+                            <a class="text-body" href="#">비밀번호 찾기</a>
+                        </div>
+                        <button type="button" class="btn ms-auto" onclick="login()">
+                            로그인
+                        </button>
+                    </div>
+<!--                    <div class="mb-3">-->
+<!--                        <div class="hr-text">Social</div>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <div class="row justify-content-center align-items-center">-->
+<!--                            <a href="#" class="col-2">-->
+<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/kakao-icon.png" alt="kakao">-->
+<!--                            </a>-->
+<!--                            <a href="#" class="col-2">-->
+<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/naver-icon.png" alt="naver">-->
+<!--                            </a>-->
+<!--                            <a href="https://github.com/login/oauth/authorize?client_id=ee49c7b2e2685765b152" class="col-2">-->
+<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/github-icon.png" alt="github">-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script"></th:block>
+<script src="/static/js/lib/theme.js" defer></script>
+<script src="/static/js/lib/tabler.min.js" defer></script>
+<script src="/static/js/lib/apexcharts.min.js" defer></script>
+<script src="/static/js/lib/litepicker.js" defer></script>
+<script src="/static/js/lib/axios.js" defer></script>
+<script src="/static/js/my/login.js" defer></script>
 </body>
 </html>
