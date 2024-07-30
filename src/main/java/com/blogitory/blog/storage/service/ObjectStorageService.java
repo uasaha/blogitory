@@ -11,11 +11,19 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 public interface ObjectStorageService {
   /**
-   * upload new file.
+   * Upload new file.
    *
    * @param type file category
    * @param file file
    * @return uploaded file info
    */
   FileUploadResponseDto uploadFile(String type, MultipartFile file);
+
+  /**
+   * Delete file.
+   *
+   * @param type     file type
+   * @param filename file name
+   */
+  void deleteFile(String type, String filename);
 }

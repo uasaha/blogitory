@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.blogitory.blog.commons.properties.ObjectStorageProperties;
@@ -23,6 +24,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
@@ -132,5 +134,20 @@ class ObjectStorageServiceTest {
 
     assertThrows(FileUploadException.class,
             () -> objectStorageService.uploadFile(type, file));
+  }
+
+  @Test
+  @DisplayName("파일 삭제")
+  void deleteFile() {
+    String type = "type";
+    String filename = "filename.jpg";
+    String bucket = "bucket";
+
+    when(properties.getBucket()).thenReturn(bucket);
+    when(s3Client.deleteObject((DeleteObjectRequest) any())).thenReturn(null);
+
+    objectStorageService.deleteFile(type, filename);
+
+    verify(s3Client).deleteObject((DeleteObjectRequest) any());
   }
 }

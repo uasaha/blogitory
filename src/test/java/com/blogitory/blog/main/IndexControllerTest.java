@@ -2,16 +2,19 @@ package com.blogitory.blog.main;
 
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.dto.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.member.dto.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
+import com.blogitory.blog.member.dto.response.MemberSettingsAlertResponseDto;
+import com.blogitory.blog.member.dto.response.MemberSettingsProfileResponseDto;
 import com.blogitory.blog.member.service.MemberService;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -97,11 +100,12 @@ class IndexControllerTest {
 
     BlogListInSettingsResponseDto responseDto = new BlogListInSettingsResponseDto(
             "name",
+            "bio",
             "url",
-            "intro",
             LocalDateTime.of(2000, 2, 2, 2, 2, 2),
             "",
-            "");
+            "",
+            List.of());
 
     List<BlogListInSettingsResponseDto> responseDtoList = List.of(responseDto);
 
@@ -139,6 +143,73 @@ class IndexControllerTest {
     attrs.put("noBlog", true);
 
     mvc.perform(MockMvcRequestBuilders.get("/settings/blog")
+                    .flashAttrs(attrs))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("name")));
+  }
+
+  @Test
+  @DisplayName("셔플 페이지")
+  void shufflePage() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.get("/shuffle"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Blogitory")));
+  }
+
+  @Test
+  @DisplayName("피드 페이지")
+  void feedPage() throws Exception {
+    mvc.perform(MockMvcRequestBuilders.get("/feed"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Blogitory")));
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("설정 페이지")
+  void settingsPage() throws Exception {
+    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+
+    MemberSettingsProfileResponseDto responseDto =
+            new MemberSettingsProfileResponseDto(
+                    "username",
+                    "name",
+                    "pfp",
+                    "email",
+                    "bio",
+                    "intro",
+                    List.of());
+    when(memberService.getSettingsProfile(any())).thenReturn(responseDto);
+
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+    attrs.put("noBlog", false);
+
+    mvc.perform(MockMvcRequestBuilders.get("/settings")
+            .flashAttrs(attrs))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("name")));
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("알림 설정 페이지")
+  void notificationPage() throws Exception {
+    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+
+    MemberSettingsAlertResponseDto responseDto =
+            new MemberSettingsAlertResponseDto(true,
+                    true,
+                    true,
+                    true);
+
+    when(memberService.getSettingsAlert(any())).thenReturn(responseDto);
+
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+    attrs.put("noBlog", false);
+
+    mvc.perform(MockMvcRequestBuilders.get("/settings/notification")
                     .flashAttrs(attrs))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("name")));

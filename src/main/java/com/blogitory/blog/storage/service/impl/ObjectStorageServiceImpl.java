@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
@@ -72,5 +73,17 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
             .extension(fileEx)
             .savePath(type)
             .build();
+  }
+
+  @Override
+  public void deleteFile(String type, String filename) {
+    String key = type + "/" + filename;
+
+    DeleteObjectRequest request = DeleteObjectRequest.builder()
+            .bucket(objectStorageProperties.getBucket())
+            .key(key)
+            .build();
+
+    s3Client.deleteObject(request);
   }
 }

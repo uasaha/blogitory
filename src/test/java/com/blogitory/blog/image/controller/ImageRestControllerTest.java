@@ -1,7 +1,10 @@
 package com.blogitory.blog.image.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,12 +69,22 @@ class ImageRestControllerTest {
 
     when(imageService.uploadThumbnail(any(), any())).thenReturn(responseDto);
 
-    mvc.perform(MockMvcRequestBuilders.multipart("/api/v1/image/thumbnail")
+    mvc.perform(MockMvcRequestBuilders.multipart("/api/images/thumbnail")
             .file(file)
             .contentType(MediaType.MULTIPART_FORM_DATA))
             .andExpect(status().isOk())
             .andExpect(jsonPath("url").value(responseDto.getUrl()))
             .andExpect(jsonPath("originName").value(responseDto.getOriginName()))
             .andDo(print());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("프로필 썸네일 삭제")
+  void deleteThumbnail() throws Exception {
+    doNothing().when(imageService).removeThumbnail(anyInt());
+
+    mvc.perform(delete("/api/images/thumbnail"))
+            .andExpect(status().isOk());
   }
 }

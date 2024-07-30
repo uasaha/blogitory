@@ -19,4 +19,30 @@ public interface ImageService {
    * @return origin name & url
    */
   ThumbnailUpdateResponseDto uploadThumbnail(Integer memberNo, MultipartFile file);
+
+  /**
+   * Delete thumbnail.
+   *
+   * @param memberNo member no
+   */
+  void removeThumbnail(Integer memberNo);
+
+  /**
+   * Modify blog thumbnail.
+   *
+   * @param memberNo member no
+   * @param blogUrl  blog url
+   * @param file     new file
+   * @return responses
+   */
+  ThumbnailUpdateResponseDto updateBlogThumbnail(
+          Integer memberNo, String blogUrl, MultipartFile file);
+
+  /**
+   * Delete blog thumbnail.
+   *
+   * @param memberNo member no
+   * @param blogUrl  blog url
+   */
+  void removeBlogThumbnail(Integer memberNo, String blogUrl);
 }

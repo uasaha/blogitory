@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.blogitory.blog.commons.config.JpaConfig;
+import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.follow.entity.Follow;
 import com.blogitory.blog.follow.entity.FollowDummy;
 import com.blogitory.blog.member.entity.Member;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * Follow repository test.
@@ -22,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * @author woonseok
  * @since 1.0
  */
+@Import({JpaConfig.class, QuerydslConfig.class})
 @DataJpaTest
 class FollowRepositoryTest {
 
@@ -79,7 +83,11 @@ class FollowRepositoryTest {
             "intro@email.com",
             false,
             false,
-            false
+            false,
+            true,
+            true,
+            true,
+            true
     );
     follower = memberRepository.save(follower);
 
@@ -94,7 +102,11 @@ class FollowRepositoryTest {
             "intro@email.com",
             false,
             false,
-            false
+            false,
+            true,
+            true,
+            true,
+            true
     );
     leader = memberRepository.save(leader);
 
