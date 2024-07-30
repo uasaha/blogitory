@@ -5,7 +5,7 @@ import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME
 import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 
 import com.blogitory.blog.jwt.service.JwtService;
-import com.blogitory.blog.member.dto.MemberLoginResponseDto;
+import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,6 +37,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
                     userDetails.getUsername(),
                     userDetails.getIdName(),
                     userDetails.getName(),
+                    userDetails.getPfp(),
                     userDetails.getPassword(),
                     authentication.getAuthorities()
                             .stream().map(Object::toString)

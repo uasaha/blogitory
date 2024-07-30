@@ -116,7 +116,7 @@ public class JwtUtils {
    * @param token  accessToken
    * @return can reissue
    */
-  public static boolean canReissue(String secret, String token) {
+  public static boolean needReissue(String secret, String token) {
     if (isExpiredToken(secret, token)) {
       return false;
     }
@@ -124,9 +124,10 @@ public class JwtUtils {
     Claims claims = parseToken(secret, token);
 
     LocalDateTime exp = claims.getExpiration().toInstant()
-            .atZone(ZoneId.systemDefault()).toLocalDateTime();
-    LocalDateTime now = LocalDateTime.now().minusHours(1);
+            .atZone(ZoneId.systemDefault()).toLocalDateTime().minusHours(1);
 
-    return now.isAfter(exp) && now.isBefore(now.plusHours(1));
+    LocalDateTime now = LocalDateTime.now();
+
+    return now.isAfter(exp);
   }
 }

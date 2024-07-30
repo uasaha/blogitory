@@ -1,6 +1,6 @@
 package com.blogitory.blog.security.filter;
 
-import com.blogitory.blog.member.dto.MemberLoginRequestDto;
+import com.blogitory.blog.member.dto.request.MemberLoginRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

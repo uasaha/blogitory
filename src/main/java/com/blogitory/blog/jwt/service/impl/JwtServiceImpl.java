@@ -4,7 +4,7 @@ import com.blogitory.blog.jwt.dto.MemberInfoDto;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.provider.JwtProvider;
 import com.blogitory.blog.jwt.service.JwtService;
-import com.blogitory.blog.member.dto.MemberLoginResponseDto;
+import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,6 +49,7 @@ public class JwtServiceImpl implements JwtService {
             responseDto.getEmail(),
             responseDto.getUsername(),
             responseDto.getName(),
+            responseDto.getPfp(),
             responseDto.getRoles(),
             refreshToken);
 

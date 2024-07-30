@@ -12,7 +12,7 @@ import com.blogitory.blog.jwt.dto.MemberInfoDto;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.provider.JwtProvider;
 import com.blogitory.blog.jwt.service.JwtService;
-import com.blogitory.blog.member.dto.MemberLoginResponseDto;
+import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,11 +83,10 @@ class JwtServiceImplTest {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
     MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
-            1, "test@email.com", "username", "name", "password", List.of("ROLE_TEST"));
+            1, "test@email.com", "username", "name", "pfp", "password", List.of("ROLE_TEST"));
 
     String expect = "accessToken";
     String uuid = UUID.randomUUID().toString();
-    List<String> roles = List.of("ROLE_TEST");
 
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
     String info = "info";
@@ -118,7 +117,7 @@ class JwtServiceImplTest {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
     MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
-            1, "test@email.com", "username", "name", "password", List.of("ROLE_TEST"));
+            1, "test@email.com", "username", "name", "pfp", "password", List.of("ROLE_TEST"));
 
     String expect = "accessToken";
     String uuid = UUID.randomUUID().toString();
@@ -149,7 +148,7 @@ class JwtServiceImplTest {
   void reIssue() throws Exception {
     String uuid = UUID.randomUUID().toString();
     MemberInfoDto info = new MemberInfoDto(
-            1, "test@email.com", "username", "name", List.of("ROLE_TEST"), "refreshToken");
+            1, "test@email.com", "username", "name", "pfp", List.of("ROLE_TEST"), "refreshToken");
     Claims claims = new DefaultClaims(Map.of());
     String accessToken = "accessToken";
 
@@ -209,7 +208,7 @@ class JwtServiceImplTest {
   void reIssueFailedObjectMapper() throws Exception {
     String uuid = UUID.randomUUID().toString();
     MemberInfoDto info = new MemberInfoDto(
-            1, "test@email.com", "username", "name", List.of("ROLE_TEST"), "refreshToken");
+            1, "test@email.com", "username", "name", "pfp", List.of("ROLE_TEST"), "refreshToken");
     Claims claims = new DefaultClaims(Map.of());
     String accessToken = "accessToken";
 

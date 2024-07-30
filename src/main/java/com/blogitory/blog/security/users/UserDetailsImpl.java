@@ -18,6 +18,7 @@ public class UserDetailsImpl implements UserDetails {
   private final String idName; //username
   private final String name;
   private final Integer userNo;
+  private final String pfp;
   private final String password;
   private final boolean accountNonLocked;
   private final boolean accountNonExpired;
@@ -40,12 +41,14 @@ public class UserDetailsImpl implements UserDetails {
                          Integer userNo,
                          String username,
                          String name,
+                         String pfp,
                          List<? extends GrantedAuthority> authorities) {
     this.username = email;
     this.password = password;
     this.userNo = userNo;
     this.idName = username;
     this.name = name;
+    this.pfp = pfp;
     this.authorities = authorities;
     this.accountNonLocked = true;
     this.accountNonExpired = true;

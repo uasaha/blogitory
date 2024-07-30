@@ -1,6 +1,6 @@
 package com.blogitory.blog.jwt.service;
 
-import com.blogitory.blog.member.dto.MemberLoginResponseDto;
+import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Map;
 

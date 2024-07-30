@@ -3,10 +3,10 @@ package com.blogitory.blog.security.filter;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_COOKIE_EXPIRE;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
 import static com.blogitory.blog.security.util.JwtUtils.BLACK_LIST_KEY;
-import static com.blogitory.blog.security.util.JwtUtils.canReissue;
 import static com.blogitory.blog.security.util.JwtUtils.getUuid;
 import static com.blogitory.blog.security.util.JwtUtils.isExpiredToken;
 import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
+import static com.blogitory.blog.security.util.JwtUtils.needReissue;
 
 import com.blogitory.blog.jwt.dto.MemberInfoDto;
 import com.blogitory.blog.jwt.properties.JwtProperties;
@@ -94,10 +94,11 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
     Optional<String> black = Optional.ofNullable(operations.get(BLACK_LIST_KEY, uuid));
 
     if (black.isPresent() && accessToken.equals(black.get())) {
+      response.sendRedirect("/");
       throw new AuthenticationException("Access token is blocked.");
     }
 
-    if (canReissue(jwtProperties.getAccessSecret(), accessToken)) {
+    if (needReissue(jwtProperties.getAccessSecret(), accessToken)) {
       Map<String, String> tokenMap = jwtService.reIssue(uuid);
       response.addCookie(makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME,
               tokenMap.get("accessToken"), ACCESS_COOKIE_EXPIRE));
@@ -123,6 +124,7 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
                     info.getMemberNo(),
                     info.getUsername(),
                     info.getName(),
+                    info.getPfp(),
                     authorities));
 
     context.setAuthentication(authentication);

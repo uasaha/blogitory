@@ -1,5 +1,6 @@
 package com.blogitory.blog.commons.aspect;
 
+import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
 import com.blogitory.blog.security.util.SecurityUtils;
 import java.util.List;
@@ -24,6 +25,7 @@ public class AuthorizationAspect {
   private static final String ROLE_CONTRIBUTOR = "ROLE_CONTRIBUTOR";
   private static final String ROLE_WRITER = "ROLE_WRITER";
   private static final String ROLE_USER = "ROLE_USER";
+  private static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 
   /**
    * Restrict access to admin-only content.
@@ -94,7 +96,25 @@ public class AuthorizationAspect {
       return pjp.proceed();
     }
 
-    throw new AuthorizationException();
+    throw new AuthenticationException("Need Login");
+  }
+
+  /**
+   * Restrict access to user-only content.
+   *
+   * @param pjp anonymous user-only controller
+   * @return proceed
+   * @throws Throwable ?
+   */
+  @Around(value = "@annotation(com.blogitory.blog.commons.annotaion.RoleAnonymous)")
+  public Object checkAnonymous(ProceedingJoinPoint pjp) throws Throwable {
+    List<? extends GrantedAuthority> authorities = SecurityUtils.getCurrentAuthorities();
+
+    if (isContains(authorities, ROLE_ANONYMOUS)) {
+      return pjp.proceed();
+    }
+
+    throw new AuthenticationException("Need No Login");
   }
 
   /**

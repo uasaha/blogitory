@@ -67,6 +67,7 @@ class UserDetailsServiceImplTest {
             member.getMemberNo(),
             member.getUsername(),
             member.getName(),
+            member.getProfileThumb(),
             grantedRoles);
 
     UserDetails actual = userDetailsService.loadUserByUsername(member.getEmail());
