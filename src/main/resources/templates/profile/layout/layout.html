@@ -5,8 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="apple-touch-icon" href="/static/logo/logo-BE81F7.svg">
-    <link rel="icon" href="/static/logo/logo-BE81F7.svg">
+    <link rel="apple-touch-icon" href="/static/logo/logo-375582.svg">
+    <link rel="icon" href="/static/logo/logo-375582.svg">
     <link href="/static/css/lib/tabler.css" rel="stylesheet"/>
     <link href="/static/css/lib/tabler-vendors.min.css" rel="stylesheet"/>
     <style>
@@ -31,7 +31,7 @@
 <div class="page">
 <!--    <div th:replace="~{profile/fragments/sidebar :: sidebar}"></div>-->
     <div th:replace="~{profile/fragments/header :: header}"></div>
-    <div class="page-wrapper" style="margin-top: 2rem" layout:fragment="main-content"></div>
+    <div class="page-wrapper" layout:fragment="main-content"></div>
     <div class="mb-6"></div>
 </div>
 
@@ -39,9 +39,9 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="card">
-                <div class="card-body">
+                <div id="login-body" class="card-body">
                     <div class="card-title">
-                        <img class="navbar-brand-image" src="/static/logo/logo-BE81F7.svg" width="25" height="25" alt="">
+                        <img class="navbar-brand-image" src="/static/logo/logo-375582.svg" width="25" height="25" alt="">
                         <p class="navbar-brand">Blogitory&nbsp;로그인</p>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -59,28 +59,45 @@
                     <div class="mb-3 d-flex">
                         <div>
                             <a class="text-body" href="/signup">회원가입</a> /
-                            <a class="text-body" href="#">비밀번호 찾기</a>
+                            <a class="text-body" onclick="pwdChangeEvent()">비밀번호 찾기</a>
                         </div>
                         <button type="button" class="btn ms-auto" onclick="login()">
                             로그인
                         </button>
                     </div>
-<!--                    <div class="mb-3">-->
-<!--                        <div class="hr-text">Social</div>-->
-<!--                    </div>-->
-<!--                    <div class="mb-3">-->
-<!--                        <div class="row justify-content-center align-items-center">-->
-<!--                            <a href="#" class="col-2">-->
-<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/kakao-icon.png" alt="kakao">-->
-<!--                            </a>-->
-<!--                            <a href="#" class="col-2">-->
-<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/naver-icon.png" alt="naver">-->
-<!--                            </a>-->
-<!--                            <a href="https://github.com/login/oauth/authorize?client_id=ee49c7b2e2685765b152" class="col-2">-->
-<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/github-icon.png" alt="github">-->
-<!--                            </a>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                    <div class="mb-3">
+                        <div class="hr-text">Social</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="row justify-content-center align-items-center">
+                            <a href="#" class="col-2">
+                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/kakao-icon.png" alt="kakao">
+                            </a>
+                            <a href="#" class="col-2">
+                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/naver-icon.png" alt="naver">
+                            </a>
+                            <a href="https://github.com/login/oauth/authorize?client_id=ee49c7b2e2685765b152" class="col-2">
+                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/github-icon.png" alt="github">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="pwd-body" class="card-body d-none">
+                    <div class="card-title">
+                        <img class="navbar-brand-image" src="/static/logo/logo-375582.svg" width="25" height="25" alt="">
+                        <p class="navbar-brand">비밀번호 초기화</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">이메일</label>
+                        <input type="email" id="pwd-id-input" name="id" class="form-control" placeholder="email" onkeyup="pwdEnterPress()">
+                        <p id="pwdSent" class="mt-2 d-none" style="color: var(--tblr-form-valid-color)">이메일로 비밀번호 변경 메일이 발송되었습니다.</p>
+                        <p id="pwdSentFail" class="mt-2 d-none" style="color: var(--tblr-form-invalid-color)">가입되지 않은 이메일입니다.</p>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn" onclick="pwdMailPush()">메일 발송</button>
+                        <button class="btn" onclick="pwdCancel()">취소</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,7 +108,7 @@
 <script>
     const currentUrl = document.URL;
 
-    window.addEventListener("load", () => {
+    window.addEventListener("DOMContentLoaded", () => {
         if (currentUrl.includes("/settings/blog")) {
             document.getElementById("settings-blog").className = "nav-link active";
         } else if (currentUrl.includes("/settings/profile")) {

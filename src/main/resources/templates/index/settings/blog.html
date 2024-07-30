@@ -6,35 +6,178 @@
     <meta charset="UTF-8">
     <title>Blogitory - 설정</title>
 </head>
-<body style="background-color: #EEEEEE">
-<div class="container-md" layout:fragment="main-content" style="padding-top: 5em; max-width: 600px">
-    <div class="row">
-        <div th:replace="~{index/fragments/settings-sidebar :: settings-sidebar}"></div>
-        <div th:if="${noBlog}" class="col" style="height: 500px;">
-            <div class="row justify-content-center" style="margin-top: 1em;">
-                <button type="button" style="max-width: 300px;" class="btn btn-outline-secondary" onclick="location.href='/blogs/open'">기록 시작하기</button>
+<body>
+<div class="container-xl" layout:fragment="main-content">
+    <div class="page-body">
+        <div class="card">
+            <div class="row g-0">
+                <div class="col-12 col-md-3 border-end">
+                    <div class="card-body">
+                        <div class="list-group list-group-transparent">
+                            <a href="/settings"
+                               class="list-group-item list-group-item-action d-flex align-items-center">계정</a>
+                            <a href="/settings/notification"
+                               class="list-group-item list-group-item-action d-flex align-items-center">알림</a>
+                            <a href="/settings/blog"
+                               class="list-group-item list-group-item-action d-flex align-items-center active">블로그</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9 d-flex flex-column">
+                    <div class="card-body">
+                        <div class="d-none" id="blogs" th:value="${blogs}"></div>
+                        <h3 class="card-title">블로그</h3>
+                        <div id="blogSelectDiv" class="row mb-3">
+                            <div class="col-auto">
+                                <select id="blogSelect" class="form-select" onchange="blogSwap()">
+                                    <option th:each="blog : ${blogs}" th:value="${blog.blogName}"
+                                            th:text="${blog.blogName}"></option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <div>
+                                    <button type="button" class="btn" data-bs-toggle="blogOpenModal"
+                                            data-bs-target="#blogOpenModal" onclick="blogNew()">
+                                        개설
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-ghost-danger" data-bs-toggle="modal" data-bs-target="#blogQuitModal">
+                                    폐쇄
+                                </button>
+                            </div>
+                        </div>
+                        <div id="blogPfpDiv">
+                            <h3 class="card-title">블로그 사진</h3>
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <img class="avatar avatar-xl" id="blogPfp" alt="pfp"/>
+                                    <input id="blogThumbInput" type="file" class="d-none" accept="image/*" onchange="updateBlogThumb()"/>
+                                </div>
+                                <div class="col-auto"><button class="btn" onclick="updateBlogThumbOpen()">
+                                    변경
+                                </button></div>
+                                <div class="col-auto"><button href="#" class="btn btn-ghost-danger" onclick="deleteBlogThumb()">
+                                    삭제
+                                </button></div>
+                            </div>
+                        </div>
+                        <h3 class="card-title mt-4">블로그 이름</h3>
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                <input type="text" class="form-control" id="blogName">
+                            </div>
+                        </div>
+                        <h3 class="card-title mt-4">블로그 URL</h3>
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                <div class="input-group">
+                                    <span id="urlPrefix" class="input-group-text d-none"
+                                          th:text="'@' + ${members.username} + '/'"></span>
+                                    <input type="text" class="form-control" id="blogUrl" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="blogOpenDiv">
+                            <h3 class="card-title mt-4">개설일</h3>
+                            <div class="row g-3">
+                                <div class="col-auto">
+                                    <input type="text" name="input-mask" class="form-control"
+                                           data-mask="0000/00/00" data-mask-visible="true"
+                                           placeholder="0000/00/00" autocomplete="off" id="blogOpen"
+                                           readonly
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="card-title mt-4">한 줄 소개</h3>
+                        <div class="row g-3">
+                            <div class="col-md">
+                                <textarea type="text" class="form-control" rows="6" id="blogBio"
+                                          placeholder="Bio.."></textarea>
+                            </div>
+                        </div>
+                        <div id="categoryDiv">
+                            <h3 class="card-title mt-4">카테고리</h3>
+                            <div class="row g-3 mb-1">
+                                <div class="col-auto">
+                                    <input id="newCategory" type="text" class="form-control" value="">
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn" onclick="addCategory()" value="추가"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent mt-auto">
+                        <div class="btn-list justify-content-end">
+                            <div>
+                                <span id="save-success" class="d-none"
+                                      style="color: var(--tblr-primary)">저장되었습니다.</span>
+                                <span id="save-failed" class="d-none"
+                                      style="color: var(--tblr-danger)">저장에 실패하였습니다.</span>
+                            </div>
+                            <button class="btn btn-primary" id="blogSave" onclick="updateBlog()">
+                                저장
+                            </button>
+                            <button class="btn d-none" id="blogCreate" onclick="blogCreate()">개설</button>
+                            <button class="btn btn-ghost-danger d-none" id="blogCancel" onclick="blogCreateCancel()">
+                                취소
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div th:unless="${noBlog}" class="col" style="height: 500px;">
-<!--            <div class="row" th:each="blog : ${blogs}" style="margin-top: 1em">-->
-<!--                <div class="col-12 text-left">-->
-<!--                    <div class="card">-->
-<!--                        <div th:if="${!blog.isThumbIsNull()}" style="width: 100%; height: 250px; overflow: hidden; margin: 0 auto">-->
-<!--                            <img class="card-image-top" style="width: 100%; height: 100%; object-fit: cover" th:src="${blog.getThumbUrl()}"  th:alt="${blog.getThumbOriginName()}">-->
-<!--                        </div>-->
-<!--                        <div class="card-header" th:blog-url="${blog.getBlogUrl()}" th:onclick="|location.href='/@'+this.getAttribute('blog-url')|">-->
-<!--                            <h5 th:text="${blog.getBlogName()}"></h5>-->
-<!--                        </div>-->
-<!--                        <div class="card-body">-->
-<!--                            <a style="text-decoration: none; color: black" th:href="'/@' + ${blog.getBlogUrl()}"><h5 class="card-title" th:text="'@' + ${blog.getBlogUrl()}"></h5></a>-->
-<!--                            <p class="card-text" th:text="${blog.getBlogIntro()}"></p>-->
-<!--                            <span class="blockquote-footer">개설일: <span th:text="${#temporals.format(blog.getCreatedAt(), 'yyyy.MM.dd')}"></span></span>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
+    </div>
+    <div class="modal" id="blogQuitModal" tabindex="-1">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-status bg-danger"></div>
+                <div class="modal-body text-center py-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 9v2m0 4v.01" />
+                        <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                    </svg>
+                    <h3>블로그 폐쇄</h3>
+                    <div class="text-secondary">모든 활동이 함께 삭제되며 복구가 불가능합니다.</div>
+                    <div class="w-100 mt-2">
+                        <div class="col">
+                            <div>하단에 비밀번호를 입력해주세요.</div>
+                            <input class="form-control" id="left-pwd" type="password"/>
+                        </div>
+                    </div>
+                    <div class="w-100 mt-2">
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn w-100" data-bs-dismiss="modal">취소</button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-danger w-100" data-bs-dismiss="modal" onclick="deleteBlog()">폐쇄</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        let blogs = [[${blogs}]];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (blogs === null) {
+                blogNew();
+            } else {
+                blogSwap();
+            }
+        })
+    </script>
+    <script src="/static/js/my/settings.js" defer></script>
+</th:block>
 </body>
 </html>

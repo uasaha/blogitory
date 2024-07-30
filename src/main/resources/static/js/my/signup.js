@@ -10,7 +10,7 @@ function emailVerificationFormOpen () {
     sendButton.disabled = true;
 
     axios
-        .get("/api/v1/mail/verification?email=" + email)
+        .get("/api/mail/verification?email=" + email)
         .then((result) => {
             alert("인증번호는 10분간 유효합니다.");
             document.getElementById("email-verify-div").className = "form-group mb-4";
@@ -29,7 +29,7 @@ function emailVerificationFormOpen () {
 function emailVerification() {
     const verificationCode = document.getElementById("email-verify").value;
     const nowEmail = document.getElementById("email-input").value;
-    axios.post("/api/v1/mail/verification", {
+    axios.post("/api/mail/verification", {
         "email" : nowEmail,
         "verificationCode" : verificationCode
     })
@@ -48,7 +48,7 @@ async function usernameValidate() {
     let isDuplicated = true;
     let usernameInput = document.getElementById("username-input");
 
-    await axios.get("/api/v1/users/username/verification?username=" + usernameInput.value)
+    await axios.get("/api/users/username/verification?username=" + usernameInput.value)
         .then((result) => {
             isDuplicated = result.data;
 

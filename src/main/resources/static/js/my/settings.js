@@ -1,311 +1,84 @@
-const profileThumb = document.getElementById("profile-thumb");
-const settingNameReq = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,20}$/;
-const nameAria = document.getElementById("nameAria");
-const nameAriaUpdate = document.getElementById("nameAriaUpdate");
-const nameAriaWrite = document.getElementById("nameAriaWrite");
-const introEmailAria = document.getElementById("introEmailAria");
-const introEmailAriaUpdate = document.getElementById("introEmailAriaUpdate");
-const introEmailAriaWrite = document.getElementById("introEmailAriaWrite");
-const githubAria = document.getElementById("githubAria");
-const githubAriaUpdate = document.getElementById("githubAriaUpdate");
-const githubAriaWrite = document.getElementById("githubAriaWrite");
-const facebookAria = document.getElementById("facebookAria");
-const facebookAriaUpdate = document.getElementById("facebookAriaUpdate");
-const facebookAriaWrite = document.getElementById("facebookAriaWrite");
-const xAria = document.getElementById("xAria");
-const xAriaUpdate = document.getElementById("xAriaUpdate");
-const xAriaWrite = document.getElementById("xAriaWrite");
-const homepageAria = document.getElementById("homepageAria");
-const homepageAriaUpdate = document.getElementById("homepageAriaUpdate");
-const homepageAriaWrite = document.getElementById("homepageAriaWrite");
-const thumbInput = document.getElementById("thumbInput");
+const nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,20}$/;
 const socialLength = 50;
 
-function updateThumbOpen() {
-    thumbInput.click();
+function pfpInputClick() {
+    document.querySelector("#pfpInput").click();
 }
 
-function updateThumb() {
-    let settingProfileThumb = document.getElementById("profile-pfp");
-    let settingProfileThumbUpdatable = document.getElementById("profile-pfp-updatable");
-    let profilePfpUpdatableMobile = document.getElementById("profile-pfp-updatable-mobile");
-    let profilePfpMobile = document.getElementById("profile-pfp-updatable-mobile");
+function pfpChanged() {
+    let pfp = document.querySelector("#pfp");
+    let pfpInput = document.querySelector("#pfpInput");
 
     let formData = new FormData();
-    formData.append("file", thumbInput.files[0]);
+    formData.append("file", pfpInput.files[0]);
 
-    axios.post("/api/v1/image/thumbnail", formData, {
+    axios.post("/api/images/thumbnail", formData, {
         headers: {
             'Content-Type': `multipart/form-data;`,
         }
     })
         .then((result) => {
-            settingProfileThumb.src = result.data.url;
-            settingProfileThumb.alt = result.data.originName;
-            settingProfileThumbUpdatable.src = result.data.url;
-            settingProfileThumbUpdatable.alt = result.data.originName;
-            profilePfpUpdatableMobile.src = result.data.url;
-            profilePfpUpdatableMobile.alt = result.data.originName;
-            profilePfpMobile.src = result.data.url;
-            profilePfpMobile.alt = result.data.originName;
+            pfp.src = result.data.url;
+            pfp.alt = result.data.originName;
         })
         .catch(() => {
             console.log("실패하였습니다.");
         })
 }
 
-function nameAriaInvisible() {
-    nameAria.className = "col-7 d-none";
-    nameAriaUpdate.className = "col-2 text-center d-none";
-    nameAriaWrite.className = "col-9 input-group";
-}
-
-function nameAriaVisible() {
-    nameAria.className = "col-7";
-    nameAriaUpdate.className = "col-2 text-center";
-    nameAriaWrite.className = "col-9 input-group d-none";
-}
-
-function introEmailAriaInvisible() {
-    introEmailAria.className = "col-7 d-none";
-    introEmailAriaUpdate.className = "col-2 text-center d-none";
-    introEmailAriaWrite.className = "col-9 input-group";
-}
-
-function introEmailAriaVisible() {
-    introEmailAria.className = "col-7";
-    introEmailAriaUpdate.className = "col-2 text-center";
-    introEmailAriaWrite.className = "col-9 input-group d-none";
-}
-
-function githubAriaInvisible() {
-    githubAria.className = "col-7 d-none";
-    githubAriaUpdate.className = "col-2 text-center d-none";
-    githubAriaWrite.className = "col-9 input-group";
-}
-
-function githubAriaVisible() {
-    githubAria.className = "col-7";
-    githubAriaUpdate.className = "col-2 text-center";
-    githubAriaWrite.className = "col-9 input-group d-none";
-}
-
-function facebookAriaInvisible() {
-    facebookAria.className = "col-7 d-none";
-    facebookAriaUpdate.className = "col-2 text-center d-none";
-    facebookAriaWrite.className = "col-9 input-group";
-}
-
-function facebookAriaVisible() {
-    facebookAria.className = "col-7";
-    facebookAriaUpdate.className = "col-2 text-center";
-    facebookAriaWrite.className = "col-9 input-group d-none";
-}
-
-function xAriaInvisible() {
-    xAria.className = "col-7 d-none";
-    xAriaUpdate.className = "col-2 text-center d-none";
-    xAriaWrite.className = "col-9 input-group";
-}
-
-function xAriaVisible() {
-    xAria.className = "col-7";
-    xAriaUpdate.className = "col-2 text-center";
-    xAriaWrite.className = "col-9 input-group d-none";
-}
-
-function homepageAriaInvisible() {
-    homepageAria.className = "col-7 d-none";
-    homepageAriaUpdate.className = "col-2 text-center d-none";
-    homepageAriaWrite.className = "col-9 input-group";
-}
-
-function homepageAriaVisible() {
-    homepageAria.className = "col-7";
-    homepageAriaUpdate.className = "col-2 text-center";
-    homepageAriaWrite.className = "col-9 input-group d-none";
-}
-
-function saveName() {
-    const settingNameInput = document.getElementById("settingNameInput");
-    const nameP = document.getElementById("nameP");
-
-    if (settingNameInput.value === nameP.innerText) {
-        nameAriaVisible();
-        return;
-    }
-
-    if (!settingNameValidate()) {
-        alert("이름은 최소 2자, 최대 20자로 한글과 영어만 입력 가능합니다.");
-        return;
-    }
-
-    axios.put("/api/v1/users/profile/name",
-        {
-        "name" : settingNameInput.value
-        })
-        .then(() => {
-            nameP.innerText = settingNameInput.value;
-            nameAriaVisible();
-        })
-        .catch(() => {
-            alert("변경에 실패하였습니다. 잠시 후 다시 시도해주세요.");
-        })
-}
-
-function saveIntroEmail() {
-    const settingIntroEmailInput = document.getElementById("settingIntroEmailInput");
-    const introEmailP = document.getElementById("introEmailP");
-
-    if (settingIntroEmailInput.value === introEmailP.innerText) {
-        introEmailAriaVisible();
-        return;
-    }
-
-    if (!socialValidate(settingIntroEmailInput)) {
-        alert("최대 50자입니다.");
-        return;
-    }
-
-    axios.put("/api/v1/users/profile/github",
-        {
-            "content" : settingIntroEmailInput.value
-        })
-        .then(() => {
-            introEmailP.innerText = settingIntroEmailInput.value;
-            introEmailAriaVisible();
-        })
-        .catch(() => {
-            alert("변경에 실패하였습니다. 잠시 후 다시 시도해주세요.");
-        })
-}
-
-function saveGithub() {
-    const settingGithubInput = document.getElementById("settingGithubInput");
-    const githubP = document.getElementById("githubP");
-
-    if (settingGithubInput.value === githubP.innerText) {
-        githubAriaVisible();
-        return;
-    }
-
-    if (!socialValidate(settingGithubInput)) {
-        alert("최대 50자입니다.");
-        return;
-    }
-
-    axios.put("/api/v1/users/profile/github",
-        {
-            "content" : settingGithubInput.value
-        })
-        .then(() => {
-            githubP.innerText = settingGithubInput.value;
-            githubAriaVisible();
-        })
-        .catch(() => {
-            alert("변경에 실패하였습니다. 잠시 후 다시 시도해주세요.");
-        })
-}
-
-function saveFacebook() {
-    const settingFacebookInput = document.getElementById("settingFacebookInput");
-    const facebookP = document.getElementById("facebookP");
-
-    if (settingFacebookInput.value === facebookP.innerText) {
-        facebookAriaVisible();
-        return;
-    }
-
-    if (!socialValidate(settingFacebookInput)) {
-        alert("최대 50자입니다.");
-        return;
-    }
-
-    axios.put("/api/v1/users/profile/facebook",
-        {
-            "content" : settingFacebookInput.value
-        })
-        .then(() => {
-            facebookP.innerText = settingFacebookInput.value;
-            facebookAriaVisible();
-        })
-        .catch(() => {
-            alert("변경에 실패하였습니다. 잠시 후 다시 시도해주세요.");
-        })
-}
-
-function saveX() {
-    const settingXInput = document.getElementById("settingXInput");
-    const xP = document.getElementById("xP");
-
-    if (settingXInput.value === xP.innerText) {
-        xAriaVisible();
-        return;
-    }
-
-    if (!socialValidate(settingXInput)) {
-        alert("최대 50자입니다.");
-        return;
-    }
-
-    axios.put("/api/v1/users/profile/x",
-        {
-            "content" : settingXInput.value
-        })
-        .then(() => {
-            xP.innerText = settingXInput.value;
-            xAriaVisible();
-        })
-        .catch(() => {
-            alert("변경에 실패하였습니다. 잠시 후 다시 시도해주세요.");
-        })
-}
-
-function saveHomepage() {
-    const settingHomepageInput = document.getElementById("settingHomepageInput");
-    const homepageP = document.getElementById("homepageP");
-
-    if (settingHomepageInput.value === homepageP.innerText) {
-        homepageAriaVisible();
-        return;
-    }
-
-    if (!socialValidate(settingHomepageInput)) {
-        alert("최대 50자입니다.");
-        return;
-    }
-
-    axios.put("/api/v1/users/profile/homepage",
-        {
-            "content" : settingHomepageInput.value
-        })
-        .then(() => {
-            homepageP.innerText = settingHomepageInput.value;
-            homepageAriaVisible();
-        })
-        .catch(() => {
-            alert("변경에 실패하였습니다. 잠시 후 다시 시도해주세요.");
-        })
-}
-
-async function settingNameValidate() {
-    let isDuplicated = true;
-    let settingNameInput = document.getElementById("settingNameInput");
-    console.log(settingNameInput.value);
-
-    await axios.get("/api/v1/users/name/verification?name=" + settingNameInput.value,)
+function pfpRemove() {
+    axios.put("/api/images/thumbnail", {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
         .then((result) => {
-            isDuplicated = result.data;
-            console.log(isDuplicated);
-
-            if (settingNameReq.test(settingNameInput.value) && !isDuplicated) {
-                settingNameInput.className = "form-control is-valid";
-                return true;
-            } else {
-                settingNameInput.className = "form-control is-invalid";
-                return false;
-            }
+            pfp.src = "/static/icons/person.svg";
+            pfp.alt = "no image";
         })
+        .catch(() => {
+            console.log("실패하였습니다.")
+        })
+}
+
+function profileUpdate() {
+    let name = document.querySelector("#name").value;
+    let introEmail = document.querySelector("#introEmail").value;
+    let bio = document.querySelector("#bio").value;
+    let $$profileLinks = document.querySelectorAll('.profile-links');
+    let saveFailed = document.querySelector("#save-failed");
+    let links = [];
+
+    if (!nameValidate(name)) {
+        alert("이름을 확인해주세요.")
+    }
+
+    pushLink(links, $$profileLinks[0].value);
+    pushLink(links, $$profileLinks[1].value);
+    pushLink(links, $$profileLinks[2].value);
+    pushLink(links, $$profileLinks[3].value);
+    pushLink(links, $$profileLinks[4].value);
+
+    axios.put("/api/users/profiles", {
+        "name" : name,
+        "bio" : bio,
+        "email" : introEmail,
+        "linkList" : links
+    }).then(() => {
+        document.location.reload();
+    }).catch(() => {
+        saveFailed.classList.remove("d-none")
+    })
+}
+
+function pushLink(linkArray, val) {
+    if (val !== '') {
+        linkArray.push(val);
+    }
+}
+
+function nameValidate(element) {
+    return nameReg.test(element.value);
 }
 
 function socialValidate(element) {
@@ -328,3 +101,335 @@ function debounce(func, timeout = 200) {
 }
 
 const settingNameCheck = debounce(() => settingNameValidate());
+
+function updateAlert(type, checkbox) {
+    let url = `/api/users/alerts?type=${type}&isOn=${checkbox.checked}`;
+
+    axios.put(url, {})
+        .catch(() => {
+        alert("저장에 실패하였습니다.")
+    })
+}
+
+let categoryDiv = document.querySelector("#categoryDiv");
+
+function blogSwap() {
+    let selectBox = document.querySelector('#blogSelect').selectedIndex;
+    let selectedBlog = blogs[selectBox];
+    let blogPfp = document.querySelector("#blogPfp");
+    let blogName = document.querySelector("#blogName");
+    let blogUrl = document.querySelector("#blogUrl");
+    let blogOpen = document.querySelector("#blogOpen");
+    let blogBio = document.querySelector("#blogBio");
+
+    if (selectedBlog.thumbUrl === '' || selectedBlog.thumbUrl === null) {
+        selectedBlog.thumbUrl = '/static/icons/reorder.svg';
+    }
+
+    blogPfp.src = selectedBlog.thumbUrl;
+    blogName.value = selectedBlog.blogName;
+    blogUrl.value = selectedBlog.blogUrl;
+    blogOpen.value = selectedBlog.createdAt.split('T')[0];
+    blogBio.value = selectedBlog.blogBio;
+    let categories = selectedBlog.categories;
+
+    categoryDiv.innerHTML = "<h3 class=\"card-title mt-4\">카테고리</h3>" +
+        "<div class=\"row g-3 mb-1\">\n" +
+        "    <div class=\"col-auto\">\n" +
+        "        <input id=\"newCategory\" type=\"text\" class=\"form-control\" value=\"\">\n" +
+        "    </div>\n" +
+        "    <div class=\"col-auto\"><button class=\"btn\" onclick='addCategory()'>\n" +
+        "        추가\n" +
+        "    </button></div>\n" +
+        "</div>";
+
+    for (let i = 0; i < categories.length; i++) {
+        if (categories[i].name === '' || categories[i].name === null) {
+            return;
+        }
+
+        if (!categories[i].deleted) {
+            drawCategory(categories[i]);
+        }
+    }
+}
+
+function drawCategory(category) {
+    let categoryRow = document.createElement("div");
+    categoryRow.className = "row g-3 mb-1";
+
+    let categoryCol = document.createElement("div");
+    categoryCol.className = "col-auto";
+    let categoryUpdateCol = document.createElement("div");
+    categoryUpdateCol.className = "col-auto";
+    let categoryUpdateBtn = document.createElement("button");
+    categoryUpdateBtn.className = "btn"
+
+    let categoryDeleteCol = document.createElement("div");
+    categoryDeleteCol.className = "col-auto";
+    let categoryDeleteBtn = document.createElement("button");
+    categoryDeleteBtn.className = "btn btn-ghost-danger"
+
+
+    let categoryInput = document.createElement("input");
+    categoryInput.type = "text";
+    categoryInput.className = "form-control";
+    categoryInput.id = "category-input-" + category.categoryNo;
+    categoryInput.value = category.name;
+
+    categoryUpdateBtn.appendChild(document.createTextNode("수정"));
+
+    categoryUpdateBtn.addEventListener("click", function() {
+        updateCategory(category.categoryNo)
+    });
+
+    categoryDeleteBtn.addEventListener("click", function() {
+        deleteCategory(category.categoryNo)
+    });
+
+    categoryDeleteBtn.appendChild(document.createTextNode("삭제"));
+    categoryDeleteCol.appendChild(categoryDeleteBtn);
+    categoryUpdateCol.appendChild(categoryUpdateBtn);
+    categoryRow.appendChild(categoryCol);
+    categoryCol.appendChild(categoryInput);
+    categoryRow.appendChild(categoryUpdateCol);
+    categoryRow.appendChild(categoryDeleteCol);
+    categoryDiv.appendChild(categoryRow);
+}
+
+function addCategory() {
+    let newCategory = document.querySelector("#newCategory");
+    let blogUrl = document.querySelector("#blogUrl").value;
+
+    if (newCategory.value === "" || newCategory.value === null) {
+        alert("카테고리를 입력하지 않았습니다.")
+        return;
+    }
+
+    let url = `/api/categories?name=${newCategory.value}&blogUrl=${blogUrl}`;
+
+    axios.post(url)
+        .then((result) => {
+            console.log(result);
+
+        let savedCategory = result.data;
+
+        drawCategory(savedCategory);
+
+        newCategory.value = "";
+    }).catch(() => {
+        alert("저장에 실패하였습니다.");
+    })
+}
+
+function updateCategory(categoryNo) {
+    let categoryName = document.querySelector("#category-input-" + categoryNo);
+
+    if (categoryName.value === "" || categoryName.value === null) {
+        alert("카테고리를 입력하지 않았습니다.")
+        return;
+    }
+
+    let url = `/api/categories/${categoryNo}?name=${categoryName.value}`;
+
+    axios.put(url)
+        .catch(() => {
+            alert("저장에 실패하였습니다.")
+        })
+}
+
+function deleteCategory(categoryNo) {
+    let categoryName = document.querySelector("#category-input-" + categoryNo);
+    let url = `/api/categories/${categoryNo}`;
+
+    axios.delete(url)
+        .then((result) => {
+            categoryName.parentElement.parentElement.remove();
+        })
+        .catch(() => {
+            alert("삭제에 실패하였습니다.")
+        })
+}
+
+function blogNew() {
+    if (blogs !== null && blogs.length >= 3) {
+        alert("더 이상 개설할 수 없습니다.");
+        return;
+    }
+
+    let blogPfp = document.querySelector("#blogPfp");
+    let blogName = document.querySelector("#blogName");
+    let blogUrl = document.querySelector("#blogUrl");
+    let blogOpen = document.querySelector("#blogOpen");
+    let blogBio = document.querySelector("#blogBio");
+    let blogSaveBtn = document.querySelector("#blogSave");
+    let blogCreateBtn = document.querySelector("#blogCreate");
+    let blogSelectDiv = document.querySelector("#blogSelectDiv");
+    let blogOpenDiv = document.querySelector("#blogOpenDiv");
+    let categoryDiv = document.querySelector("#categoryDiv");
+    let blogCancelBtn = document.querySelector("#blogCancel");
+    let blogPfpDiv = document.querySelector("#blogPfpDiv");
+    let urlPrefix = document.querySelector("#urlPrefix");
+
+    blogOpen.readOnly = false;
+    blogUrl.readOnly = false;
+    blogSelectDiv.classList.add("d-none");
+    blogOpenDiv.classList.add("d-none");
+    categoryDiv.classList.add("d-none");
+    blogSaveBtn.classList.add("d-none");
+    blogPfpDiv.classList.add("d-none");
+    blogCreateBtn.classList.remove("d-none");
+    blogCancelBtn.classList.remove("d-none");
+    urlPrefix.classList.remove("d-none");
+
+    blogPfp.src = '';
+    blogName.value = '';
+    blogUrl.value = '';
+    blogOpen.value = '';
+    blogBio.value = '';
+}
+
+function blogCreateCancel() {
+    let blogUrl = document.querySelector("#blogUrl");
+    let blogOpen = document.querySelector("#blogOpen");
+    let blogSaveBtn = document.querySelector("#blogSave");
+    let blogCreateBtn = document.querySelector("#blogCreate");
+    let blogSelectDiv = document.querySelector("#blogSelectDiv");
+    let blogOpenDiv = document.querySelector("#blogOpenDiv");
+    let categoryDiv = document.querySelector("#categoryDiv");
+    let blogCancelBtn = document.querySelector("#blogCancel");
+    let blogPfpDiv = document.querySelector("#blogPfpDiv");
+    let urlPrefix = document.querySelector("#urlPrefix");
+
+    blogOpen.readOnly = true;
+    blogUrl.readOnly = true;
+    blogSelectDiv.classList.remove("d-none");
+    blogOpenDiv.classList.remove("d-none");
+    categoryDiv.classList.remove("d-none");
+    blogSaveBtn.classList.remove("d-none");
+    blogPfpDiv.classList.remove("d-none");
+    blogCreateBtn.classList.add("d-none");
+    blogCancelBtn.classList.add("d-none");
+    urlPrefix.classList.add("d-none");
+
+    blogSwap();
+}
+
+function blogCreate() {
+    let blogName = document.querySelector("#blogName");
+    let blogUrl = document.querySelector("#blogUrl");
+    let blogBio = document.querySelector("#blogBio");
+
+    axios.post("/api/blogs", {
+        "name": blogName.value,
+        "url": blogUrl.value,
+        "bio": blogBio.value
+    }).then(() => {
+        window.location.reload();
+    }).catch(() => {
+        alert("개설에 실패하였습니다.")
+    })
+}
+
+function updateBlog() {
+    let blogName = document.querySelector("#blogName");
+    let blogUrl = document.querySelector("#blogUrl");
+    let blogBio = document.querySelector("#blogBio");
+    let saveSuccess = document.querySelector("#save-success");
+    let saveFailed = document.querySelector("#save-failed");
+    let url = `/api/blogs?url=${blogUrl.value}`;
+
+    saveSuccess.className="d-none";
+    saveFailed.className="d-none";
+
+    axios.put(url, {
+        "name": blogName.value,
+        "bio": blogBio.value
+    }).then((result) => {
+        console.log(result);
+        saveSuccess.classList.remove("d-none");
+    }).catch(() => {
+        saveFailed.classList.remove("d-none");
+    });
+}
+
+function updateBlogThumbOpen() {
+    let blogThumbInput = document.querySelector("#blogThumbInput");
+    blogThumbInput.click();
+}
+
+function updateBlogThumb() {
+    let blogThumbInput = document.querySelector("#blogThumbInput");
+    let blogPfp = document.querySelector("#blogPfp");
+    let blogUrl = document.querySelector("#blogUrl");
+
+    let formData = new FormData();
+    formData.append("file", blogThumbInput.files[0]);
+
+    let url = `/api/blogs/thumbs?url=${blogUrl.value}`;
+
+    axios.post(url, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    }).then((result) => {
+        blogPfp.src = result.data.url;
+        blogPfp.alt = result.data.originName;
+    }).catch(() => {
+        alert("저장에 실패하였습니다.")
+    });
+}
+
+function deleteBlogThumb() {
+    let blogPfp = document.querySelector("#blogPfp");
+    let blogUrl = document.querySelector("#blogUrl");
+    let url = `/api/blogs/thumbs?url=${blogUrl.value}`;
+    axios.delete(url).then(() => {
+        document.location.reload();
+    })
+}
+
+function changePasswordClick() {
+    let email = document.querySelector("#memberEmail").value;
+    let url = `/api/users/password?email=${email}`;
+    console.log(url);
+
+    axios.get(url)
+        .then(() => {
+            let sent = document.querySelector("#pwdSent");
+            sent.classList.remove("d-none");
+        })
+        .catch(() => {
+            let sentFail = document.querySelector("#pwdSentFail");
+            sentFail.classList.remove("d-none");
+        })
+}
+
+function deleteAccount() {
+    let pwd = document.querySelector("#left-pwd").value;
+
+    axios.post('/api/users', {
+        "password": pwd
+    })
+        .then(() => {
+            document.location.reload();
+        })
+        .catch((error) => {
+            console.log(error);
+            alert("계정 삭제 실패하였습니다.");
+        })
+}
+
+function deleteBlog() {
+    let blogUrl = document.querySelector("#blogUrl");
+    let url = `/api/blogs/quit?url=${blogUrl.value}`;
+    let pwd = document.querySelector("#left-pwd").value;
+
+    axios.post(url, {
+        "password": pwd,
+    }).then(() => {
+        document.location.reload();
+    }).catch(() => {
+        alert("폐쇄에 실패하였습니다.");
+    })
+}

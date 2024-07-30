@@ -7,7 +7,7 @@
         <div class="container-xl">
             <h1 class="navbar-brand d-none-navbar-horizontal pe-0 pe-md-3">
                 <a href="/">
-                    <img src="/static/logo/logo-BE81F7.svg" width="30" height="30" alt="">
+                    <img src="/static/logo/logo-375582.svg" width="30" height="30" alt="">
                 </a>
                 <a style="font-size: 22px; font-weight: bold" th:text="${profile.username}" th:username="${profile.username}" th:onclick="|location.href='/@'+this.getAttribute('username')|"></a>
             </h1>
@@ -152,7 +152,7 @@
                 <div sec:authorize="isAuthenticated()" class="nav-item dropdown">
                     <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                        aria-label="Open user menu">
-                        <img class="avatar avatar-sm" th:src="${thumbIsNull} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="pjp"/>
+                        <img class="avatar avatar-sm rounded-circle" th:src="${thumbIsNull} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="pjp"/>
                         <div class="d-none d-xl-block ps-2">
                             <div th:text="${members.getName()}"></div>
                             <div class="mt-1 small text-secondary" th:text="'@'+${members.getUsername()}"></div>
@@ -164,7 +164,7 @@
                         <div class="dropdown-divider"></div>
                         <a onclick="setTheme('dark')" class="dropdown-item d-md-none hide-theme-dark">테마 변경</a>
                         <a onclick="setTheme('light')" class="dropdown-item d-md-none hide-theme-light">테마 변경</a>
-                        <a href="./settings.html" class="dropdown-item">설정</a>
+                        <a href="/settings" class="dropdown-item">설정</a>
                         <p onclick="logout()" class="dropdown-item">로그아웃</p>
                     </div>
                 </div>

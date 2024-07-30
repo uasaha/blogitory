@@ -7,27 +7,54 @@ const profilePfp = document.querySelector('#profile-pfp');
 const profilePfpUpdatable = document.querySelector('#profile-pfp-updatable');
 const profileUpdatable = document.querySelector('#profile-updatable');
 const profileButtonUpdatable = document.querySelector('#profile-button-updatable');
+let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,50}$/;
+
+function isNullOrEmpty(value) {
+    return value === null || value === '';
+}
+
+function nameValidate(element) {
+    if (!nameReg.test(element.value)) {
+        element.className = "form-control is-invalid";
+        return false;
+    } else {
+        element.className = "form-control is-valid";
+        return true;
+    }
+}
 
 function disappearProfiles() {
     profileName.className = "profile-name d-none";
-    profileBio.className = "row justify-content-center d-none";
+
+    if (!isNullOrEmpty(profileBio)) {
+        profileBio.className = "row justify-content-center d-none";
+    }
     profileFollow.className = "col-12 d-none";
     profileButton.className = "row justify-content-center d-none";
-    profileEmail.className = "row justify-content-center d-none";
-    profilePfp.className = "avatar avatar-md d-none";
-    profilePfpUpdatable.className = "avatar avatar-md cursor-pointer";
+
+    if (!isNullOrEmpty(profileEmail)) {
+        profileEmail.className = "row justify-content-center d-none";
+    }
+    profilePfp.className = "avatar avatar-md d-none rounded-circle";
+    profilePfpUpdatable.className = "avatar avatar-md cursor-pointer rounded-circle";
     profileUpdatable.className = "row justify-content-center";
     profileButtonUpdatable.className = "row justify-content-end";
 }
 
 function showProfiles() {
     profileName.className = "profile-name";
-    profileBio.className = "row justify-content-center";
+
+    if (!isNullOrEmpty(profileBio)) {
+        profileBio.className = "row justify-content-center";
+    }
     profileFollow.className = "col-12";
     profileButton.className = "row justify-content-center";
-    profileEmail.className = "row justify-content-center";
-    profilePfp.className = "avatar avatar-md";
-    profilePfpUpdatable.className = "avatar avatar-md cursor-pointer d-none";
+
+    if (!isNullOrEmpty(profileEmail)) {
+        profileEmail.className = "row justify-content-center";
+    }
+    profilePfp.className = "avatar avatar-md rounded-circle";
+    profilePfpUpdatable.className = "avatar avatar-md cursor-pointer d-none rounded-circle";
     profileUpdatable.className = "row justify-content-center d-none";
     profileButtonUpdatable.className = "row justify-content-end d-none";
 }
@@ -39,15 +66,17 @@ function saveProfiles() {
     const $$profileLinksUpdatable = document.querySelectorAll('.profile-links-updatable');
     let links = [];
 
+    if (!nameValidate(profileNameUpdatable)) {
+        alert("이름을 확인해주세요.")
+    }
+
     pushLink(links, $$profileLinksUpdatable[0].value);
     pushLink(links, $$profileLinksUpdatable[1].value);
     pushLink(links, $$profileLinksUpdatable[2].value);
     pushLink(links, $$profileLinksUpdatable[3].value);
     pushLink(links, $$profileLinksUpdatable[4].value);
 
-    console.log(links);
-
-    axios.put("/api/v1/users/profiles", {
+    axios.put("/api/users/profiles", {
         "name" : profileNameUpdatable.value,
         "bio" : profileBioUpdatable.value,
         "email" : profileEmailUpdatable.value,
@@ -55,6 +84,8 @@ function saveProfiles() {
     }).then(() => {
         showProfiles();
         document.location.reload();
+    }).catch(() => {
+        alert("저장에 실패하였습니다.")
     })
 }
 
@@ -76,22 +107,27 @@ const profileButtonUpdatableMobile = document.querySelector('#profile-button-upd
 
 function disappearProfilesMobile() {
     profileNameMobile.className = "col-8 d-none";
-    profileBioMobile.className = "row justify-content-center d-none";
+
+    if (!isNullOrEmpty(profileBioMobile)) {
+        profileBioMobile.className = "row justify-content-center d-none";
+    }
     profileFollowMobile.className = "col-12 d-none";
     profileButtonMobile.className = "row justify-content-center d-none";
-    profilePfpMobile.className = "avatar avatar-md d-none";
-    profilePfpUpdatableMobile.className = "avatar avatar-md cursor-pointer";
+    profilePfpMobile.className = "avatar avatar-md d-none rounded-circle";
+    profilePfpUpdatableMobile.className = "avatar avatar-md cursor-pointer rounded-circle";
     profileUpdatableMobile.className = "row justify-content-center";
     profileButtonUpdatableMobile.className = "row justify-content-end";
 }
 
 function showProfilesMobile() {
     profileNameMobile.className = "col-8";
-    profileBioMobile.className = "row justify-content-center";
+    if (!isNullOrEmpty(profileBioMobile)) {
+        profileBioMobile.className = "row justify-content-center";
+    }
     profileFollowMobile.className = "col-12";
     profileButtonMobile.className = "row justify-content-center";
-    profilePfpMobile.className = "avatar avatar-md";
-    profilePfpUpdatableMobile.className = "avatar avatar-md cursor-pointer d-none";
+    profilePfpMobile.className = "avatar avatar-md rounded-circle";
+    profilePfpUpdatableMobile.className = "avatar avatar-md cursor-pointer d-none rounded-circle";
     profileUpdatableMobile.className = "row justify-content-center d-none";
     profileButtonUpdatableMobile.className = "row justify-content-end d-none";
 }
@@ -103,6 +139,10 @@ function saveProfilesMobile() {
     const $$profileLinksUpdatable = document.querySelectorAll('.profile-links-updatable-mobile');
     let links = [];
 
+    if (!nameValidate(profileNameUpdatable)) {
+        alert("이름을 확인해주세요.")
+    }
+
     pushLink(links, $$profileLinksUpdatable[0].value);
     pushLink(links, $$profileLinksUpdatable[1].value);
     pushLink(links, $$profileLinksUpdatable[2].value);
@@ -111,7 +151,7 @@ function saveProfilesMobile() {
 
     console.log(links);
 
-    axios.put("/api/v1/users/profiles", {
+    axios.put("/api/users/profiles", {
         "name" : profileNameUpdatable.value,
         "bio" : profileBioUpdatable.value,
         "email" : profileEmailUpdatable.value,
@@ -119,6 +159,8 @@ function saveProfilesMobile() {
     }).then(() => {
         showProfiles();
         document.location.reload();
+    }).catch(() => {
+        alert("저장에 실패하였습니다.")
     })
 }
 
@@ -135,7 +177,7 @@ function updateThumb() {
     let formData = new FormData();
     formData.append("file", thumbInput.files[0]);
 
-    axios.post("/api/v1/image/thumbnail", formData, {
+    axios.post("/api/images/thumbnail", formData, {
         headers: {
             'Content-Type': `multipart/form-data;`,
         }
@@ -151,6 +193,237 @@ function updateThumb() {
             profilePfpMobile.alt = result.data.originName;
         })
         .catch(() => {
-            console.log("실패하였습니다.");
+            alert("저장에 실패하였습니다.")
         })
 }
+
+Date.prototype.yyyymmdd = function() {
+    var mm = this.getMonth() + 1;
+    var dd = this.getDate();
+
+    return [this.getFullYear(),
+        (mm>9 ? '' : '0') + mm,
+        (dd>9 ? '' : '0') + dd
+    ].join('-');
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    let monData = [];
+    let tueData = [];
+    let wedData = [];
+    let thuData = [];
+    let friData = [];
+    let satData = [];
+    let sunData = [];
+
+    let daysInYear = 366;
+    let now = new Date();
+
+    let currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+
+    if (currentDate.getDay() === 1) {
+        currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -1);
+        daysInYear = daysInYear + 1;
+    }
+    if (currentDate.getDay() === 2) {
+        currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -2);
+        daysInYear = daysInYear + 2;
+    }
+    if (currentDate.getDay() === 3) {
+        currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -3);
+        daysInYear = daysInYear + 3;
+    }
+    if (currentDate.getDay() === 4) {
+        currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -4);
+        daysInYear = daysInYear + 4;
+    }
+    if (currentDate.getDay() === 5) {
+        currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -5);
+        daysInYear = daysInYear + 5;
+    }
+    if (currentDate.getDay() === 6) {
+        currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -6);
+        daysInYear = daysInYear + 6;
+    }
+
+    let allDayData = [];
+
+    for (let i = 0; i <= daysInYear; i++) {
+        allDayData.push(
+            {
+                name: currentDate.getDay(),
+                date: currentDate.yyyymmdd(),
+                value: getRandomInt(0, 5)
+            }
+        )
+
+        currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
+    }
+
+    for (let i = 0; i <= daysInYear; i++) {
+        if (allDayData[i].name === 0) {
+            sunData.push({
+                x: allDayData[i].date,
+                y: allDayData[i].value,
+            })
+        }
+        if (allDayData[i].name === 1) {
+            monData.push({
+                x: allDayData[i].date,
+                y: allDayData[i].value,
+            })
+        }
+        if (allDayData[i].name === 2) {
+            tueData.push({
+                x: allDayData[i].date,
+                y: allDayData[i].value,
+            })
+        }
+        if (allDayData[i].name === 3) {
+            wedData.push({
+                x: allDayData[i].date,
+                y: allDayData[i].value,
+            })
+        }
+        if (allDayData[i].name === 4) {
+            thuData.push({
+                x: allDayData[i].date,
+                y: allDayData[i].value,
+            })
+        }
+        if (allDayData[i].name === 5) {
+            friData.push({
+                x: allDayData[i].date,
+                y: allDayData[i].value,
+            })
+        }
+        if (allDayData[i].name === 6) {
+            satData.push({
+                x: allDayData[i].date,
+                y: allDayData[i].value,
+            })
+        }
+    }
+
+    let data = [
+        {
+            name: 'Sat',
+            data: satData
+        },
+        {
+            name: 'Fri',
+            data: friData
+        },
+        {
+            name: 'Thu',
+            data: thuData
+        },
+        {
+            name: 'Wed',
+            data: wedData
+        },
+        {
+            name: 'Tue',
+            data: tueData
+        },
+        {
+            name: 'Mon',
+            data: monData
+        },
+        {
+            name: 'Sun',
+            data: sunData
+        },
+    ];
+
+    let options = {
+        chart: {
+            height: 175,
+            type: 'heatmap',
+            toolbar: {
+                show: false,
+            },
+        },
+        plotOptions: {
+            heatmap: {
+                radius: 0,
+                distributed: true,
+                colorScale: {
+                    ranges: [{
+                        from: 0,
+                        to: 0,
+                        name: '0',
+                        color: '#BDBDBD'
+                    }, {
+                        from: 1,
+                        to: 1,
+                        name: '1',
+                        color: '#8fb0c6'
+                    }, {
+                        from: 2,
+                        to: 2,
+                        name: '2',
+                        color: '#4F7FB4'
+                    }, {
+                        from: 3,
+                        to: 3,
+                        name: '3',
+                        color: '#335582'
+                    }, {
+                        from: 4,
+                        to: 4,
+                        name: '4',
+                        color: '#11264f'
+                    }, {
+                        from: 5,
+                        to: 5,
+                        name: '5++',
+                        color: '#0C1152'
+                    },
+                    ],
+                    inverse: true,
+                }
+            }
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        stroke: {
+            show: false,
+        },
+        series: data,
+        xaxis: {
+            type: "datetime",
+            labels: {
+                format: 'MM/dd'
+            },
+            axisBorder: { show: false },
+            tickAmount: 12,
+            tickPlacement: 'between',
+            axisTicks: { show: true },
+            // labels: { show: false },
+            // formatter: function (value) {
+            //     return value;
+            // }
+        },
+        tooltip: {
+            intersect: false,
+            x: {
+                show: true,
+                format: "yyyy/MM/dd"
+            },
+        },
+        grid: {
+            show: false,
+        },
+    };
+
+    let chart = new ApexCharts(document.querySelector("#heatmap-chart"), options)
+    let chartMobile = new ApexCharts(document.querySelector("#heatmap-chart-mobile"), options);
+    chart.render();
+    chartMobile.render();
+})

@@ -10,467 +10,391 @@
 
     </style>
 </head>
-<body class="body-background">
+<body>
 <div class="container-xl" layout:fragment="main-content">
-    <div class="row row-deck row-cards">
-        <div class="profile col-lg-3 d-none d-lg-block">
-            <div class="row">
-                <div style="width:100%; vertical-align: middle; aspect-ratio: 1/1">
-                    <img id="profile-pfp" class="avatar avatar-md" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb}" alt="profile_picture">
-                    <img id="profile-pfp-updatable"  class="avatar avatar-md d-none cursor-pointer" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb}" alt="profile_picture" title="사진 변경" onclick="updateThumbOpen()">
-                    <input id="thumbInput" type="file" class="d-none" accept="image/*" onchange="updateThumb()"/>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="row mt-1">
-                    <span id="profile-name" style="font-size: 22px; font-weight: bold" th:text="${profile.name}"></span>
-                    <span style="font-size: 18px" th:text="'@'+${profile.username}"></span>
-                </div>
-                <div th:if="${profile.bio} != null" id="profile-bio" class="row justify-content-center mt-1">
-                    <span th:text="${profile.bio}"></span>
-                </div>
-                <div sec:authorize="isAuthenticated()" id="profile-updatable" class="row justify-content-center d-none">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <button type="button" class="btn" onclick="updateThumbOpen()">프로필 사진 변경</button>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Name</label>
-                                <input id="profile-name-updatable" type="text" class="form-control" aria-label="Name" aria-describedby="name-input" placeholder="name" th:value="${profile.name}">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Bio
-                                    <span class="form-label-description">100</span></label>
-                                <textarea id="profile-bio-updatable" class="form-control" rows="6" placeholder="Bio.." th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input id="profile-email-updatable" class="form-control" type="email" th:value="${profile.introEmail} == null ? '' : ${profile.introEmail}">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Social</label>
-                                <input th:each="link : ${profile.links}" class="form-control profile-links-updatable mb-1" th:value="${link.getLinkUrl()}">
-                                <input class="form-control profile-links-updatable mb-1" th:each="num : ${#numbers.sequence(1, 5 - profile.links.size())}">
-                            </div>
-                            <div id="profile-button-updatable" class="row justify-content-end d-none" style="margin-top: 5px">
-                                <button type="button" class="btn" style="width: 60px" onclick="saveProfiles()">저장</button>
-                                <button type="button" class="btn" style="width: 60px; margin-left: 10px" onclick="showProfiles()">취소</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="profile-follow" class="col-12 mt-1">
-                    <a href="#" class="text-body">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                             stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                            <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                            <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-                        </svg>
-                        <b><span th:text="${profile.followerCnt}"></span></b><span> 팔로워</span>
-                    </a>
-                    ·
-                    <a href="#" class="text-body">
-                        <b><span th:text="${profile.followeeCnt}"></span></b><span> 팔로잉</span>
-                    </a>
-                </div>
-            </div>
-            <div id="profile-email" class="row justify-content-center mt-1">
-                <a th:href="'mailto:' + ${profile.introEmail}" class="text-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
-                        <path d="M3 7l9 6l9 -6" />
-                    </svg>
-                    <span id="profile-mail" class="col-11" th:text="${profile.introEmail}"></span>
-                </a>
-                <div th:each="link : ${profile.links}" class="mt-1">
-                    <a th:href="${link.linkUrl}" class="text-body">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                             stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M9 15l6 -6" />
-                            <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
-                            <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
-                        </svg>
-                        <span class="col-11" th:text="${link.linkUrl}"></span>
-                    </a>
-                </div>
-            </div>
-            <div id="profile-button" sec:authorize="isAuthenticated()" class="row justify-content-center mt-1">
-                <button th:if="${profile.username} != ${members.username}" type="button" class="btn">팔로우</button>
-                <button th:if="${profile.username} == ${members.username}" type="button" class="btn" onclick="disappearProfiles()">프로필 수정</button>
-            </div>
-        </div>
-        <div class="contents col-lg-9 d-none d-lg-block">
-            <div class="row">
-                <span class="mb-3" style="font-size: 17px; font-weight: bold">Blogs</span>
-                <div class="col-4" th:each="blog : ${profile.blogs}">
-                    <div class="card" style="height: 120px">
-                        <div class="card-body">
-                            <a class="text-body" th:href="${blog.getBlogUrl()}"><h5 class="card-title" th:text="${blog.blogName}"></h5></a>
-                            <div class="card-text" th:text="${blog.blogBio}"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-1" sec:authorize="isAuthenticated()" th:if="${profile.blogs.size()} < 3 and ${profile.username} == ${members.username}" style="width: 70px; margin-left: -1em">
-                    <div class="card cursor-pointer" style="height: 120px" onclick="location.href='#'">
-                        <div class="card-body">
-                            <h5 class="card-title" style="margin-top: 1.5em">+</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 2em">
-                <span style="font-size: 17px; font-weight: bold">Yearly Posts</span>
-                <div class="row" style="overflow-y: scroll">
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row" style="margin-top: 2em">
-                <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
+    <div class="page-body">
+        <div class="row row-deck row-cards">
+            <div class="profile col-lg-3 d-none d-lg-block">
                 <div class="row">
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                    <div style="width:100%; vertical-align: middle; aspect-ratio: 1/1">
+                        <img id="profile-pfp" class="avatar avatar-md rounded-circle" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb == null} or  ${profile.profileThumb == ''}? '/static/icons/person.svg' : ${profile.profileThumb}" alt="profile_picture">
+                        <img id="profile-pfp-updatable"  class="avatar avatar-md d-none cursor-pointer rounded-circle" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb == null} or  ${profile.profileThumb == ''}? '/static/icons/person.svg' : ${profile.profileThumb}" alt="profile_picture" title="사진 변경" onclick="updateThumbOpen()">
+                        <input id="thumbInput" type="file" class="d-none" accept="image/*" onchange="updateThumb()"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="row mt-1">
+                        <span id="profile-name" style="font-size: 22px; font-weight: bold" th:text="${profile.name}"></span>
+                        <span style="font-size: 18px" th:text="'@'+${profile.username}"></span>
+                    </div>
+                    <div th:if="${profile.bio} != null" id="profile-bio" class="row justify-content-center mt-1">
+                        <span th:text="${profile.bio}"></span>
+                    </div>
+                    <div sec:authorize="isAuthenticated()" id="profile-updatable" class="row justify-content-center d-none">
+                        <div class="card">
                             <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                <div class="mb-3">
+                                    <button type="button" class="btn" onclick="updateThumbOpen()">프로필 사진 변경</button>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Name
+                                        <span class="form-label-description">20</span></label>
+                                    <input id="profile-name-updatable" type="text" class="form-control" aria-label="Name" aria-describedby="name-input" placeholder="name" th:value="${profile.name}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bio
+                                        <span class="form-label-description">200</span></label>
+                                    <textarea id="profile-bio-updatable" class="form-control" rows="6" placeholder="Bio.." th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input id="profile-email-updatable" class="form-control" type="email" th:value="${profile.introEmail} == null ? '' : ${profile.introEmail}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Social</label>
+                                    <input th:each="link : ${profile.links}" class="form-control profile-links-updatable mb-1" th:value="${link.getLinkUrl()}">
+                                    <input class="form-control profile-links-updatable mb-1" th:each="num : ${#numbers.sequence(1, 5 - profile.links.size())}">
+                                </div>
+                                <div id="profile-button-updatable" class="row justify-content-end d-none" style="margin-top: 5px">
+                                    <button type="button" class="btn" style="width: 60px" onclick="saveProfiles()">저장</button>
+                                    <button type="button" class="btn" style="width: 60px; margin-left: 10px" onclick="showProfiles()">취소</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                    <div id="profile-follow" class="col-12 mt-1">
+                        <a href="#" class="text-body">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                            </svg>
+                            <b><span th:text="${profile.followerCnt}"></span></b><span> 팔로워</span>
+                        </a>
+                        ·
+                        <a href="#" class="text-body">
+                            <b><span th:text="${profile.followeeCnt}"></span></b><span> 팔로잉</span>
+                        </a>
+                    </div>
+                </div>
+                <div id="profile-email" class="row justify-content-center mt-1">
+                    <a th:href="'mailto:' + ${profile.introEmail}" class="text-body" th:if="${!#strings.isEmpty(profile.introEmail)}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
+                            <path d="M3 7l9 6l9 -6" />
+                        </svg>
+                        <span id="profile-mail" class="col-11" th:text="${profile.introEmail}"></span>
+                    </a>
+                    <div th:each="link : ${profile.links}" class="mt-1">
+                        <a th:href="${link.linkUrl}" class="text-body">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 15l6 -6" />
+                                <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
+                                <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
+                            </svg>
+                            <span class="col-11" th:text="${link.linkUrl}"></span>
+                        </a>
+                    </div>
+                </div>
+                <div id="profile-button" sec:authorize="isAuthenticated()" class="row justify-content-center mt-1">
+                    <button th:if="${profile.username} != ${members.username}" type="button" class="btn">팔로우</button>
+                    <button th:if="${profile.username} == ${members.username}" type="button" class="btn" onclick="disappearProfiles()">프로필 수정</button>
+                </div>
+            </div>
+            <div class="contents col-lg-9 d-none d-lg-block">
+                <div class="row">
+                    <span class="mb-3" style="font-size: 17px; font-weight: bold">Blogs</span>
+                    <div class="col-4" th:each="blog : ${profile.blogs}">
+                        <div class="card" style="height: 120px">
                             <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                </div>
+                                <a class="text-body" th:href="${blog.getBlogUrl()}"><h5 class="card-title" th:text="${blog.blogName}"></h5></a>
+                                <div class="card-text" th:text="${blog.blogBio}"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                    <div class="col-1" sec:authorize="isAuthenticated()" th:if="${profile.blogs.size()} < 3 and ${profile.username} == ${members.username}" style="width: 70px;">
+                        <div class="card cursor-pointer" style="height: 120px" onclick="location.href='/settings/blog'">
                             <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                </div>
+                                <h5 class="card-title" style="margin-top: 1.5em">+</h5>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                </div>
+                <div class="row" style="margin-top: 2em">
+                    <span style="font-size: 17px; font-weight: bold">Activities</span>
+                    <div class="col-12">
+                        <div class="card mt-3">
+                            <div class="card-body" style="overflow-y: scroll;">
+                                <div id="heatmap-chart" style="width: 900px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 2em">
+                    <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
+                    <div class="row">
+                        <div class="col-6 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="profile col-dm-4 d-lg-none">
-            <div class="col">
-                <div class="row d-flex">
-                    <div class="col-4" style="width: 110px; height: 110px; vertical-align: middle;">
-                        <img id="profile-pfp-mobile" class="avatar avatar-md" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb}" alt="profile_image">
-                        <img id="profile-pfp-updatable-mobile"  class="avatar avatar-md d-none cursor-pointer" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb}" alt="profile_picture" title="사진 변경"  onclick="updateThumbOpen()">
-                    </div>
-                    <div id="profile-name-mobile" class="col-8">
-                        <div>
-                            <span style="font-size: 22px; font-weight: bold" th:text="${profile.name}"></span>
+            <div class="profile col-dm-4 d-lg-none">
+                <div class="col">
+                    <div class="row d-flex">
+                        <div class="col-4" style="width: 110px; height: 110px; vertical-align: middle;">
+                            <img id="profile-pfp-mobile" class="avatar avatar-md rounded-circle" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb}" alt="profile_image">
+                            <img id="profile-pfp-updatable-mobile"  class="avatar avatar-md d-none cursor-pointer rounded-circle" style="object-fit: cover; width: 100%; height: 100%" th:src="${profile.profileThumb}" alt="profile_picture" title="사진 변경"  onclick="updateThumbOpen()">
                         </div>
-                        <div>
-                            <span style="font-size: 18px" th:text="'@'+${profile.username}"></span>
-                        </div>
-                        <div id="profile-follow-mobile" class="col-12 mt-1">
-                            <a href="#" class="text-body">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
-                                    <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                    <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
-                                </svg>
-                                <b><span th:text="${profile.followerCnt}"></span></b><span> 팔로워</span>
-                            </a>
-                            ·
-                            <a href="#" class="text-body">
-                                <b><span th:text="${profile.followeeCnt}"></span></b><span> 팔로잉</span>
-                            </a>
-                        </div>
-                        <div class="row justify-content-center">
-                            <a th:href="'mailto:' + ${profile.introEmail}" class="text-body mt-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                     stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
-                                    <path d="M3 7l9 6l9 -6" />
-                                </svg>
-                                <span class="col-11" th:text="${profile.introEmail}"></span>
-                            </a>
-                            <div class="dropdown mt-1" th:if="${profile.links.size()} > 0">
-                                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <div id="profile-name-mobile" class="col-8">
+                            <div>
+                                <span style="font-size: 22px; font-weight: bold" th:text="${profile.name}"></span>
+                            </div>
+                            <div>
+                                <span style="font-size: 18px" th:text="'@'+${profile.username}"></span>
+                            </div>
+                            <div id="profile-follow-mobile" class="col-12 mt-1">
+                                <a href="#" class="text-body">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                          viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                          stroke-linecap="round" stroke-linejoin="round">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <path d="M9 15l6 -6" />
-                                        <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
-                                        <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
+                                        <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
                                     </svg>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-sm-start">
-                                    <li th:each="link : ${profile.links}">
-                                        <a class="dropdown-item text-body" th:href="${link.linkUrl}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                                 stroke-linecap="round" stroke-linejoin="round">
-                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                <path d="M9 15l6 -6" />
-                                                <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
-                                                <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
-                                            </svg>
-                                            <span th:text="${link.linkUrl}"></span>
-                                        </a>
-                                    </li>
-                                </ul>
+                                    <b><span th:text="${profile.followerCnt}"></span></b><span> 팔로워</span>
+                                </a>
+                                ·
+                                <a href="#" class="text-body">
+                                    <b><span th:text="${profile.followeeCnt}"></span></b><span> 팔로잉</span>
+                                </a>
+                            </div>
+                            <div class="row justify-content-center">
+                                <a th:href="'mailto:' + ${profile.introEmail}" class="text-body mt-1" th:if="${!#strings.isEmpty(profile.introEmail)}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                         stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
+                                        <path d="M3 7l9 6l9 -6" />
+                                    </svg>
+                                    <span class="col-11" th:text="${profile.introEmail}"></span>
+                                </a>
+                                <div class="dropdown mt-1" th:if="${profile.links.size()} > 0">
+                                    <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" style="font-size: 10px; width: 70px; height: 20px; border: none;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                            <path d="M9 15l6 -6" />
+                                            <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
+                                            <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
+                                        </svg>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-sm-start">
+                                        <li th:each="link : ${profile.links}">
+                                            <a class="dropdown-item text-body" th:href="${link.linkUrl}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                     stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <path d="M9 15l6 -6" />
+                                                    <path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" />
+                                                    <path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />
+                                                </svg>&nbsp;
+                                                <span th:text="${link.linkUrl}"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="profile-bio-mobile" th:if="${profile.bio} != null" class="row justify-content-center">
-                    <span th:text="${profile.bio}"></span>
-                </div>
-                <div id="profile-button-mobile" sec:authorize="isAuthenticated()" class="row justify-content-center" style="margin-top: 5px">
-                    <button th:if="${profile.username} != ${members.username}" type="button" class="btn">팔로우</button>
-                    <button th:if="${profile.username} == ${members.username}" type="button" class="btn" onclick="disappearProfilesMobile()">프로필 수정</button>
-                </div>
-                <div sec:authorize="isAuthenticated()" id="profile-updatable-mobile" class="row justify-content-center d-none">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <button type="button" class="btn" onclick="updateThumbOpen()">프로필 사진 변경</button>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Name</label>
-                                <input id="profile-name-updatable-mobile" type="text" class="form-control" aria-label="Name" aria-describedby="name-input" placeholder="name" th:value="${profile.name}">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Bio
-                                    <span class="form-label-description">100</span></label>
-                                <textarea id="profile-bio-updatable-mobile" class="form-control" rows="6" placeholder="Bio.." th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input id="profile-email-updatable-mobile" class="form-control" type="email" th:value="${profile.introEmail} == null ? '' : ${profile.introEmail}">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Social</label>
-                                <input th:each="link : ${profile.links}" class="form-control profile-links-updatable-mobile mb-1" th:value="${link.getLinkUrl()}">
-                                <input class="form-control profile-links-updatable-mobile mb-1" th:each="num : ${#numbers.sequence(1, 5 - profile.links.size())}">
-                            </div>
-                            <div id="profile-button-updatable-mobile" class="row justify-content-end d-none" style="margin-top: 5px">
-                                <button type="button" class="btn" style="width: 60px" onclick="saveProfilesMobile()">저장</button>
-                                <button type="button" class="btn" style="width: 60px; margin-left: 10px" onclick="showProfilesMobile()">취소</button>
+                    <div id="profile-bio-mobile" th:if="${profile.bio} != null" class="row justify-content-center">
+                        <span th:text="${profile.bio}"></span>
+                    </div>
+                    <div id="profile-button-mobile" sec:authorize="isAuthenticated()" class="row justify-content-center" style="margin-top: 5px">
+                        <button th:if="${profile.username} != ${members.username}" type="button" class="btn">팔로우</button>
+                        <button th:if="${profile.username} == ${members.username}" type="button" class="btn" onclick="disappearProfilesMobile()">프로필 수정</button>
+                    </div>
+                    <div sec:authorize="isAuthenticated()" id="profile-updatable-mobile" class="row justify-content-center d-none">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button type="button" class="btn" onclick="updateThumbOpen()">프로필 사진 변경</button>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Name</label>
+                                    <input id="profile-name-updatable-mobile" type="text" class="form-control" aria-label="Name" aria-describedby="name-input" placeholder="name" th:value="${profile.name}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Bio
+                                        <span class="form-label-description">100</span></label>
+                                    <textarea id="profile-bio-updatable-mobile" class="form-control" rows="6" placeholder="Bio.." th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input id="profile-email-updatable-mobile" class="form-control" type="email" th:value="${profile.introEmail} == null ? '' : ${profile.introEmail}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Social</label>
+                                    <input th:each="link : ${profile.links}" class="form-control profile-links-updatable-mobile mb-1" th:value="${link.getLinkUrl()}">
+                                    <input class="form-control profile-links-updatable-mobile mb-1" th:each="num : ${#numbers.sequence(1, 5 - profile.links.size())}">
+                                </div>
+                                <div id="profile-button-updatable-mobile" class="row justify-content-end d-none" style="margin-top: 5px">
+                                    <button type="button" class="btn" style="width: 60px" onclick="saveProfilesMobile()">저장</button>
+                                    <button type="button" class="btn" style="width: 60px; margin-left: 10px" onclick="showProfilesMobile()">취소</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            </div>
-        </div>
-        <div class="contents d-lg-none" style="margin-top: 2em;">
-            <div class="row justify-content-center">
-                <span style="font-size: 17px; font-weight: bold">Blogs</span>
-                <div class="col-12 mt-3" th:each="blog : ${profile.blogs}">
-                    <div class="card">
-                        <div class="card-body">
-                            <a class="text-body" th:href="${blog.getBlogUrl()}"><h5 class="card-title" th:text="${blog.blogName}"></h5></a>
-                            <div class="card-text blog-bio-overflow" th:text="${blog.blogBio}"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 mt-1" sec:authorize="isAuthenticated()" th:if="${profile.blogs.size()} < 3 and ${profile.username} == ${members.username}">
-                    <div class="card cursor-pointer" style="height: 50px;" onclick="location.href='#'">
-                        <div class="card-body">
-                            <h5 class="card-title">+</h5>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <div class="row mt-4">
-                <span style="font-size: 17px; font-weight: bold">Yearly Posts</span>
-                <div class="col-12 mt-3">
-                    <div class="card placeholder-glow">
-                        <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                        <div class="card-body">
-                            <div class="placeholder col-9 mb-3"></div>
-                            <div class="placeholder placeholder-xs col-10"></div>
-                            <div class="placeholder placeholder-xs col-11"></div>
-                            <div class="mt-3">
-                                <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 mt-3">
-                    <div class="card placeholder-glow">
-                        <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                        <div class="card-body">
-                            <div class="placeholder col-9 mb-3"></div>
-                            <div class="placeholder placeholder-xs col-10"></div>
-                            <div class="placeholder placeholder-xs col-11"></div>
-                            <div class="mt-3">
-                                <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 mt-3">
-                    <div class="card placeholder-glow">
-                        <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                        <div class="card-body">
-                            <div class="placeholder col-9 mb-3"></div>
-                            <div class="placeholder placeholder-xs col-10"></div>
-                            <div class="placeholder placeholder-xs col-11"></div>
-                            <div class="mt-3">
-                                <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
-                <div class="col">
-                    <div class="col-12 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+            <div class="contents d-lg-none" style="margin-top: 2em;">
+                <div class="row justify-content-center">
+                    <span style="font-size: 17px; font-weight: bold">Blogs</span>
+                    <div class="col-12 mt-3" th:each="blog : ${profile.blogs}">
+                        <div class="card">
                             <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                <a class="text-body" th:href="${blog.getBlogUrl()}"><h5 class="card-title" th:text="${blog.blogName}"></h5></a>
+                                <div class="card-text blog-bio-overflow" th:text="${blog.blogBio}"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-1" sec:authorize="isAuthenticated()" th:if="${profile.blogs.size()} < 3 and ${profile.username} == ${members.username}">
+                        <div class="card cursor-pointer" style="height: 50px;" onclick="location.href='/settings/blog'">
+                            <div class="card-body">
+                                <h5 class="card-title">+</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <span style="font-size: 17px; font-weight: bold">Activities</span>
+                    <div class="col-12 mt-3">
+                        <div class="card mt-3">
+                            <div class="card-body" style="overflow-y: scroll">
+                                <div id="heatmap-chart-mobile" style="width: 950px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
+                    <div class="col">
+                        <div class="col-12 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                        <div class="col-12 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                        <div class="col-12 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <div class="card placeholder-glow">
-                            <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                            <div class="card-body">
-                                <div class="placeholder col-9 mb-3"></div>
-                                <div class="placeholder placeholder-xs col-10"></div>
-                                <div class="placeholder placeholder-xs col-11"></div>
-                                <div class="mt-3">
-                                    <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                        <div class="col-12 mt-3">
+                            <div class="card placeholder-glow">
+                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
+                                <div class="card-body">
+                                    <div class="placeholder col-9 mb-3"></div>
+                                    <div class="placeholder placeholder-xs col-10"></div>
+                                    <div class="placeholder placeholder-xs col-11"></div>
+                                    <div class="mt-3">
+                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

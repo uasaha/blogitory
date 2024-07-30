@@ -4821,7 +4821,7 @@ body[data-bs-theme=dark] .navbar[data-bs-theme=light] {
 .card-footer {
   padding: var(--tblr-card-cap-padding-y) var(--tblr-card-cap-padding-x);
   color: var(--tblr-card-cap-color);
-  background-color: var(--tblr-card-cap-bg);
+  /*background-color: var(--tblr-card-cap-bg);*/
   border-top: var(--tblr-card-border-width) solid var(--tblr-card-border-color);
 }
 .card-footer:last-child {
@@ -16008,7 +16008,7 @@ Navbar
 .navbar {
   --tblr-navbar-bg: var(--tblr-bg-surface);
   --tblr-navbar-border-width: var(--tblr-border-width);
-  --tblr-navbar-active-border-color: var(--tblr-primary);
+  --tblr-navbar-active-border-color: var(--tblr-gray-500);
   --tblr-navbar-active-bg: rgba(0, 0, 0, 0.06);
   --tblr-navbar-color: var(--tblr-body-color);
   --tblr-navbar-border-color: var(--tblr-border-color);
