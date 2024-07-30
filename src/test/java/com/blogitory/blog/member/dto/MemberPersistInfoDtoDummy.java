@@ -1,5 +1,7 @@
 package com.blogitory.blog.member.dto;
 
+import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+
 /**
  * 설명 작성 필!
  *

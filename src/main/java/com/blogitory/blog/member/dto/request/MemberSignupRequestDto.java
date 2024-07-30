@@ -1,4 +1,4 @@
-package com.blogitory.blog.member.dto;
+package com.blogitory.blog.member.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,5 +31,8 @@ public class MemberSignupRequestDto {
 
   @NotBlank
   @Size(min = 8, message = "Password must be between 8 and 100 characters long")
+  @Pattern(regexp =
+          "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+=?<>.,/|~`])"
+                  + "[A-Za-z\\d!@#$%^&*()_+=?<>.,/|~`]{8,}$")
   private String pwd;
 }

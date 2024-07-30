@@ -1,8 +1,5 @@
 package com.blogitory.blog.member.entity;
 
-import com.blogitory.blog.link.entity.Link;
-import java.util.List;
-
 /**
  * Test data of Member.
  *
@@ -27,6 +24,10 @@ public class MemberDummy {
             "test@test.com",
             false,
             false,
-            false);
+            false,
+            true,
+            true,
+            true,
+            true);
   }
 }

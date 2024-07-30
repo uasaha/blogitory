@@ -71,6 +71,18 @@ public class Member extends BaseCreatedAtEntity {
   @Column(name = "member_oauth")
   private boolean oauth;
 
+  @Column(name = "member_follow_alert")
+  private boolean followAlert;
+
+  @Column(name = "member_comment_alert")
+  private boolean commentAlert;
+
+  @Column(name = "member_heart_alert")
+  private boolean heartAlert;
+
+  @Column(name = "member_new_alert")
+  private boolean newAlert;
+
   /**
    * Constructor no links, no roles, no blog.
    *
@@ -97,7 +109,11 @@ public class Member extends BaseCreatedAtEntity {
                 String introEmail,
                 boolean blocked,
                 boolean left,
-                boolean oauth) {
+                boolean oauth,
+                boolean followAlert,
+                boolean commentAlert,
+                boolean heartAlert,
+                boolean newAlert) {
     this.memberNo = memberNo;
     this.email = email;
     this.password = password;
@@ -109,6 +125,10 @@ public class Member extends BaseCreatedAtEntity {
     this.blocked = blocked;
     this.left = left;
     this.oauth = oauth;
+    this.followAlert = followAlert;
+    this.commentAlert = commentAlert;
+    this.heartAlert = heartAlert;
+    this.newAlert = newAlert;
   }
 
   public void updateThumbnail(String url) {
@@ -125,5 +145,36 @@ public class Member extends BaseCreatedAtEntity {
 
   public void updateBio(String bio) {
     this.bio = bio;
+  }
+
+  public void updateFollowAlert(boolean followAlert) {
+    this.followAlert = followAlert;
+  }
+
+  public void updateCommentAlert(boolean commentAlert) {
+    this.commentAlert = commentAlert;
+  }
+
+  public void updateHeartAlert(boolean heartAlert) {
+    this.heartAlert = heartAlert;
+  }
+
+  public void updateNewAlert(boolean newAlert) {
+    this.newAlert = newAlert;
+  }
+
+  public void updatePassword(String password) {
+    this.password = password;
+  }
+
+  /**
+   * Quit member.
+   *
+   * @param deleteMsg delete code
+   */
+  public void deleteMember(String deleteMsg) {
+    this.left = true;
+    this.username = deleteMsg;
+    this.email = deleteMsg;
   }
 }

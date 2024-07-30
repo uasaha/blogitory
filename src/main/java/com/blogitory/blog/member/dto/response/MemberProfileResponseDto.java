@@ -1,6 +1,6 @@
-package com.blogitory.blog.member.dto;
+package com.blogitory.blog.member.dto.response;
 
-import com.blogitory.blog.blog.dto.BlogProfileResponseDto;
+import com.blogitory.blog.blog.dto.response.BlogProfileResponseDto;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

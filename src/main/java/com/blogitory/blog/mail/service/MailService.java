@@ -23,4 +23,11 @@ public interface MailService {
    * @return is verified
    */
   boolean checkVerificationCode(MailVerificationRequestDto requestDto);
+
+  /**
+   * Send email to user changing Password link.
+   *
+   * @param email user email
+   */
+  void sendUpdatePassword(String email);
 }

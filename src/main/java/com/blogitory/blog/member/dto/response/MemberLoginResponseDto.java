@@ -1,4 +1,4 @@
-package com.blogitory.blog.member.dto;
+package com.blogitory.blog.member.dto.response;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,6 +17,7 @@ public class MemberLoginResponseDto {
   private String email;
   private String username;
   private String name;
+  private String pfp;
   private String password;
   private List<String> roles;
 }

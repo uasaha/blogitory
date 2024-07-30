@@ -2,7 +2,9 @@ package com.blogitory.blog.member.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.blogitory.blog.member.dto.MemberPersistInfoDto;
+import com.blogitory.blog.commons.config.JpaConfig;
+import com.blogitory.blog.commons.config.QuerydslConfig;
+import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.role.entity.Role;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * MemberRepository test.
@@ -22,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * @author woonseok
  * @since 1.0
  */
+@Import({JpaConfig.class, QuerydslConfig.class})
 @DataJpaTest
 class MemberRepositoryTest {
   /**
@@ -81,7 +85,11 @@ class MemberRepositoryTest {
             () -> assertEquals(member.getIntroEmail(), savedMember.getIntroEmail()),
             () -> assertEquals(member.isBlocked(), savedMember.isBlocked()),
             () -> assertEquals(member.isLeft(), savedMember.isLeft()),
-            () -> assertEquals(member.isOauth(), savedMember.isOauth())
+            () -> assertEquals(member.isOauth(), savedMember.isOauth()),
+            () -> assertEquals(member.isHeartAlert(), savedMember.isHeartAlert()),
+            () -> assertEquals(member.isCommentAlert(), savedMember.isCommentAlert()),
+            () -> assertEquals(member.isNewAlert(), savedMember.isNewAlert()),
+            () -> assertEquals(member.isFollowAlert(), savedMember.isFollowAlert())
     );
   }
 

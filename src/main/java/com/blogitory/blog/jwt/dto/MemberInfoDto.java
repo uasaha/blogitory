@@ -17,6 +17,7 @@ public class MemberInfoDto {
   private String email;
   private String username;
   private String name;
+  private String pfp;
   private List<String> roles;
   private String refreshToken;
 }

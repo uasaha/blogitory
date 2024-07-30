@@ -1,7 +1,9 @@
 package com.blogitory.blog.mail.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -10,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.mail.dto.MailVerificationRequestDto;
 import com.blogitory.blog.mail.service.MailService;
+import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
 import com.blogitory.blog.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -65,10 +68,24 @@ class MailRestControllerTest {
 
     doNothing().when(mailService).sendVerificationCode(email);
 
-    mvc.perform(MockMvcRequestBuilders.get("/api/v1/mail/verification")
+    mvc.perform(MockMvcRequestBuilders.get("/api/mail/verification")
             .param("email", email))
             .andExpect(status().isOk())
             .andDo(print());
+  }
+
+  @Test
+  @DisplayName("인증번호 발송 실패 - 중복된 이메일")
+  void issueVerificationCodeFailed() throws Exception {
+    String email = "test@email.com";
+
+    doThrow(MemberEmailAlreadyUsedException.class)
+            .when(mailService).sendVerificationCode(anyString());
+
+    mvc.perform(MockMvcRequestBuilders.get("/api/mail/verification")
+            .param("email", email)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isConflict());
   }
 
   /**
@@ -87,7 +104,7 @@ class MailRestControllerTest {
     when(mailService.checkVerificationCode(any()))
             .thenReturn(true);
 
-    mvc.perform(MockMvcRequestBuilders.post("/api/v1/mail/verification")
+    mvc.perform(MockMvcRequestBuilders.post("/api/mail/verification")
             .content(objectMapper.writeValueAsString(mailVerificationRequestDto))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())

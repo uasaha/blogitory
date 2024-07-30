@@ -1,6 +1,6 @@
 package com.blogitory.blog.member.repository;
 
-import com.blogitory.blog.member.dto.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 

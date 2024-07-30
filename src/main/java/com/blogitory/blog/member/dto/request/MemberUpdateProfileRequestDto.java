@@ -1,4 +1,4 @@
-package com.blogitory.blog.member.dto;
+package com.blogitory.blog.member.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

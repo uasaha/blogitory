@@ -1,19 +1,26 @@
 package com.blogitory.blog.member.controller;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.dto.BlogProfileResponseDto;
+import com.blogitory.blog.blog.dto.response.BlogProfileResponseDto;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.member.dto.MemberProfileLinkResponseDto;
-import com.blogitory.blog.member.dto.MemberProfileResponseDto;
+import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
+import com.blogitory.blog.member.dto.response.MemberProfileLinkResponseDto;
+import com.blogitory.blog.member.dto.response.MemberProfileResponseDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
+import com.blogitory.blog.member.exception.MemberPwdChangeFailedException;
 import com.blogitory.blog.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -24,7 +31,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 /**
  * Member Controller Test.
@@ -61,12 +67,12 @@ class MemberControllerTest {
 
     doNothing().when(memberService).signup(any());
 
-    mvc.perform(MockMvcRequestBuilders.post("/signup").with(csrf())
+    mvc.perform(post("/signup").with(csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .param("username", member.getUsername())
             .param("name", member.getName())
             .param("email", member.getEmail())
-            .param("pwd", member.getPassword()))
+            .param("pwd", "@poilklj1234"))
             .andExpect(status().is3xxRedirection())
             .andDo(print());
   }
@@ -88,7 +94,52 @@ class MemberControllerTest {
 
     when(memberService.getProfileByUsername(anyString())).thenReturn(profileDto);
 
-    mvc.perform(MockMvcRequestBuilders.get("/@" + profileDto.getUsername()).with(csrf()))
+    mvc.perform(get("/@" + profileDto.getUsername()).with(csrf()))
             .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("비밀번호 수정 페이지")
+  void updatePasswordPage() throws Exception {
+    mvc.perform(get("/users/passwords")
+                    .param("ui", "ui"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(content().string(containsString("Blogitory")));
+  }
+
+  @Test
+  @DisplayName("비밀번호 수정")
+  void updatePassword() throws Exception {
+    doNothing().when(memberService).updatePassword(any());
+
+    mvc.perform(post("/users/passwords")
+                    .param("ui", "ui")
+                    .param("pwd", "@Test12345"))
+            .andExpect(status().is3xxRedirection());
+  }
+
+  @Test
+  @DisplayName("비밀번호 수정 성공")
+  void updatePasswordSuccessPage() throws Exception {
+    mvc.perform(get("/users/passwords/su"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Blogitory")));
+  }
+
+  @Test
+  @DisplayName("비밀번호 수정 실패")
+  void updatePasswordFailPage() throws Exception {
+    UpdatePasswordRequestDto updatePasswordDto =
+            new UpdatePasswordRequestDto("ui", "@Test123");
+
+    doThrow(MemberPwdChangeFailedException.class)
+            .when(memberService).updatePassword(any());
+
+    mvc.perform(post("/users/passwords")
+                    .param("ui", "ui")
+                    .param("pwd", "@Test12345"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Blogitory")));
   }
 }

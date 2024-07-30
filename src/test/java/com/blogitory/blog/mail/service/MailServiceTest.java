@@ -10,19 +10,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.mail.dto.MailVerificationRequestDto;
 import com.blogitory.blog.mail.exception.EmailNotVerificationException;
 import com.blogitory.blog.mail.service.impl.MailServiceImpl;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
 import com.blogitory.blog.member.service.MemberService;
-import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
  * Mail service test.
@@ -47,6 +47,7 @@ class MailServiceTest {
    * The Redis template.
    */
   RedisTemplate redisTemplate;
+
 
   /**
    * Sets up.
@@ -74,7 +75,7 @@ class MailServiceTest {
 
     mailService.sendVerificationCode(email);
 
-    verify(javaMailSender, times(1)).send(any(SimpleMailMessage.class));
+    verify(javaMailSender, times(1)).send(any(MimeMessagePreparator.class));
   }
 
   /**
@@ -123,5 +124,33 @@ class MailServiceTest {
     when(redisTemplate.delete(any())).thenReturn(1L);
 
     assertThrows(EmailNotVerificationException.class, () -> mailService.checkVerificationCode(requestDto));
+  }
+
+  @Test
+  @DisplayName("비밀번호 변경 메일 발송 성공")
+  void sendPasswordChangeLink() {
+    String email = "test@email.com";
+
+    when(memberService.existMemberByEmail(any())).thenReturn(true);
+    ValueOperations<String, Object> operations = mock(ValueOperations.class);
+    when(redisTemplate.opsForValue()).thenReturn(operations);
+    doNothing().when(operations).set(anyString(), anyString(), anyLong(), any());
+
+    mailService.sendUpdatePassword(email);
+
+    verify(javaMailSender, times(1)).send(any(MimeMessagePreparator.class));
+  }
+
+  @Test
+  @DisplayName("비밀번호 변경 메일 발송 실패 - 없는 이메일")
+  void sendPasswordChangeLinkFailed() {
+    String email = "test@email.com";
+
+    when(memberService.existMemberByEmail(any())).thenReturn(false);
+    ValueOperations<String, Object> operations = mock(ValueOperations.class);
+    when(redisTemplate.opsForValue()).thenReturn(operations);
+    doNothing().when(operations).set(anyString(), anyString(), anyLong(), any());
+
+    assertThrows(NotFoundException.class, () -> mailService.sendUpdatePassword(email));
   }
 }

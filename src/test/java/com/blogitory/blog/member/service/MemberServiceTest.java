@@ -5,26 +5,33 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
+import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.link.entity.Link;
 import com.blogitory.blog.link.repository.LinkRepository;
-import com.blogitory.blog.member.dto.MemberLoginRequestDto;
-import com.blogitory.blog.member.dto.MemberPersistInfoDto;
-import com.blogitory.blog.member.dto.MemberProfileResponseDto;
-import com.blogitory.blog.member.dto.MemberSignupRequestDto;
-import com.blogitory.blog.member.dto.MemberUpdateProfileRequestDto;
+import com.blogitory.blog.member.dto.request.MemberLoginRequestDto;
+import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
+import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.MemberProfileResponseDto;
+import com.blogitory.blog.member.dto.request.MemberSignupRequestDto;
+import com.blogitory.blog.member.dto.request.MemberUpdateProfileRequestDto;
+import com.blogitory.blog.member.dto.response.MemberSettingsAlertResponseDto;
+import com.blogitory.blog.member.dto.response.MemberSettingsProfileResponseDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
+import com.blogitory.blog.member.exception.MemberPwdChangeFailedException;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.member.service.impl.MemberServiceImpl;
 import com.blogitory.blog.role.entity.Role;
@@ -38,6 +45,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -56,6 +65,8 @@ class MemberServiceTest {
   private JwtService jwtService;
   private FollowRepository followRepository;
   private LinkRepository linkRepository;
+  private BlogRepository blogRepository;
+  private RedisTemplate<String, Object> redisTemplate;
 
   /**
    * Sets up.
@@ -69,10 +80,11 @@ class MemberServiceTest {
     jwtService = mock(JwtService.class);
     followRepository = mock(FollowRepository.class);
     linkRepository = mock(LinkRepository.class);
-
+    redisTemplate = mock(RedisTemplate.class);
+    blogRepository = mock(BlogRepository.class);
 
     memberService = new MemberServiceImpl(
-            memberRepository, roleRepository, roleMemberRepository, followRepository, linkRepository, jwtService, passwordEncoder);
+            memberRepository, roleRepository, roleMemberRepository, followRepository, linkRepository, blogRepository, jwtService, passwordEncoder, redisTemplate);
   }
 
   /**
@@ -368,6 +380,18 @@ class MemberServiceTest {
   }
 
   @Test
+  @DisplayName("프로필 조회 실패 - 탈퇴")
+  void getProfileByUsernameFailedLeft() {
+    Member member = MemberDummy.dummy();
+    ReflectionTestUtils.setField(member, "left", true);
+    ReflectionTestUtils.setField(member, "blogs", List.of());
+
+    when(memberRepository.findByUsername(any())).thenReturn(Optional.of(member));
+
+    assertThrows(NotFoundException.class, () -> memberService.getProfileByUsername("username"));
+  }
+
+  @Test
   @DisplayName("프로필 업데이트 성공")
   void updateProfile() {
     Member member = MemberDummy.dummy();
@@ -411,6 +435,179 @@ class MemberServiceTest {
 
     assertThrows(NotFoundException.class,
             () -> memberService.updateProfile(1, requestDto));
+  }
 
+  @Test
+  @DisplayName("설정 프로필 조회")
+  void getSettingsProfile() {
+    Member member = MemberDummy.dummy();
+    Link link = new Link(1L, member, "link");
+    ReflectionTestUtils.setField(member, "links", List.of(link));
+
+    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+
+    MemberSettingsProfileResponseDto responseDto = memberService.getSettingsProfile(member.getMemberNo());
+
+    assertEquals(responseDto.getUsername(), member.getUsername());
+    assertEquals(responseDto.getName(), member.getName());
+    assertEquals(responseDto.getBio(), member.getBio());
+    assertEquals(responseDto.getEmail(), member.getEmail());
+    assertEquals(responseDto.getIntroEmail(), member.getIntroEmail());
+    assertEquals(responseDto.getPfpUrl(), member.getProfileThumb());
+    assertEquals(responseDto.getLinks().get(0), link.getUrl());
+  }
+
+  @Test
+  @DisplayName("설정 프로필 조회 실패")
+  void getSettingsProfileFailed() {
+    when(memberRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> memberService.getSettingsProfile(1));
+  }
+
+  @Test
+  @DisplayName("설정 알림 조회")
+  void getSettingsAlert() {
+    Member member = MemberDummy.dummy();
+    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+
+    MemberSettingsAlertResponseDto responseDto = memberService.getSettingsAlert(member.getMemberNo());
+
+    assertEquals(responseDto.isCommentAlert(), member.isCommentAlert());
+    assertEquals(responseDto.isFollowAlert(), member.isFollowAlert());
+    assertEquals(responseDto.isHeartAlert(), member.isHeartAlert());
+    assertEquals(responseDto.isNewPostsAlert(), member.isNewAlert());
+  }
+
+  @Test
+  @DisplayName("설정 알림 조회 실패")
+  void getSettingsAlertFailed() {
+    when(memberRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> memberService.getSettingsAlert(1));
+  }
+
+  @Test
+  @DisplayName("알림 설정")
+  void updateAlerts() {
+    Member member = MemberDummy.dummy();
+    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+
+    memberService.updateAlerts(1, "COMMENT", false);
+    assertFalse(member.isCommentAlert());
+
+    memberService.updateAlerts(1, "FOLLOW", false);
+    assertFalse(member.isFollowAlert());
+
+    memberService.updateAlerts(1, "HEART", false);
+    assertFalse(member.isHeartAlert());
+
+    memberService.updateAlerts(1, "NEW_POSTS", false);
+    assertFalse(member.isNewAlert());
+  }
+
+  @Test
+  @DisplayName("알림 설정 실패")
+  void updateAlertsFailed() {
+    when(memberRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(NotFoundException.class, () -> memberService.updateAlerts(1, "COMMENT", false));
+  }
+
+  @Test
+  @DisplayName("비밀번호 수정")
+  void updatePassword() {
+    Member member = MemberDummy.dummy();
+    String email = member.getEmail();
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
+    ValueOperations<String, Object> operations = mock(ValueOperations.class);
+    when(redisTemplate.opsForValue()).thenReturn(operations);
+    when(operations.getAndDelete(anyString())).thenReturn(email);
+
+    UpdatePasswordRequestDto requestDto =
+            new UpdatePasswordRequestDto("ui", "@Test12345");
+
+    when(passwordEncoder.encode(anyString())).thenReturn(requestDto.getPwd());
+
+    memberService.updatePassword(requestDto);
+
+    assertEquals(requestDto.getPwd(), member.getPassword());
+  }
+
+  @Test
+  @DisplayName("비밀번호 수정 실패 - 없는 회원")
+  void updatePasswordFailed() {
+    Member member = MemberDummy.dummy();
+    String email = member.getEmail();
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.empty());
+    ValueOperations<String, Object> operations = mock(ValueOperations.class);
+    when(redisTemplate.opsForValue()).thenReturn(operations);
+    when(operations.getAndDelete(anyString())).thenReturn(email);
+
+    UpdatePasswordRequestDto requestDto =
+            new UpdatePasswordRequestDto("ui", "@Test12345");
+
+    when(passwordEncoder.encode(anyString())).thenReturn(requestDto.getPwd());
+
+    assertThrows(MemberPwdChangeFailedException.class, () -> memberService.updatePassword(requestDto));
+  }
+
+  @Test
+  @DisplayName("비밀번호 수정 실패 - 없는 메일")
+  void updatePasswordFailedNoMail() {
+    Member member = MemberDummy.dummy();
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
+    ValueOperations<String, Object> operations = mock(ValueOperations.class);
+    when(redisTemplate.opsForValue()).thenReturn(operations);
+    when(operations.getAndDelete(anyString())).thenReturn(null);
+
+    UpdatePasswordRequestDto requestDto =
+            new UpdatePasswordRequestDto("ui", "@Test12345");
+
+    when(passwordEncoder.encode(anyString())).thenReturn(requestDto.getPwd());
+
+    assertThrows(MemberPwdChangeFailedException.class, () -> memberService.updatePassword(requestDto));
+  }
+
+  @Test
+  @DisplayName("회원 탈퇴")
+  void deleteUser() {
+    Member member = MemberDummy.dummy();
+    Link link = new Link(1L, member, "url");
+    Blog blog = BlogDummy.dummy(member);
+    ReflectionTestUtils.setField(member, "links", List.of(link));
+    ReflectionTestUtils.setField(member, "blogs", List.of(blog));
+
+    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+    when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+    doNothing().when(linkRepository).deleteById(anyLong());
+    when(followRepository.findRelatedByMemberNo(any())).thenReturn(List.of());
+    doNothing().when(followRepository).deleteById(anyLong());
+    when(blogRepository.findById(anyLong())).thenReturn(Optional.of(blog));
+
+    memberService.deleteUser(member.getMemberNo(), member.getPassword());
+
+    assertTrue(member.isLeft());
+    assertTrue(blog.isDeleted());
+  }
+
+  @Test
+  @DisplayName("회원 탈퇴 살패 - 비밀번호 미일치")
+  void deleteUserFailed() {
+    Member member = MemberDummy.dummy();
+    Link link = new Link(1L, member, "url");
+    Blog blog = BlogDummy.dummy(member);
+    ReflectionTestUtils.setField(member, "links", List.of(link));
+    ReflectionTestUtils.setField(member, "blogs", List.of(blog));
+
+    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+    when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+    doNothing().when(linkRepository).deleteById(anyLong());
+    when(followRepository.findRelatedByMemberNo(any())).thenReturn(List.of());
+    doNothing().when(followRepository).deleteById(anyLong());
+    when(blogRepository.findById(anyLong())).thenReturn(Optional.of(blog));
+
+    assertThrows(AuthenticationException.class,
+            () -> memberService.deleteUser(1, "@Test12345"));
   }
 }

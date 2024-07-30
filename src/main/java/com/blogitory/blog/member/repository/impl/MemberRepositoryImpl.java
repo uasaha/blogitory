@@ -1,6 +1,6 @@
 package com.blogitory.blog.member.repository.impl;
 
-import com.blogitory.blog.member.dto.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.QMember;
 import com.blogitory.blog.member.repository.MemberRepositoryCustom;

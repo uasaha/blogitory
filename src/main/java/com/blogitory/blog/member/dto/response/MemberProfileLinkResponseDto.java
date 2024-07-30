@@ -1,4 +1,4 @@
-package com.blogitory.blog.member.dto;
+package com.blogitory.blog.member.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
