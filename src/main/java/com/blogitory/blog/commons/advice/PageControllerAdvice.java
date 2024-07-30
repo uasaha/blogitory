@@ -36,12 +36,24 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @RequiredArgsConstructor
 public class PageControllerAdvice {
 
+  /**
+   * Handle 401.
+   *
+   * @param response response
+   * @throws IOException exception
+   */
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ExceptionHandler(value = {AuthenticationException.class})
   public void handleAuthentication(HttpServletResponse response) throws IOException {
     response.sendRedirect("/");
   }
 
+  /**
+   * Handle 400.
+   *
+   * @param model model
+   * @return error page
+   */
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(value = {DuplicateCategoryException.class,
                              MemberEmailAlreadyUsedException.class,
@@ -53,6 +65,12 @@ public class PageControllerAdvice {
     return DEFAULT_ERROR_VIEW;
   }
 
+  /**
+   * Handle 404.
+   *
+   * @param model model
+   * @return error page
+   */
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(value = {NoHandlerFoundException.class, NotFoundException.class})
   public String handleNotFound(Model model) {
@@ -61,6 +79,12 @@ public class PageControllerAdvice {
     return DEFAULT_ERROR_VIEW;
   }
 
+  /**
+   * Handle 403.
+   *
+   * @param model model
+   * @return error page
+   */
   @ResponseStatus(HttpStatus.FORBIDDEN)
   @ExceptionHandler(value = {AuthorizationException.class})
   public String handleForbidden(Model model) {
@@ -69,6 +93,12 @@ public class PageControllerAdvice {
     return DEFAULT_ERROR_VIEW;
   }
 
+  /**
+   * Handle 500.
+   *
+   * @param model model
+   * @return error page
+   */
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   @ExceptionHandler(value = {Exception.class})
   public String handleServerError(Model model) {
