@@ -1,6 +1,7 @@
 package com.blogitory.blog.blog.repository;
 
 import com.blogitory.blog.blog.entity.Blog;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,5 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author woonseok
  * @since 1.0
  **/
-public interface BlogRepository extends JpaRepository<Blog, Integer>, BlogRepositoryCustom {
+public interface BlogRepository extends JpaRepository<Blog, Long>, BlogRepositoryCustom {
+  Optional<Blog> findBlogByUrlName(String urlName);
 }

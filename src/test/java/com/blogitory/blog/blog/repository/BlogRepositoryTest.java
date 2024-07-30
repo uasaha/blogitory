@@ -5,9 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import com.blogitory.blog.blog.dto.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
+import com.blogitory.blog.commons.config.JpaConfig;
+import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.image.entity.Image;
 import com.blogitory.blog.image.entity.ImageDummy;
 import com.blogitory.blog.image.repository.ImageRepository;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * Blog repository test.
@@ -31,6 +34,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * @author woonseok
  * @since 1.0
  */
+@Import({JpaConfig.class, QuerydslConfig.class})
 @DataJpaTest
 class BlogRepositoryTest {
   /**
@@ -97,7 +101,6 @@ class BlogRepositoryTest {
             () -> assertEquals(blog.getBio(), actual.getBio()),
             () -> assertEquals(blog.getUrlName(), actual.getUrlName()),
             () -> assertEquals(blog.getBackground(), actual.getBackground()),
-            () -> assertEquals(blog.getIntro(), actual.getIntro()),
             () -> assertEquals(blog.getTheme(), actual.getTheme()),
             () -> assertEquals(blog.isDeleted(), actual.isDeleted())
     );
@@ -132,7 +135,6 @@ class BlogRepositoryTest {
     assertAll(
             () -> assertEquals(expect.getBio(), actualGet.getBlogBio()),
             () -> assertEquals(expect.getUrlName(), actualGet.getBlogUrl()),
-            () -> assertEquals(expect.getIntro(), actualGet.getBlogIntro()),
             () -> assertEquals(expect.getCreatedAt(), actualGet.getCreatedAt()),
             () -> assertFalse(actualGet.isThumbIsNull()),
             () -> assertEquals(expectImage.getUrl(), actualGet.getThumbUrl()),

@@ -1,6 +1,8 @@
-package com.blogitory.blog.blog.dto;
+package com.blogitory.blog.blog.dto.response;
 
+import com.blogitory.blog.category.dto.CategorySettingsResponseDto;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 
@@ -12,33 +14,35 @@ import lombok.Getter;
  **/
 @Getter
 public class BlogListInSettingsResponseDto {
+  private final String blogName;
   private final String blogBio;
   private final String blogUrl;
-  private final String blogIntro;
   private final LocalDateTime createdAt;
   private boolean thumbIsNull;
   private final String thumbUrl;
   private final String thumbOriginName;
+  private final List<CategorySettingsResponseDto> categories;
 
   /**
    * Constructor for Projections.
    *
    * @param blogBio        bio
    * @param blogUrl         url
-   * @param blogIntro       intro
    * @param createdAt       createdAt
    * @param thumbUrl        thumbnail
    * @param thumbOriginName thumbnail origin name
    */
-  public BlogListInSettingsResponseDto(String blogBio, String blogUrl,
-                                       String blogIntro, LocalDateTime createdAt,
-                                       String thumbUrl, String thumbOriginName) {
+  public BlogListInSettingsResponseDto(String blogName, String blogBio, String blogUrl,
+                                       LocalDateTime createdAt,
+                                       String thumbUrl, String thumbOriginName,
+                                       List<CategorySettingsResponseDto> categories) {
+    this.blogName = blogName;
     this.blogBio = blogBio;
     this.blogUrl = blogUrl;
-    this.blogIntro = blogIntro;
     this.createdAt = createdAt;
     this.thumbUrl = thumbUrl;
     this.thumbOriginName = thumbOriginName;
+    this.categories = categories;
   }
 
   /**

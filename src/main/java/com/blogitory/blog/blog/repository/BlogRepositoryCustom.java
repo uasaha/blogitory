@@ -1,6 +1,6 @@
 package com.blogitory.blog.blog.repository;
 
-import com.blogitory.blog.blog.dto.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
 import java.util.List;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -12,5 +12,12 @@ import org.springframework.data.repository.NoRepositoryBean;
  **/
 @NoRepositoryBean
 public interface BlogRepositoryCustom {
+
+  /**
+   * Get Blogs for settings page by member no.
+   *
+   * @param memberNo memberNo
+   * @return Blogs
+   */
   List<BlogListInSettingsResponseDto> getBlogListByMemberNo(Integer memberNo);
 }

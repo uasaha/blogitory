@@ -24,7 +24,6 @@ public class BlogDummy {
             "blog bio",
             "urlName",
             "background",
-            "intro",
             "light",
             false,
             LocalDateTime.of(2000, 12, 10, 10, 30));
