@@ -1,6 +1,7 @@
 package com.blogitory.blog.category.entity;
 
 import com.blogitory.blog.blog.entity.Blog;
+import com.blogitory.blog.posts.entity.Posts;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,7 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,4 +45,31 @@ public class Category {
 
   @Column(name = "category_deleted")
   private boolean deleted;
+
+  @OneToMany(mappedBy = "category")
+  private List<Posts> posts = new ArrayList<>();
+
+  /**
+   * Constructor.
+   *
+   * @param categoryNo category no
+   * @param blog       blog
+   * @param name       name
+   * @param deleted    is deleted
+   */
+  public Category(Long categoryNo, Blog blog, String name, boolean deleted) {
+    this.categoryNo = categoryNo;
+    this.blog = blog;
+    this.name = name;
+    this.deleted = deleted;
+  }
+
+  public void updateName(String name) {
+    this.name = name;
+  }
+
+  public void delete() {
+    this.deleted = true;
+    this.posts.forEach(Posts::deleteCategory);
+  }
 }
