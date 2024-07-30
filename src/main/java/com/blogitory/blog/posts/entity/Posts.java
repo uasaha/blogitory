@@ -47,6 +47,9 @@ public class Posts extends BaseCreatedAtEntity {
   @Column(name = "posts_summary")
   private String summary;
 
+  @Column(name = "posts_views")
+  private Integer views;
+
   @Column(name = "posts_thumbnail")
   private String thumbnail;
 
@@ -59,9 +62,10 @@ public class Posts extends BaseCreatedAtEntity {
   @Column(name = "posts_open")
   private boolean open;
 
-  @Column(name = "posts_heart_amount")
-  private Long heartAmount;
-
   @Column(name = "posts_deleted")
   private boolean deleted;
+
+  public void deleteCategory() {
+    this.category = null;
+  }
 }

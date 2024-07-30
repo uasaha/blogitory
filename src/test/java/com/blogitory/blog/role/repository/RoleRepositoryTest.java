@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.blogitory.blog.commons.config.JpaConfig;
+import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * Role repository test.
@@ -28,6 +31,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * @author woonseok
  * @since 1.0
  */
+@Import({JpaConfig.class, QuerydslConfig.class})
 @DataJpaTest
 class RoleRepositoryTest {
 

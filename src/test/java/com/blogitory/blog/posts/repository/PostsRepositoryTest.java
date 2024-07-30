@@ -2,6 +2,7 @@ package com.blogitory.blog.posts.repository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
@@ -9,6 +10,8 @@ import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
+import com.blogitory.blog.commons.config.JpaConfig;
+import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -21,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 /**
  * Posts repository test.
@@ -28,6 +32,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * @author woonseok
  * @since 1.0
  */
+@Import({JpaConfig.class, QuerydslConfig.class})
 @DataJpaTest
 class PostsRepositoryTest {
 
@@ -107,12 +112,12 @@ class PostsRepositoryTest {
             () -> assertEquals(posts.getSubject(), actual.getSubject()),
             () -> assertEquals(posts.getUrl(), actual.getUrl()),
             () -> assertEquals(posts.getSummary(), actual.getSummary()),
+            () -> assertEquals(posts.getViews(), actual.getViews()),
             () -> assertEquals(posts.getThumbnail(), actual.getThumbnail()),
             () -> assertEquals(posts.getDetail(), actual.getDetail()),
             () -> assertEquals(posts.getUpdatedAt(), actual.getUpdatedAt()),
-            () -> assertEquals(posts.getCreatedAt(), actual.getCreatedAt()),
+            () -> assertNotNull(actual.getCreatedAt()),
             () -> assertEquals(posts.isOpen(), actual.isOpen()),
-            () -> assertEquals(posts.getHeartAmount(), actual.getHeartAmount()),
             () -> assertEquals(posts.isDeleted(), actual.isDeleted())
     );
   }

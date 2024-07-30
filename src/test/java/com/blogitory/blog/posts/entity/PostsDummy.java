@@ -21,8 +21,9 @@ public class PostsDummy {
             1L, category,
             "posts_url",
             "subject", "summary",
+            10,
             "thumbnail", "detail",
             LocalDateTime.of(2020, 12, 12, 12, 12, 12),
-            true, 1L, false);
+            true, false);
   }
 }
