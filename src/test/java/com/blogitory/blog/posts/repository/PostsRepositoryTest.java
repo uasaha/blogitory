@@ -3,6 +3,7 @@ package com.blogitory.blog.posts.repository;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
@@ -15,11 +16,12 @@ import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,42 +38,20 @@ import org.springframework.context.annotation.Import;
 @DataJpaTest
 class PostsRepositoryTest {
 
-  /**
-   * The Posts repository.
-   */
   @Autowired
   PostsRepository postsRepository;
 
-  /**
-   * The Category repository.
-   */
   @Autowired
   CategoryRepository categoryRepository;
 
-  /**
-   * The Member repository.
-   */
   @Autowired
   MemberRepository memberRepository;
 
-  /**
-   * The Blog repository.
-   */
   @Autowired
   BlogRepository blogRepository;
 
-  /**
-   * The Entity manager.
-   */
   @Autowired
   EntityManager entityManager;
-
-  /**
-   * Sets up.
-   */
-  @BeforeEach
-  void setUp() {
-  }
 
   /**
    * Teardown.
@@ -121,4 +101,40 @@ class PostsRepositoryTest {
             () -> assertEquals(posts.isDeleted(), actual.isDeleted())
     );
   }
+
+  @Test
+  @DisplayName("글 조회")
+  void getPosts() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Optional<GetPostResponseDto> responseDto =
+            postsRepository.getPostByPostUrl(posts.getUrl());
+
+    assertTrue(responseDto.isPresent());
+    GetPostResponseDto actual = responseDto.get();
+    assertNotNull(actual);
+    assertEquals(member.getUsername(), actual.getUsername());
+    assertEquals(member.getName(), actual.getMemberName());
+    assertEquals(blog.getName(), actual.getBlogName());
+    assertEquals(blog.getUrlName(), actual.getBlogUrl());
+    assertEquals(category.getCategoryNo(), actual.getCategoryNo());
+    assertEquals(category.getName(), actual.getCategoryName());
+    assertEquals(posts.getUrl(), actual.getPostUrl());
+    assertEquals(posts.getSubject(), actual.getSubject());
+    assertEquals(posts.getSummary(), actual.getSummary());
+    assertEquals(posts.getViews(), actual.getViews());
+    assertEquals(posts.getDetail(), actual.getDetail());
+  }
+
+
 }

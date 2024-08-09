@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -65,7 +66,23 @@ public class Posts extends BaseCreatedAtEntity {
   @Column(name = "posts_deleted")
   private boolean deleted;
 
-  public void deleteCategory() {
-    this.category = null;
+  @Builder
+  public Posts(Category category,
+               String url,
+               String subject,
+               String summary,
+               String thumbnail,
+               String detail) {
+    this.category = category;
+    this.url = url;
+    this.subject = subject;
+    this.summary = summary;
+    this.views = 0;
+    this.thumbnail = thumbnail;
+    this.detail = detail;
+  }
+
+  public void delete() {
+    this.deleted = true;
   }
 }

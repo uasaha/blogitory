@@ -33,4 +33,8 @@ public class Tag {
 
   @Column(name = "tag_deleted")
   private boolean deleted;
+
+  public Tag(String name) {
+    this.name = name;
+  }
 }
