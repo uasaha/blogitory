@@ -1,6 +1,6 @@
 package com.blogitory.blog.image.service;
 
-import com.blogitory.blog.image.dto.ThumbnailUpdateResponseDto;
+import com.blogitory.blog.image.dto.UpdateThumbnailResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -18,7 +18,7 @@ public interface ImageService {
    * @param file     new one
    * @return origin name & url
    */
-  ThumbnailUpdateResponseDto uploadThumbnail(Integer memberNo, MultipartFile file);
+  UpdateThumbnailResponseDto uploadThumbnail(Integer memberNo, MultipartFile file);
 
   /**
    * Delete thumbnail.
@@ -35,7 +35,7 @@ public interface ImageService {
    * @param file     new file
    * @return responses
    */
-  ThumbnailUpdateResponseDto updateBlogThumbnail(
+  UpdateThumbnailResponseDto updateBlogThumbnail(
           Integer memberNo, String blogUrl, MultipartFile file);
 
   /**
@@ -45,4 +45,6 @@ public interface ImageService {
    * @param blogUrl  blog url
    */
   void removeBlogThumbnail(Integer memberNo, String blogUrl);
+
+  UpdateThumbnailResponseDto uploadPostsImages(Integer memberNo, MultipartFile file);
 }

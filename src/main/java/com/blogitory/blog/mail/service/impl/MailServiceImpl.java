@@ -1,7 +1,7 @@
 package com.blogitory.blog.mail.service.impl;
 
 import com.blogitory.blog.commons.exception.NotFoundException;
-import com.blogitory.blog.mail.dto.MailVerificationRequestDto;
+import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
 import com.blogitory.blog.mail.exception.EmailNotVerificationException;
 import com.blogitory.blog.mail.service.MailService;
 import com.blogitory.blog.member.entity.Member;
@@ -63,7 +63,7 @@ public class MailServiceImpl implements MailService {
    * {@inheritDoc}
    */
   @Override
-  public boolean checkVerificationCode(MailVerificationRequestDto requestDto) {
+  public boolean checkVerificationCode(GetMailVerificationRequestDto requestDto) {
     String verificationCode = Objects.requireNonNull(
             redisTemplate.opsForValue().get(requestDto.getEmail())).toString();
 
@@ -85,6 +85,9 @@ public class MailServiceImpl implements MailService {
     return String.valueOf(random.nextInt(888_888) + 100_000);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void sendUpdatePassword(String email) {
     if (!memberService.existMemberByEmail(email)) {
@@ -104,17 +107,31 @@ public class MailServiceImpl implements MailService {
     javaMailSender.send(preparator);
   }
 
+  /**
+   * Get mime message preparator.
+   *
+   * @param email   email
+   * @param subject subject
+   * @param text    text
+   * @return MimeMessagePreparator
+   */
   private MimeMessagePreparator mimeMessagePreparator(String email,
                                                       String subject,
                                                       String text) {
     return mimeMessage -> {
-      MimeMessageHelper helper =  new MimeMessageHelper(mimeMessage, "UTF-8");
+      MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
       helper.setTo(email);
       helper.setSubject(subject);
       helper.setText(text, true);
     };
   }
 
+  /**
+   * Get verification code content.
+   *
+   * @param verificationCode verification code
+   * @return content
+   */
   private static String verificationCodeContent(String verificationCode) {
     return "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' "
             + "content='width=device-width, initial-scale=1.0'><title>Verification Code"
@@ -140,6 +157,12 @@ public class MailServiceImpl implements MailService {
             + "</table></body></html>";
   }
 
+  /**
+   * Get password initialization mail content.
+   *
+   * @param uuid uuid
+   * @return content
+   */
   private static String updatePasswordContent(String uuid) {
     return "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' "
             + "content='width=device-width, initial-scale=1.0'><title>Verification Code"

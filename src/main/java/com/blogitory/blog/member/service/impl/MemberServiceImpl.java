@@ -2,7 +2,7 @@ package com.blogitory.blog.member.service.impl;
 
 import static com.blogitory.blog.blog.service.impl.BlogServiceImpl.BLOG_DELETED;
 
-import com.blogitory.blog.blog.dto.response.BlogProfileResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInProfileResponseDto;
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.commons.exception.NotFoundException;
@@ -11,16 +11,16 @@ import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.link.entity.Link;
 import com.blogitory.blog.link.repository.LinkRepository;
-import com.blogitory.blog.member.dto.request.MemberLoginRequestDto;
-import com.blogitory.blog.member.dto.request.MemberSignupRequestDto;
-import com.blogitory.blog.member.dto.request.MemberUpdateProfileRequestDto;
+import com.blogitory.blog.member.dto.request.LoginMemberRequestDto;
+import com.blogitory.blog.member.dto.request.SignupMemberRequestDto;
+import com.blogitory.blog.member.dto.request.UpdateMemberProfileRequestDto;
 import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
-import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
-import com.blogitory.blog.member.dto.response.MemberProfileLinkResponseDto;
-import com.blogitory.blog.member.dto.response.MemberProfileResponseDto;
-import com.blogitory.blog.member.dto.response.MemberSettingsAlertResponseDto;
-import com.blogitory.blog.member.dto.response.MemberSettingsProfileResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberAlertInSettingsResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileInSettingsResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileLinkResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
+import com.blogitory.blog.member.dto.response.LoginMemberResponseDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
 import com.blogitory.blog.member.exception.MemberPwdChangeFailedException;
@@ -68,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
    * {@inheritDoc}
    */
   @Override
-  public void signup(MemberSignupRequestDto requestDto) {
+  public void signup(SignupMemberRequestDto requestDto) {
     if (memberRepository.existsMemberByEmail(requestDto.getEmail())
             || memberRepository.existsMemberByUsername(requestDto.getUsername())) {
       throw new MemberEmailAlreadyUsedException(requestDto.getEmail());
@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService {
    * {@inheritDoc}
    */
   @Override
-  public String login(MemberLoginRequestDto requestDto) {
+  public String login(LoginMemberRequestDto requestDto) {
     Member member = memberRepository.findByEmail(requestDto.getEmail())
             .orElseThrow(() -> new NotFoundException(Member.class));
 
@@ -115,7 +115,7 @@ public class MemberServiceImpl implements MemberService {
 
     List<String> roles = roleRepository.findRolesByMemberNo(member.getMemberNo());
 
-    MemberLoginResponseDto responseDto = new MemberLoginResponseDto(
+    LoginMemberResponseDto responseDto = new LoginMemberResponseDto(
             member.getMemberNo(),
             member.getEmail(),
             member.getUsername(),
@@ -134,7 +134,7 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   @Transactional(readOnly = true)
-  public MemberPersistInfoDto persistInfo(Integer memberNo) {
+  public GetMemberPersistInfoDto persistInfo(Integer memberNo) {
     return memberRepository.getPersistInfo(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
   }
@@ -173,7 +173,7 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   @Transactional(readOnly = true)
-  public MemberProfileResponseDto getProfileByUsername(String username) {
+  public GetMemberProfileResponseDto getProfileByUsername(String username) {
     Member member = memberRepository.findByUsername(username)
             .orElseThrow(() -> new NotFoundException(Member.class));
 
@@ -184,15 +184,15 @@ public class MemberServiceImpl implements MemberService {
     Long follower = followRepository.countFollower(member.getMemberNo());
     Long followee = followRepository.countFollowee(member.getMemberNo());
 
-    return new MemberProfileResponseDto(member.getUsername(),
+    return new GetMemberProfileResponseDto(member.getUsername(),
             member.getName(),
             member.getBio(),
             member.getProfileThumb(),
             member.getIntroEmail(),
             member.getLinks().stream().map(link ->
-                    new MemberProfileLinkResponseDto(link.getLinkNo(), link.getUrl())).toList(),
+                    new GetMemberProfileLinkResponseDto(link.getLinkNo(), link.getUrl())).toList(),
             member.getBlogs().stream().filter(blog -> !blog.isDeleted()).map(blog ->
-                            new BlogProfileResponseDto(blog.getUrlName(),
+                            new GetBlogInProfileResponseDto(blog.getUrlName(),
                                     blog.getName(), blog.getBio()))
                     .toList(),
             follower,
@@ -203,7 +203,7 @@ public class MemberServiceImpl implements MemberService {
    * {@inheritDoc}
    */
   @Override
-  public void updateProfile(Integer memberNo, MemberUpdateProfileRequestDto requestDto) {
+  public void updateProfile(Integer memberNo, UpdateMemberProfileRequestDto requestDto) {
     Member member = memberRepository.findById(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
 
@@ -228,11 +228,11 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   @Transactional(readOnly = true)
-  public MemberSettingsProfileResponseDto getSettingsProfile(Integer memberNo) {
+  public GetMemberProfileInSettingsResponseDto getSettingsProfile(Integer memberNo) {
     Member member = memberRepository.findById(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
 
-    return new MemberSettingsProfileResponseDto(
+    return new GetMemberProfileInSettingsResponseDto(
             member.getUsername(),
             member.getName(),
             member.getProfileThumb(),
@@ -248,11 +248,11 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   @Transactional(readOnly = true)
-  public MemberSettingsAlertResponseDto getSettingsAlert(Integer memberNo) {
+  public GetMemberAlertInSettingsResponseDto getSettingsAlert(Integer memberNo) {
     Member member = memberRepository.findById(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
 
-    return new MemberSettingsAlertResponseDto(
+    return new GetMemberAlertInSettingsResponseDto(
             member.isFollowAlert(),
             member.isCommentAlert(),
             member.isHeartAlert(),

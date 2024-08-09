@@ -1,6 +1,6 @@
 package com.blogitory.blog.member.repository;
 
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -19,5 +19,5 @@ public interface MemberRepositoryCustom {
    * @param memberNo user number
    * @return user info
    */
-  Optional<MemberPersistInfoDto> getPersistInfo(Integer memberNo);
+  Optional<GetMemberPersistInfoDto> getPersistInfo(Integer memberNo);
 }

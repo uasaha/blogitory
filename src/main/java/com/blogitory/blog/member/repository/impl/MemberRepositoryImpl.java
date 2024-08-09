@@ -1,6 +1,6 @@
 package com.blogitory.blog.member.repository.impl;
 
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.QMember;
 import com.blogitory.blog.member.repository.MemberRepositoryCustom;
@@ -26,11 +26,11 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
    * {@inheritDoc}
    */
   @Override
-  public Optional<MemberPersistInfoDto> getPersistInfo(Integer memberNo) {
+  public Optional<GetMemberPersistInfoDto> getPersistInfo(Integer memberNo) {
     return Optional.ofNullable(
             from(member)
                     .select(Projections.constructor(
-                            MemberPersistInfoDto.class,
+                            GetMemberPersistInfoDto.class,
                             member.username,
                             member.name,
                             member.profileThumb

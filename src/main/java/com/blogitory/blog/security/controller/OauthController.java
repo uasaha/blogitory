@@ -5,9 +5,9 @@ import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME
 import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 
 import com.blogitory.blog.security.service.OauthService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,10 +37,10 @@ public class OauthController {
 
     String accessToken = oauthService.githubLogin(githubAccessToken);
 
-    Cookie cookie =
+    ResponseCookie cookie =
             makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE);
 
-    response.addCookie(cookie);
+    response.addHeader("Set-Cookie", cookie.toString());
 
     return "redirect:/";
   }

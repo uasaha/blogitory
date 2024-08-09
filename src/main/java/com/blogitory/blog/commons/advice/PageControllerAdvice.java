@@ -9,6 +9,7 @@ import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.main.IndexController;
 import com.blogitory.blog.member.controller.MemberController;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
+import com.blogitory.blog.posts.controller.PostsController;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
 import com.blogitory.blog.storage.exception.FileUploadException;
@@ -32,7 +33,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  **/
 @ControllerAdvice(assignableTypes = {BlogController.class,
                                      IndexController.class,
-                                     MemberController.class})
+                                     MemberController.class,
+                                     PostsController.class})
 @RequiredArgsConstructor
 public class PageControllerAdvice {
 
@@ -42,7 +44,6 @@ public class PageControllerAdvice {
    * @param response response
    * @throws IOException exception
    */
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   @ExceptionHandler(value = {AuthenticationException.class})
   public void handleAuthentication(HttpServletResponse response) throws IOException {
     response.sendRedirect("/");

@@ -1,7 +1,7 @@
 package com.blogitory.blog.mail.controller;
 
-import com.blogitory.blog.mail.dto.MailVerificationRequestDto;
-import com.blogitory.blog.mail.dto.MailVerificationResponseDto;
+import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
+import com.blogitory.blog.mail.dto.response.GetMailVerificationResponseDto;
 import com.blogitory.blog.mail.service.MailService;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
 import jakarta.validation.Valid;
@@ -51,10 +51,10 @@ public class MailRestController {
    * @return is verified, 200
    */
   @PostMapping("/verification")
-  public ResponseEntity<MailVerificationResponseDto> checkVerificationCode(
-          @RequestBody @Valid MailVerificationRequestDto requestDto) {
+  public ResponseEntity<GetMailVerificationResponseDto> checkVerificationCode(
+          @RequestBody @Valid GetMailVerificationRequestDto requestDto) {
     return ResponseEntity.ok(
-            new MailVerificationResponseDto(mailService.checkVerificationCode(requestDto)));
+            new GetMailVerificationResponseDto(mailService.checkVerificationCode(requestDto)));
   }
 
   @ExceptionHandler(MemberEmailAlreadyUsedException.class)

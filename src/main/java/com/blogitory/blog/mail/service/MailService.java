@@ -1,6 +1,6 @@
 package com.blogitory.blog.mail.service;
 
-import com.blogitory.blog.mail.dto.MailVerificationRequestDto;
+import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
 
 /**
  * Service of Mail.
@@ -22,7 +22,7 @@ public interface MailService {
    * @param requestDto email and verification code
    * @return is verified
    */
-  boolean checkVerificationCode(MailVerificationRequestDto requestDto);
+  boolean checkVerificationCode(GetMailVerificationRequestDto requestDto);
 
   /**
    * Send email to user changing Password link.

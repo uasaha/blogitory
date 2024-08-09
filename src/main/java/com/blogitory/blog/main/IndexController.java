@@ -1,6 +1,6 @@
 package com.blogitory.blog.main;
 
-import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInSettingsResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.annotaion.RoleAnonymous;
 import com.blogitory.blog.commons.annotaion.RoleUser;
@@ -66,7 +66,7 @@ public class IndexController {
   @RoleUser
   @GetMapping("/settings/blog")
   public String blogSettings(Model model) {
-    List<BlogListInSettingsResponseDto> blogs =
+    List<GetBlogInSettingsResponseDto> blogs =
             blogService.getBlogListByMemberNo(SecurityUtils.getCurrentUserNo());
 
     if (blogs.isEmpty()) {

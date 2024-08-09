@@ -1,9 +1,9 @@
 package com.blogitory.blog.member.controller;
 
 import com.blogitory.blog.commons.annotaion.RoleAnonymous;
-import com.blogitory.blog.member.dto.request.MemberSignupRequestDto;
+import com.blogitory.blog.member.dto.request.SignupMemberRequestDto;
 import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
-import com.blogitory.blog.member.dto.response.MemberProfileResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
 import com.blogitory.blog.member.exception.MemberPwdChangeFailedException;
 import com.blogitory.blog.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -37,7 +37,7 @@ public class MemberController {
    */
   @RoleAnonymous
   @PostMapping("/signup")
-  public String signup(@Valid MemberSignupRequestDto requestDto) {
+  public String signup(@Valid SignupMemberRequestDto requestDto) {
     memberService.signup(requestDto);
 
     return "redirect:/";
@@ -53,7 +53,7 @@ public class MemberController {
    */
   @GetMapping("/@{username}")
   public String profile(@PathVariable String username, Model model) {
-    MemberProfileResponseDto profile = memberService.getProfileByUsername(username);
+    GetMemberProfileResponseDto profile = memberService.getProfileByUsername(username);
 
     model.addAttribute("profile", profile);
 

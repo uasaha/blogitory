@@ -5,16 +5,16 @@ import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 
 import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.mail.service.MailService;
-import com.blogitory.blog.member.dto.request.MemberLeftRequestDto;
-import com.blogitory.blog.member.dto.request.MemberUpdateProfileRequestDto;
+import com.blogitory.blog.member.dto.request.LeftMemberRequestDto;
+import com.blogitory.blog.member.dto.request.UpdateMemberProfileRequestDto;
 import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.util.SecurityUtils;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,7 +59,7 @@ public class MemberRestController {
    */
   @PutMapping("/profiles")
   public ResponseEntity<Void> updateProfile(
-          @RequestBody @Valid MemberUpdateProfileRequestDto requestDto) {
+          @RequestBody @Valid UpdateMemberProfileRequestDto requestDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     memberService.updateProfile(memberNo, requestDto);
@@ -107,13 +107,13 @@ public class MemberRestController {
   @RoleUser
   @PostMapping
   public ResponseEntity<Void> deleteUser(HttpServletResponse response,
-                                         @RequestBody MemberLeftRequestDto requestDto) {
+                                         @RequestBody LeftMemberRequestDto requestDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     memberService.deleteUser(memberNo, requestDto.getPassword());
 
-    Cookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, "", 0);
-    response.addCookie(cookie);
+    ResponseCookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, "", 0);
+    response.addHeader("Set-Cookie", cookie.toString());
 
     return ResponseEntity.noContent().build();
   }

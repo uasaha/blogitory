@@ -1,13 +1,13 @@
 package com.blogitory.blog.member.service;
 
-import com.blogitory.blog.member.dto.request.MemberLoginRequestDto;
-import com.blogitory.blog.member.dto.request.MemberSignupRequestDto;
-import com.blogitory.blog.member.dto.request.MemberUpdateProfileRequestDto;
+import com.blogitory.blog.member.dto.request.LoginMemberRequestDto;
+import com.blogitory.blog.member.dto.request.SignupMemberRequestDto;
+import com.blogitory.blog.member.dto.request.UpdateMemberProfileRequestDto;
 import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
-import com.blogitory.blog.member.dto.response.MemberProfileResponseDto;
-import com.blogitory.blog.member.dto.response.MemberSettingsAlertResponseDto;
-import com.blogitory.blog.member.dto.response.MemberSettingsProfileResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberAlertInSettingsResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileInSettingsResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
 
 /**
  * Service of Member.
@@ -21,7 +21,7 @@ public interface MemberService {
    *
    * @param requestDto Signup info.
    */
-  void signup(MemberSignupRequestDto requestDto);
+  void signup(SignupMemberRequestDto requestDto);
 
   /**
    * Already used email, return true
@@ -38,7 +38,7 @@ public interface MemberService {
    * @param requestDto login info
    * @return JWT
    */
-  String login(MemberLoginRequestDto requestDto);
+  String login(LoginMemberRequestDto requestDto);
 
   /**
    * Get user info for header.
@@ -46,7 +46,7 @@ public interface MemberService {
    * @param memberNo user no
    * @return user info
    */
-  MemberPersistInfoDto persistInfo(Integer memberNo);
+  GetMemberPersistInfoDto persistInfo(Integer memberNo);
 
   /**
    * Checking for duplication of username.
@@ -78,7 +78,7 @@ public interface MemberService {
    * @param username username
    * @return Profile content
    */
-  MemberProfileResponseDto getProfileByUsername(String username);
+  GetMemberProfileResponseDto getProfileByUsername(String username);
 
   /**
    * Update Profile.
@@ -86,7 +86,7 @@ public interface MemberService {
    * @param memberNo   memberNo
    * @param requestDto needed
    */
-  void updateProfile(Integer memberNo, MemberUpdateProfileRequestDto requestDto);
+  void updateProfile(Integer memberNo, UpdateMemberProfileRequestDto requestDto);
 
   /**
    * Get user profile for settings page.
@@ -94,7 +94,7 @@ public interface MemberService {
    * @param memberNo member no
    * @return responses
    */
-  MemberSettingsProfileResponseDto getSettingsProfile(Integer memberNo);
+  GetMemberProfileInSettingsResponseDto getSettingsProfile(Integer memberNo);
 
   /**
    * Get user alert settings.
@@ -102,7 +102,7 @@ public interface MemberService {
    * @param memberNo member no
    * @return responses
    */
-  MemberSettingsAlertResponseDto getSettingsAlert(Integer memberNo);
+  GetMemberAlertInSettingsResponseDto getSettingsAlert(Integer memberNo);
 
   /**
    * Modify user alerts.

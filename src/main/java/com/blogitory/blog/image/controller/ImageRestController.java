@@ -1,7 +1,7 @@
 package com.blogitory.blog.image.controller;
 
 import com.blogitory.blog.commons.annotaion.RoleUser;
-import com.blogitory.blog.image.dto.ThumbnailUpdateResponseDto;
+import com.blogitory.blog.image.dto.UpdateThumbnailResponseDto;
 import com.blogitory.blog.image.service.ImageService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ImageRestController {
    */
   @RoleUser
   @PostMapping("/thumbnail")
-  public ResponseEntity<ThumbnailUpdateResponseDto> updateThumbnail(
+  public ResponseEntity<UpdateThumbnailResponseDto> updateThumbnail(
           @RequestParam("file") MultipartFile file) {
     return ResponseEntity.ok(imageService.uploadThumbnail(SecurityUtils.getCurrentUserNo(), file));
   }
@@ -52,5 +52,17 @@ public class ImageRestController {
     return ResponseEntity.ok().build();
   }
 
-
+  /**
+   * upload image for post.
+   *
+   * @param file image
+   * @return image infos
+   */
+  @RoleUser
+  @PostMapping("/posts")
+  public ResponseEntity<UpdateThumbnailResponseDto> uploadImage(
+          @RequestParam("file") MultipartFile file) {
+    return ResponseEntity.ok(imageService
+            .uploadPostsImages(SecurityUtils.getCurrentUserNo(), file));
+  }
 }
