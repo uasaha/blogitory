@@ -3,6 +3,7 @@ package com.blogitory.blog.commons.properties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
  * Properties for DBCP2.
@@ -12,7 +13,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  **/
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "dbcp")
+@RefreshScope
+@ConfigurationProperties(prefix = "blogitory.dbcp")
 public class DbcpProperties {
   private String driverClassName;
   private String url;
