@@ -1,8 +1,11 @@
 package com.blogitory.blog.blog.service;
 
-import com.blogitory.blog.blog.dto.request.BlogCreateRequestDto;
-import com.blogitory.blog.blog.dto.request.BlogModifyRequestDto;
-import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.request.CreateBlogRequestDto;
+import com.blogitory.blog.blog.dto.request.UpdateBlogRequestDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInHeaderResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogWithCategoryResponseDto;
 import java.util.List;
 
 /**
@@ -18,7 +21,7 @@ public interface BlogService {
    * @param memberNo memberNo
    * @return Blog List
    */
-  List<BlogListInSettingsResponseDto> getBlogListByMemberNo(Integer memberNo);
+  List<GetBlogInSettingsResponseDto> getBlogListByMemberNo(Integer memberNo);
 
   /**
    * Create new blog.
@@ -26,7 +29,7 @@ public interface BlogService {
    * @param requestDto Info for make blog
    * @param memberNo   member no
    */
-  void createBlog(BlogCreateRequestDto requestDto, Integer memberNo);
+  void createBlog(CreateBlogRequestDto requestDto, Integer memberNo);
 
   /**
    * Modify blog.
@@ -35,7 +38,7 @@ public interface BlogService {
    * @param requestDto Info for modify blog
    * @param memberNo   member no
    */
-  void updateBlog(String urlName, BlogModifyRequestDto requestDto, Integer memberNo);
+  void updateBlog(String urlName, UpdateBlogRequestDto requestDto, Integer memberNo);
 
   /**
    * Quit blog.
@@ -45,4 +48,28 @@ public interface BlogService {
    * @param pwd      member password
    */
   void quitBlog(Integer memberNo, String url, String pwd);
+
+  /**
+   * Get Blog List.
+   *
+   * @param username username
+   * @return Blog List
+   */
+  List<GetBlogInHeaderResponseDto> blogListForHeader(String username);
+
+  /**
+   * Get Blog by url.
+   *
+   * @param url url
+   * @return Blog Dto
+   */
+  GetBlogResponseDto getBlogByUrl(String url);
+
+  /**
+   * Get Blog List with category.
+   *
+   * @param memberNo memberNo
+   * @return blog list
+   */
+  List<GetBlogWithCategoryResponseDto> getBlogListWithCategory(Integer memberNo);
 }

@@ -8,13 +8,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.dto.request.BlogCreateRequestDto;
-import com.blogitory.blog.blog.dto.request.BlogModifyRequestDto;
+import com.blogitory.blog.blog.dto.request.CreateBlogRequestDto;
+import com.blogitory.blog.blog.dto.request.UpdateBlogRequestDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.image.dto.ThumbnailUpdateResponseDto;
+import com.blogitory.blog.image.dto.UpdateThumbnailResponseDto;
 import com.blogitory.blog.image.service.ImageService;
-import com.blogitory.blog.member.dto.request.MemberLeftRequestDto;
+import com.blogitory.blog.member.dto.request.LeftMemberRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,7 @@ class BlogRestControllerTest {
   @Test
   @WithMockUser("1")
   void create() throws Exception {
-    BlogCreateRequestDto requestDto = new BlogCreateRequestDto();
+    CreateBlogRequestDto requestDto = new CreateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "url", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
@@ -67,7 +67,7 @@ class BlogRestControllerTest {
   @Test
   @WithMockUser("1")
   void update() throws Exception {
-    BlogModifyRequestDto requestDto = new BlogModifyRequestDto();
+    UpdateBlogRequestDto requestDto = new UpdateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog");
     String blogUrl = "@blog/blog";
@@ -88,8 +88,8 @@ class BlogRestControllerTest {
             "content".getBytes(StandardCharsets.UTF_8));
     String blogUrl = "@blog/blog";
 
-    ThumbnailUpdateResponseDto responseDto =
-            new ThumbnailUpdateResponseDto("url", file.getName());
+    UpdateThumbnailResponseDto responseDto =
+            new UpdateThumbnailResponseDto("url", file.getName());
 
     when(imageService.updateBlogThumbnail(1, blogUrl, file))
             .thenReturn(responseDto);
@@ -117,7 +117,7 @@ class BlogRestControllerTest {
   @WithMockUser("1")
   void deleteBlog() throws Exception {
     String blogUrl = "@blog/blog";
-    MemberLeftRequestDto requestDto = new MemberLeftRequestDto();
+    LeftMemberRequestDto requestDto = new LeftMemberRequestDto();
     ReflectionTestUtils.setField(requestDto, "password", "password");
 
     doNothing().when(blogService).quitBlog(1, blogUrl, requestDto.getPassword());

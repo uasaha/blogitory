@@ -1,8 +1,11 @@
 package com.blogitory.blog.blog.service.impl;
 
-import com.blogitory.blog.blog.dto.request.BlogCreateRequestDto;
-import com.blogitory.blog.blog.dto.request.BlogModifyRequestDto;
-import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.request.CreateBlogRequestDto;
+import com.blogitory.blog.blog.dto.request.UpdateBlogRequestDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInHeaderResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogWithCategoryResponseDto;
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.exception.BlogLimitException;
 import com.blogitory.blog.blog.repository.BlogRepository;
@@ -40,9 +43,9 @@ public class BlogServiceImpl implements BlogService {
    */
   @Override
   @Transactional(readOnly = true)
-  public List<BlogListInSettingsResponseDto> getBlogListByMemberNo(Integer memberNo) {
-    List<BlogListInSettingsResponseDto> blogs = blogRepository.getBlogListByMemberNo(memberNo);
-    blogs.forEach(BlogListInSettingsResponseDto::setThumbIsNull);
+  public List<GetBlogInSettingsResponseDto> getBlogListByMemberNo(Integer memberNo) {
+    List<GetBlogInSettingsResponseDto> blogs = blogRepository.getBlogListByMemberNo(memberNo);
+    blogs.forEach(GetBlogInSettingsResponseDto::setThumbIsNull);
 
     return blogs;
   }
@@ -51,7 +54,7 @@ public class BlogServiceImpl implements BlogService {
    * {@inheritDoc}
    */
   @Override
-  public void createBlog(BlogCreateRequestDto requestDto, Integer memberNo) {
+  public void createBlog(CreateBlogRequestDto requestDto, Integer memberNo) {
     Member member = memberRepository.findById(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
 
@@ -68,7 +71,7 @@ public class BlogServiceImpl implements BlogService {
    * {@inheritDoc}
    */
   @Override
-  public void updateBlog(String urlName, BlogModifyRequestDto requestDto, Integer memberNo) {
+  public void updateBlog(String urlName, UpdateBlogRequestDto requestDto, Integer memberNo) {
     Blog blog = blogRepository.findBlogByUrlName(urlName)
             .orElseThrow(() -> new NotFoundException(Blog.class));
 
@@ -100,5 +103,39 @@ public class BlogServiceImpl implements BlogService {
     String msg = BLOG_DELETED + UUID.randomUUID();
 
     blog.quitBlog(msg);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public List<GetBlogInHeaderResponseDto> blogListForHeader(String username) {
+    Member member = memberRepository.findByUsername(username)
+            .orElseThrow(() -> new NotFoundException(Member.class));
+
+    return blogRepository.getBlogListInHeaderByUsername(member.getUsername());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public GetBlogResponseDto getBlogByUrl(String url) {
+    GetBlogResponseDto responseDto = blogRepository.getBlogByUrl(url)
+            .orElseThrow(() -> new NotFoundException(Blog.class));
+    responseDto.distinct();
+
+    return responseDto;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public List<GetBlogWithCategoryResponseDto> getBlogListWithCategory(Integer memberNo) {
+    return blogRepository.getBlogWithCategoryList(memberNo);
   }
 }

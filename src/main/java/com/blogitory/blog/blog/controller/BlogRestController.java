@@ -1,11 +1,11 @@
 package com.blogitory.blog.blog.controller;
 
-import com.blogitory.blog.blog.dto.request.BlogCreateRequestDto;
-import com.blogitory.blog.blog.dto.request.BlogModifyRequestDto;
+import com.blogitory.blog.blog.dto.request.CreateBlogRequestDto;
+import com.blogitory.blog.blog.dto.request.UpdateBlogRequestDto;
 import com.blogitory.blog.blog.service.BlogService;
-import com.blogitory.blog.image.dto.ThumbnailUpdateResponseDto;
+import com.blogitory.blog.image.dto.UpdateThumbnailResponseDto;
 import com.blogitory.blog.image.service.ImageService;
-import com.blogitory.blog.member.dto.request.MemberLeftRequestDto;
+import com.blogitory.blog.member.dto.request.LeftMemberRequestDto;
 import com.blogitory.blog.security.util.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class BlogRestController {
    * @return 201
    */
   @PostMapping
-  public ResponseEntity<Void> create(@Valid @RequestBody BlogCreateRequestDto requestDto) {
+  public ResponseEntity<Void> create(@Valid @RequestBody CreateBlogRequestDto requestDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     blogService.createBlog(requestDto, memberNo);
@@ -58,7 +58,7 @@ public class BlogRestController {
    */
   @PutMapping
   public ResponseEntity<Void> update(@RequestParam String url,
-                                     @Valid @RequestBody BlogModifyRequestDto requestDto) {
+                                     @Valid @RequestBody UpdateBlogRequestDto requestDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     blogService.updateBlog(url, requestDto, memberNo);
@@ -74,11 +74,11 @@ public class BlogRestController {
    * @return 200
    */
   @PostMapping("/thumbs")
-  public ResponseEntity<ThumbnailUpdateResponseDto> updateBlogThumb(
+  public ResponseEntity<UpdateThumbnailResponseDto> updateBlogThumb(
           @RequestParam("file") MultipartFile file,
           @RequestParam String url) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
-    ThumbnailUpdateResponseDto responseDto = imageService.updateBlogThumbnail(memberNo, url, file);
+    UpdateThumbnailResponseDto responseDto = imageService.updateBlogThumbnail(memberNo, url, file);
 
     return ResponseEntity.ok(responseDto);
   }
@@ -106,7 +106,7 @@ public class BlogRestController {
    */
   @PostMapping("/quit")
   public ResponseEntity<Void> deleteBlog(@RequestParam String url,
-                                         @RequestBody MemberLeftRequestDto requestDto) {
+                                         @RequestBody LeftMemberRequestDto requestDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     blogService.quitBlog(memberNo, url, requestDto.getPassword());

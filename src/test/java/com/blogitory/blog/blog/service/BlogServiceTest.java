@@ -2,22 +2,29 @@ package com.blogitory.blog.blog.service;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.blogitory.blog.blog.dto.request.BlogCreateRequestDto;
-import com.blogitory.blog.blog.dto.request.BlogModifyRequestDto;
-import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.request.CreateBlogRequestDto;
+import com.blogitory.blog.blog.dto.request.UpdateBlogRequestDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInHeaderResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogWithCategoryResponseDto;
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.blog.exception.BlogLimitException;
 import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.blog.service.impl.BlogServiceImpl;
+import com.blogitory.blog.category.dto.GetCategoryResponseDto;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
@@ -62,8 +69,8 @@ class BlogServiceTest {
    */
   @Test
   void getBlogListByMemberNo() {
-    List<BlogListInSettingsResponseDto> expect = List.of(
-            new BlogListInSettingsResponseDto(
+    List<GetBlogInSettingsResponseDto> expect = List.of(
+            new GetBlogInSettingsResponseDto(
                     "name",
                     "url",
                     "url",
@@ -74,10 +81,10 @@ class BlogServiceTest {
 
     when(blogRepository.getBlogListByMemberNo(any())).thenReturn(expect);
 
-    List<BlogListInSettingsResponseDto> actual = blogService.getBlogListByMemberNo(1);
+    List<GetBlogInSettingsResponseDto> actual = blogService.getBlogListByMemberNo(1);
 
-    BlogListInSettingsResponseDto expectOne = expect.get(0);
-    BlogListInSettingsResponseDto actualOne = actual.get(0);
+    GetBlogInSettingsResponseDto expectOne = expect.get(0);
+    GetBlogInSettingsResponseDto actualOne = actual.get(0);
 
     assertAll(
             () -> assertEquals(expectOne.getBlogBio(), actualOne.getBlogBio()),
@@ -97,7 +104,7 @@ class BlogServiceTest {
 
     ReflectionTestUtils.setField(member, "blogs", List.of(blog));
 
-    BlogCreateRequestDto requestDto = new BlogCreateRequestDto();
+    CreateBlogRequestDto requestDto = new CreateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "url", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
@@ -117,7 +124,7 @@ class BlogServiceTest {
 
     ReflectionTestUtils.setField(member, "blogs", List.of(blog));
 
-    BlogCreateRequestDto requestDto = new BlogCreateRequestDto();
+    CreateBlogRequestDto requestDto = new CreateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "url", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
@@ -135,7 +142,7 @@ class BlogServiceTest {
 
     ReflectionTestUtils.setField(member, "blogs", List.of(blog, blog, blog));
 
-    BlogCreateRequestDto requestDto = new BlogCreateRequestDto();
+    CreateBlogRequestDto requestDto = new CreateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "url", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
@@ -154,7 +161,7 @@ class BlogServiceTest {
     when(blogRepository.findBlogByUrlName(blog.getUrlName()))
             .thenReturn(Optional.of(blog));
 
-    BlogModifyRequestDto requestDto = new BlogModifyRequestDto();
+    UpdateBlogRequestDto requestDto = new UpdateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
 
@@ -173,7 +180,7 @@ class BlogServiceTest {
     when(blogRepository.findBlogByUrlName(blog.getUrlName()))
             .thenReturn(Optional.empty());
 
-    BlogModifyRequestDto requestDto = new BlogModifyRequestDto();
+    UpdateBlogRequestDto requestDto = new UpdateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
 
@@ -194,7 +201,7 @@ class BlogServiceTest {
     when(blogRepository.findBlogByUrlName(blog.getUrlName()))
             .thenReturn(Optional.of(blog));
 
-    BlogModifyRequestDto requestDto = new BlogModifyRequestDto();
+    UpdateBlogRequestDto requestDto = new UpdateBlogRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "blog");
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
 
@@ -259,5 +266,83 @@ class BlogServiceTest {
 
     assertThrows(AuthorizationException.class,
             () -> blogService.quitBlog(1, "urlName", ""));
+  }
+
+  @Test
+  @DisplayName("유저네임으로 블로그 리스트 조회")
+  void blogListForHeader() {
+    Member member = MemberDummy.dummy();
+    GetBlogInHeaderResponseDto responseDto =
+            new GetBlogInHeaderResponseDto("blog", "blog-url");
+
+    List<GetBlogInHeaderResponseDto> responseDtoList = List.of(responseDto);
+
+    when(memberRepository.findByUsername(any())).thenReturn(Optional.of(member));
+    when(blogRepository.getBlogListInHeaderByUsername(anyString()))
+            .thenReturn(responseDtoList);
+
+    List<GetBlogInHeaderResponseDto> actual =
+            blogService.blogListForHeader(member.getUsername());
+
+    assertFalse(actual.isEmpty());
+    assertEquals(responseDtoList.getFirst().getName(), actual.getFirst().getName());
+    assertEquals(responseDtoList.getFirst().getUrl(), actual.getFirst().getUrl());
+  }
+
+  @Test
+  @DisplayName("블로그 url로 블로그 조회")
+  void getBlogByUrl() {
+    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname");
+
+    GetBlogResponseDto responseDto = new GetBlogResponseDto(
+            "blogThumbUrl",
+            "blogThumbOriginName",
+            "blogUrl",
+            "blogName",
+            "name",
+            "username",
+            "blogBio",
+            List.of(categoryResponseDto),
+            List.of());
+
+    when(blogRepository.getBlogByUrl(anyString()))
+            .thenReturn(Optional.of(responseDto));
+
+    GetBlogResponseDto actual = blogService.getBlogByUrl("blogUrl");
+
+    assertEquals(responseDto.getBlogThumbUrl(), actual.getBlogThumbUrl());
+    assertEquals(responseDto.getBlogThumbOriginName(), actual.getBlogThumbOriginName());
+    assertEquals(responseDto.getBlogUrl(), actual.getBlogUrl());
+    assertEquals(responseDto.getBlogName(), actual.getBlogName());
+    assertEquals(responseDto.getBlogBio(), actual.getBlogBio());
+    assertEquals(responseDto.getName(), actual.getName());
+    assertEquals(responseDto.getUsername(), actual.getUsername());
+    assertEquals(responseDto.getCategories().getFirst().getCategoryNo(),
+            actual.getCategories().getFirst().getCategoryNo());
+    assertEquals(responseDto.getCategories().getFirst().getCategoryName(),
+            actual.getCategories().getFirst().getCategoryName());
+  }
+
+  @Test
+  @DisplayName("회원번호로 카테고리가 있는 블로그 조회")
+  void getBlogListWithCategory() {
+    GetBlogWithCategoryResponseDto responseDto = new GetBlogWithCategoryResponseDto(
+            1L,
+            "blogName",
+            List.of(
+                    new GetCategoryResponseDto(
+                            1L,
+                            "cname")));
+
+    when(blogRepository.getBlogWithCategoryList(anyInt()))
+            .thenReturn(List.of(responseDto));
+
+    List<GetBlogWithCategoryResponseDto> actual = blogService.getBlogListWithCategory(1);
+
+    assertFalse(actual.isEmpty());
+    assertEquals(responseDto.getBlogName(), actual.getFirst().getBlogName());
+    assertEquals(responseDto.getBlogNo(), actual.getFirst().getBlogNo());
+    assertEquals(responseDto.getCategories().getFirst().getCategoryNo(),
+            actual.getFirst().getCategories().getFirst().getCategoryNo());
   }
 }
