@@ -9,29 +9,46 @@
     <link rel="icon" href="/static/logo/logo-375582.svg">
     <link href="/static/css/lib/tabler.css" rel="stylesheet"/>
     <link href="/static/css/lib/tabler-vendors.min.css" rel="stylesheet"/>
+    <link href="/static/css/my/blogi.css" rel="stylesheet"/>
     <style>
         @font-face {
-            font-family: "Nanum Gothic";
-            src: url("/static/fonts/NanumGothic.otf") format("woff"), url("/static/fonts/NanumGothic.ttf")  format("truetype");
+            font-family: "Noto Sans KR", sans-serif;
+            src: url("/static/fonts/NotoSansKR-Regular.ttf") format("truetype");
         }
 
         @font-face {
-            font-family: "Nanum Gothic Bold";
+            font-family: "Noto Sans KR Light", sans-serif;
+            src: url("/static/fonts/NotoSansKR-Light.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Medium", sans-serif;
             font-weight: bold;
-            src: url("/static/fonts/NanumGothicBold.otf") format("woff"), url("/static/fonts/NanumGothicBold.ttf")  format("truetype");
+            src: url("/static/fonts/NotoSansKR-Medium.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Bold", sans-serif;
+            font-weight: bold;
+            src: url("/static/fonts/NotoSansKR-Bold.ttf") format("truetype");
         }
 
         :root {
-            --tblr-font-sans-serif: "Nanum Gothic";
-            --tblr-font-weight-bold: "Nanum Gothic Bold";
+            --tblr-font-weight-light: "Noto Sans KR Light", sans-serif;
+            --tblr-font-sans-serif: "Noto Sans KR", sans-serif;
+            --tblr-font-normal: "Noto Sans KR", sans-serif;
+            --tblr-font-weight-medium: "Noto Sans KR Medium", sans-serif;
+            --tblr-font-weight-bold: "Noto Sans KR Bold", sans-serif;
         }
     </style>
 </head>
 <body>
 <div class="page">
-<!--    <div th:replace="~{profile/fragments/sidebar :: sidebar}"></div>-->
     <div th:replace="~{profile/fragments/header :: header}"></div>
-    <div class="page-wrapper" layout:fragment="main-content"></div>
+    <div class="container-mg">
+        <div class="page-wrapper" layout:fragment="main-content"></div>
+    </div>
+    <div th:replace="~{index/fragments/alerts :: alerts}"></div>
     <div class="mb-6"></div>
 </div>
 
@@ -125,5 +142,6 @@
 <script src="/static/js/lib/litepicker.js" defer></script>
 <script src="/static/js/lib/axios.js" defer></script>
 <script src="/static/js/my/login.js" defer></script>
+<script src="/static/js/my/posts.js" defer></script>
 </body>
 </html>

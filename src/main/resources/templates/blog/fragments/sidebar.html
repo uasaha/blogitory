@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<aside th:fragment="sidebar" class="navbar navbar-vertical navbar-expand-lg">
+    <div class="container-lg">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
+                aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <h1 class="navbar-brand d-none-navbar-horizontal pe-0 pe-md-3">
+            <a href="/">
+                <img src="/static/logo/logo-375582.svg" width="30" height="30" alt="">
+            </a>
+            <a style="font-size: 22px; font-weight: bold" th:text="${blog.blogName}"></a>
+        </h1>
+        <div class="navbar-nav flex-row d-lg-none">
+            <div sec:authorize="isAuthenticated()" class="nav-item dropdown">
+                <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
+                   aria-label="Open user menu">
+                    <img class="avatar avatar-sm rounded-circle"
+                         th:src="${thumbIsNull} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="pjp"/>
+                    <div class="d-none d-xl-block ps-2">
+                        <div th:text="${members.getName()}"></div>
+                        <div class="mt-1 small text-secondary" th:text="'@'+${members.getUsername()}"></div>
+                    </div>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-bs-theme="light">
+                    <a class="dropdown-item" onclick="toPostsIssuePage()">새 글 작성</a>
+                    <a th:href="'/@' + ${members.getUsername()}" class="dropdown-item">내 프로필</a>
+                    <a class="dropdown-item">알림</a>
+                    <a class="dropdown-item" href="/tp">임시 작성 글</a>
+                    <div class="dropdown-divider"></div>
+                    <span class="dropdown-header">내 블로그</span>
+                    <div th:each="headerBlog : ${headerBlogs}">
+                        <a class="dropdown-item" th:href="|/${headerBlog.url}|" th:text="${headerBlog.name}"></a>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a onclick="setTheme('dark')" class="dropdown-item hide-theme-dark">테마 변경</a>
+                    <a onclick="setTheme('light')" class="dropdown-item hide-theme-light">테마 변경</a>
+                    <a href="/settings" class="dropdown-item">설정</a>
+                    <p onclick="logout()" class="dropdown-item">로그아웃</p>
+                </div>
+            </div>
+            <a sec:authorize="isAnonymous()" id="login-modal-btn" class="nav-link px-0" title="로그인"
+               data-bs-toggle="modal"
+               data-bs-target="#loginModal">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M15 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2"/>
+                    <path d="M21 12h-13l3 -3"/>
+                    <path d="M11 15l-3 -3"/>
+                </svg>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse mb-5" id="sidebar-menu">
+            <div class="row justify-content-center">
+                <img th:if="${blog.blogThumbUrl != null}" class="mt-1" style="width: 95%;" alt="avatar"
+                     th:src="${blog.blogThumbUrl}">
+            </div>
+            <div class="row mt-1 ms-lg-2" style="width: 95%">
+                <span id="profile-name" style="font-size: 22px; font-weight: bold" th:text="${blog.name}"></span>
+                <span style="font-size: 18px" th:text="'@'+${blog.username}"></span>
+            </div>
+            <div th:if="${blog.blogBio} != null and ${!#strings.isEmpty(blog.blogBio)}" class="row mt-1 ms-lg-2"
+                 style="width: 95%">
+                <textarea class="form-control" rows="5" th:text="${blog.blogBio}" readonly></textarea>
+            </div>
+            <ul class="navbar-nav pt-lg-3" style="flex-grow: 0 !important;">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="|/${blog.blogUrl}|">
+                  <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path
+                            d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path
+                            d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></svg>
+                  </span>
+                        <span class="nav-link-title">
+                    Home
+                  </span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="|/${blog.blogUrl}/posts|">
+                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                         <svg
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 class="icon icon-tabler icons-tabler-outline icon-tabler-article">
+                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                             <path d="M3 4m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"/>
+                             <path d="M7 8h10"/>
+                             <path d="M7 12h10"/>
+                             <path d="M7 16h10"/>
+                         </svg>
+                    </span>
+                    <span class="nav-link-title">All</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-clock">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/>
+                            <path d="M12 7v5l3 3"/>
+                        </svg>
+                  </span>
+                        <span class="nav-link-title">
+                    Recent
+                  </span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
+                       data-bs-auto-close="false" role="button" aria-expanded="false">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="icon icon-tabler icons-tabler-outline icon-tabler-category-2">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M14 4h6v6h-6z"/>
+                            <path d="M4 14h6v6h-6z"/>
+                            <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/>
+                            <path d="M7 7m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"/>
+                        </svg>
+                    </span>
+                        <span class="nav-link-title">
+                    Category
+                  </span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-menu-columns">
+                            <div th:each="category : ${blog.categories}" class="dropdown-menu-column">
+                                <a class="dropdown-item"
+                                   th:href="|/${blog.blogUrl}/categories/${category.categoryName}|"
+                                   th:text="${category.categoryName}"></a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="row pt-lg-3 ms-lg-2" style="width: 95%">
+                <div class="card">
+                    <div class="card-status-top bg-secondary"></div>
+                    <div class="card-body">
+                        <h3 class="card-text" style="margin: 0em;">Today</h3>
+                        <p class="card-title" style="margin: 0em; font-weight: bold; font-size: 18px">149,282</p>
+                        <h3 class="card-text" style="margin: 0em;">Total</h3>
+                        <p class="card-text" style="margin: 0em; font-weight: bold; font-size: 18px">912,841,987</p>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.size(blog.tags) > 0} " class="row pt-lg-3 ms-lg-2" style="width: 95%">
+                <div class="text-secondary">태그</div>
+                <div class="card">
+                    <div class="card-body">
+                        <span th:each="tag : ${blog.tags}" class="badge badge-outline ms-auto m-1"
+                              th:text="${tag.tagName}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+</html>

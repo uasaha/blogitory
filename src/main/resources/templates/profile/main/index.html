@@ -11,7 +11,7 @@
     </style>
 </head>
 <body>
-<div class="container-xl" layout:fragment="main-content">
+<div class="container-lg" layout:fragment="main-content">
     <div class="page-body">
         <div class="row row-deck row-cards">
             <div class="profile col-lg-3 d-none d-lg-block">
@@ -28,8 +28,8 @@
                         <span id="profile-name" style="font-size: 22px; font-weight: bold" th:text="${profile.name}"></span>
                         <span style="font-size: 18px" th:text="'@'+${profile.username}"></span>
                     </div>
-                    <div th:if="${profile.bio} != null" id="profile-bio" class="row justify-content-center mt-1">
-                        <span th:text="${profile.bio}"></span>
+                    <div th:if="${profile.bio} != null" id="profile-bio" class="row mt-1">
+                        <textarea class="form-control" rows="5" th:text="${profile.bio}" readonly></textarea>
                     </div>
                     <div sec:authorize="isAuthenticated()" id="profile-updatable" class="row justify-content-center d-none">
                         <div class="card">
@@ -117,9 +117,9 @@
                     <span class="mb-3" style="font-size: 17px; font-weight: bold">Blogs</span>
                     <div class="col-4" th:each="blog : ${profile.blogs}">
                         <div class="card" style="height: 120px">
-                            <div class="card-body">
+                            <div class="card-body" >
                                 <a class="text-body" th:href="${blog.getBlogUrl()}"><h5 class="card-title" th:text="${blog.blogName}"></h5></a>
-                                <div class="card-text" th:text="${blog.blogBio}"></div>
+                                <div class="card-text text-over-summary-3" th:text="${blog.blogBio}"></div>
                             </div>
                         </div>
                     </div>

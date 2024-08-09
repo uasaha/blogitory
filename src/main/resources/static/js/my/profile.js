@@ -85,7 +85,7 @@ function saveProfiles() {
         showProfiles();
         document.location.reload();
     }).catch(() => {
-        alert("저장에 실패하였습니다.")
+        openFailedAlerts("저장에 실패하였습니다.")
     })
 }
 
@@ -140,7 +140,7 @@ function saveProfilesMobile() {
     let links = [];
 
     if (!nameValidate(profileNameUpdatable)) {
-        alert("이름을 확인해주세요.")
+        openWarnAlerts("이름을 확인해주세요. 이름은 한글과 영어만 가능합니다.")
     }
 
     pushLink(links, $$profileLinksUpdatable[0].value);
@@ -160,7 +160,7 @@ function saveProfilesMobile() {
         showProfiles();
         document.location.reload();
     }).catch(() => {
-        alert("저장에 실패하였습니다.")
+        openFailedAlerts("저장에 실패하였습니다.")
     })
 }
 
@@ -191,9 +191,10 @@ function updateThumb() {
             profilePfpUpdatableMobile.alt = result.data.originName;
             profilePfpMobile.src = result.data.url;
             profilePfpMobile.alt = result.data.originName;
+            openSuccessAlerts("저장되었습니다.")
         })
         .catch(() => {
-            alert("저장에 실패하였습니다.")
+            openFailedAlerts("저장에 실패하였습니다.")
         })
 }
 
@@ -405,10 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
             tickAmount: 12,
             tickPlacement: 'between',
             axisTicks: { show: true },
-            // labels: { show: false },
-            // formatter: function (value) {
-            //     return value;
-            // }
         },
         tooltip: {
             intersect: false,

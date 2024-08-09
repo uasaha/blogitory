@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:xmls="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="/static/logo/logo-375582.svg">
+    <link rel="icon" href="/static/logo/logo-375582.svg">
+    <link href="/static/css/lib/tabler.css" rel="stylesheet"/>
+    <link href="/static/css/lib/tabler-vendors.min.css" rel="stylesheet"/>
+    <th:block layout:fragment="css"></th:block>
+    <style>
+        @font-face {
+            font-family: "Noto Sans KR", sans-serif;
+            src: url("/static/fonts/NotoSansKR-Regular.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Light", sans-serif;
+            src: url("/static/fonts/NotoSansKR-Light.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Medium", sans-serif;
+            font-weight: bold;
+            src: url("/static/fonts/NotoSansKR-Medium.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Bold", sans-serif;
+            font-weight: bold;
+            src: url("/static/fonts/NotoSansKR-Bold.ttf") format("truetype");
+        }
+
+        :root {
+            --tblr-font-weight-light: "Noto Sans KR Light", sans-serif;
+            --tblr-font-sans-serif: "Noto Sans KR", sans-serif;
+            --tblr-font-normal: "Noto Sans KR", sans-serif;
+            --tblr-font-weight-medium: "Noto Sans KR Medium", sans-serif;
+            --tblr-font-weight-bold: "Noto Sans KR Bold", sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div th:replace="~{blog/fragments/header :: header}"></div>
+    <div th:replace="~{blog/fragments/sidebar :: sidebar}"></div>
+
+    <div class="container-lg">
+        <div class="page-wrapper d-none d-lg-block" style="margin-left: 20rem">
+            <div layout:fragment="main-content"></div>
+        </div>
+        <div class="page-wrapper d-lg-none">
+            <div layout:fragment="main-content"></div>
+        </div>
+    </div>
+    <div th:replace="~{index/fragments/alerts :: alerts}"></div>
+    <div class="mb-6"></div>
+</div>
+
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="card">
+                <div id="login-body" class="card-body">
+                    <div class="card-title">
+                        <img class="navbar-brand-image" src="/static/logo/logo-375582.svg" width="25" height="25" alt="">
+                        <p class="navbar-brand">Blogitory&nbsp;로그인</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">이메일</label>
+                        <input type="email" id="login-id-input" name="id" class="form-control" placeholder="email" onkeyup="isEnterPress()">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" id="login-pwd-input" name="pwd" class="form-control" placeholder="password" onkeyup="isEnterPress()">
+                    </div>
+                    <div id="failed-reason" class="mb-3 d-none">
+                        <span style="color: firebrick">이메일 혹은 비밀번호가 일치하지 않습니다.</span>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <div>
+                            <a class="text-body" href="/signup">회원가입</a> /
+                            <a class="text-body" onclick="pwdChangeEvent()">비밀번호 찾기</a>
+                        </div>
+                        <button type="button" class="btn ms-auto" onclick="login()">
+                            로그인
+                        </button>
+                    </div>
+                    <div class="mb-3">
+                        <div class="hr-text">Social</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="row justify-content-center align-items-center">
+                            <a href="#" class="col-2">
+                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/kakao-icon.png" alt="kakao">
+                            </a>
+                            <a href="#" class="col-2">
+                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/naver-icon.png" alt="naver">
+                            </a>
+                            <a href="https://github.com/login/oauth/authorize?client_id=ee49c7b2e2685765b152" class="col-2">
+                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/github-icon.png" alt="github">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="pwd-body" class="card-body d-none">
+                    <div class="card-title">
+                        <img class="navbar-brand-image" src="/static/logo/logo-375582.svg" width="25" height="25" alt="">
+                        <p class="navbar-brand">비밀번호 초기화</p>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">이메일</label>
+                        <input type="email" id="pwd-id-input" name="id" class="form-control" placeholder="email" onkeyup="pwdEnterPress()">
+                        <p id="pwdSent" class="mt-2 d-none" style="color: var(--tblr-form-valid-color)">이메일로 비밀번호 변경 메일이 발송되었습니다.</p>
+                        <p id="pwdSentFail" class="mt-2 d-none" style="color: var(--tblr-form-invalid-color)">가입되지 않은 이메일입니다.</p>
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn" onclick="pwdMailPush()">메일 발송</button>
+                        <button class="btn" onclick="pwdCancel()">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+        let path = window.location.pathname;
+        let recentItem = document.querySelector("#recent-item");
+        let shuffleItem = document.querySelector("#shuffle-item");
+        let feedItem = document.querySelector("#feed-item");
+
+        if (path === "/shuffle") {
+            recentItem.className = "nav-item";
+            shuffleItem.classList.add("active");
+        } else if (path === "/feed") {
+            recentItem.className = "nav-item";
+            feedItem.classList.add("active");
+        }
+    });
+</script>
+<th:block layout:fragment="script"></th:block>
+<script src="/static/js/lib/theme.js" defer></script>
+<script src="/static/js/lib/tabler.min.js" defer></script>
+<script src="/static/js/lib/apexcharts.min.js" defer></script>
+<script src="/static/js/lib/litepicker.js" defer></script>
+<script src="/static/js/lib/axios.js" defer></script>
+<script src="/static/js/my/login.js" defer></script>
+<script src="/static/js/my/posts.js" defer></script>
+</body>
+</html>

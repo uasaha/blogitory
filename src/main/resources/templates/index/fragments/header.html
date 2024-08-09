@@ -4,7 +4,7 @@
 
 <div th:fragment="header"  class="sticky-top">
     <header class="navbar navbar-expand-md sticky-top d-print-none">
-        <div class="container-xl">
+        <div class="container-lg">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu"
                     aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -17,6 +17,27 @@
             </h1>
             <div class="navbar-nav flex-row order-md-last">
                 <div class="d-none d-md-flex">
+                    <div sec:authorize="isAuthenticated()" class="nav-item d-none d-md-flex me-2">
+                        <button class="btn btn-pill w-100" onclick="toPostsIssuePage()">
+                            <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-pencil"
+                            >
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                <path d="M13.5 6.5l4 4" />
+                            </svg>
+                            <span>새 글 작성</span>
+                        </button>
+                    </div>
                     <a onclick="setTheme('dark')" class="nav-link px-0 hide-theme-dark">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -162,8 +183,15 @@
                         </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-bs-theme="light">
-                        <a class="dropdown-item d-md-none">알림</a>
+                        <a class="dropdown-item d-md-none" onclick="toPostsIssuePage()">새 글 작성</a>
                         <a th:href="'/@' + ${members.getUsername()}" class="dropdown-item">내 프로필</a>
+                        <a class="dropdown-item d-md-none">알림</a>
+                        <a class="dropdown-item" href="/tp">임시 작성 글</a>
+                        <div class="dropdown-divider"></div>
+                        <span class="dropdown-header">내 블로그</span>
+                        <div th:each="headerBlog : ${headerBlogs}">
+                            <a class="dropdown-item" th:href="|/${headerBlog.url}|" th:text="${headerBlog.name}"></a>
+                        </div>
                         <div class="dropdown-divider"></div>
                         <a onclick="setTheme('dark')" class="dropdown-item d-md-none hide-theme-dark">테마 변경</a>
                         <a onclick="setTheme('light')" class="dropdown-item d-md-none hide-theme-light">테마 변경</a>

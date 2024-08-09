@@ -20,9 +20,10 @@ function pfpChanged() {
         .then((result) => {
             pfp.src = result.data.url;
             pfp.alt = result.data.originName;
+            openSuccessAlerts("변경되었습니다.");
         })
         .catch(() => {
-            console.log("실패하였습니다.");
+            openFailedAlerts("변경에 실패하였습니다.");
         })
 }
 
@@ -35,9 +36,10 @@ function pfpRemove() {
         .then((result) => {
             pfp.src = "/static/icons/person.svg";
             pfp.alt = "no image";
+            openSuccessAlerts("삭제되었습니다.");
         })
         .catch(() => {
-            console.log("실패하였습니다.")
+            openFailedAlerts("삭제에 실패하였습니다.");
         })
 }
 
@@ -46,11 +48,10 @@ function profileUpdate() {
     let introEmail = document.querySelector("#introEmail").value;
     let bio = document.querySelector("#bio").value;
     let $$profileLinks = document.querySelectorAll('.profile-links');
-    let saveFailed = document.querySelector("#save-failed");
     let links = [];
 
     if (!nameValidate(name)) {
-        alert("이름을 확인해주세요.")
+        openWarnAlerts("이름을 확인해주세요. 이름은 한글과 영어만 가능합니다.");
     }
 
     pushLink(links, $$profileLinks[0].value);
@@ -67,7 +68,7 @@ function profileUpdate() {
     }).then(() => {
         document.location.reload();
     }).catch(() => {
-        saveFailed.classList.remove("d-none")
+        openFailedAlerts("저장에 실패하였습니다.");
     })
 }
 
@@ -106,8 +107,11 @@ function updateAlert(type, checkbox) {
     let url = `/api/users/alerts?type=${type}&isOn=${checkbox.checked}`;
 
     axios.put(url, {})
+        .then((result) => {
+            openSuccessAlerts("변경되었습니다.");
+        })
         .catch(() => {
-        alert("저장에 실패하였습니다.")
+        openFailedAlerts("변경에 실패하였습니다.");
     })
 }
 
@@ -202,7 +206,7 @@ function addCategory() {
     let blogUrl = document.querySelector("#blogUrl").value;
 
     if (newCategory.value === "" || newCategory.value === null) {
-        alert("카테고리를 입력하지 않았습니다.")
+        alert("카테고리를 입력하지 않았습니다.");
         return;
     }
 
@@ -210,15 +214,13 @@ function addCategory() {
 
     axios.post(url)
         .then((result) => {
-            console.log(result);
-
         let savedCategory = result.data;
 
         drawCategory(savedCategory);
 
         newCategory.value = "";
     }).catch(() => {
-        alert("저장에 실패하였습니다.");
+        openFailedAlerts("카테고리 추가에 실패하였습니다.");
     })
 }
 
@@ -226,15 +228,18 @@ function updateCategory(categoryNo) {
     let categoryName = document.querySelector("#category-input-" + categoryNo);
 
     if (categoryName.value === "" || categoryName.value === null) {
-        alert("카테고리를 입력하지 않았습니다.")
+        openWarnAlerts("카테고리가 입력되지 않았습니다.")
         return;
     }
 
     let url = `/api/categories/${categoryNo}?name=${categoryName.value}`;
 
     axios.put(url)
+        .then((result) => {
+            openSuccessAlerts("변경되었습니다.");
+        })
         .catch(() => {
-            alert("저장에 실패하였습니다.")
+            openFailedAlerts("변경에 실패하였습니다.");
         })
 }
 
@@ -247,13 +252,13 @@ function deleteCategory(categoryNo) {
             categoryName.parentElement.parentElement.remove();
         })
         .catch(() => {
-            alert("삭제에 실패하였습니다.")
+            openFailedAlerts("삭제에 실패하였습니다.");
         })
 }
 
 function blogNew() {
     if (blogs !== null && blogs.length >= 3) {
-        alert("더 이상 개설할 수 없습니다.");
+        openFailedAlerts("블로그는 최대 3개까지 개설할 수 있습니다.");
         return;
     }
 
@@ -327,7 +332,7 @@ function blogCreate() {
     }).then(() => {
         window.location.reload();
     }).catch(() => {
-        alert("개설에 실패하였습니다.")
+        openFailedAlerts("개설에 실패하였습니다.");
     })
 }
 
@@ -346,10 +351,9 @@ function updateBlog() {
         "name": blogName.value,
         "bio": blogBio.value
     }).then((result) => {
-        console.log(result);
-        saveSuccess.classList.remove("d-none");
+        openSuccessAlerts("저장되었습니다.")
     }).catch(() => {
-        saveFailed.classList.remove("d-none");
+        openFailedAlerts("저장에 실패하였습니다.")
     });
 }
 
@@ -375,8 +379,9 @@ function updateBlogThumb() {
     }).then((result) => {
         blogPfp.src = result.data.url;
         blogPfp.alt = result.data.originName;
+        openSuccessAlerts("변경되었습니다.");
     }).catch(() => {
-        alert("저장에 실패하였습니다.")
+        openFailedAlerts("변경에 실패하였습니다.")
     });
 }
 
@@ -384,7 +389,8 @@ function deleteBlogThumb() {
     let blogPfp = document.querySelector("#blogPfp");
     let blogUrl = document.querySelector("#blogUrl");
     let url = `/api/blogs/thumbs?url=${blogUrl.value}`;
-    axios.delete(url).then(() => {
+    axios.delete(url)
+        .then(() => {
         document.location.reload();
     })
 }
@@ -392,7 +398,6 @@ function deleteBlogThumb() {
 function changePasswordClick() {
     let email = document.querySelector("#memberEmail").value;
     let url = `/api/users/password?email=${email}`;
-    console.log(url);
 
     axios.get(url)
         .then(() => {
@@ -415,8 +420,7 @@ function deleteAccount() {
             document.location.reload();
         })
         .catch((error) => {
-            console.log(error);
-            alert("계정 삭제 실패하였습니다.");
+            openFailedAlerts("탈퇴에 실패하였습니다.");
         })
 }
 
@@ -430,6 +434,6 @@ function deleteBlog() {
     }).then(() => {
         document.location.reload();
     }).catch(() => {
-        alert("폐쇄에 실패하였습니다.");
+        openFailedAlerts("블로그 폐쇄에 실패하였습니다.")
     })
 }

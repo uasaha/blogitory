@@ -12,15 +12,14 @@ function emailVerificationFormOpen () {
     axios
         .get("/api/mail/verification?email=" + email)
         .then((result) => {
-            alert("인증번호는 10분간 유효합니다.");
+            openSuccessAlerts("인증번호가 발송되었습니다. 최대 10분간 유효합니다.");
             document.getElementById("email-verify-div").className = "form-group mb-4";
         })
         .catch((error) => {
-            console.log(error);
             if (error.response.status === 409) {
-                alert("사용중인 이메일입니다.");
+                openWarnAlerts("사용중인 이메일입니다.");
             } else {
-                alert("발송에 실패하였습니다. 다시 시도해주세요.");
+                openFailedAlerts("발송에 실패하였습니다.");
             }
             sendButton.disabled = false;
         })
@@ -34,13 +33,13 @@ function emailVerification() {
         "verificationCode" : verificationCode
     })
         .then((result) => {
-            alert("인증에 성공하였습니다.");
+            openSuccessAlerts("인증에 성공하였습니다.");
             document.getElementById("email-input").readOnly = true;
             document.getElementById("email-verify-div").className = "form-group mb-4 d-none";
             isEmailVerified = true;
         })
         .catch(() => {
-            alert("인증에 실패하였습니다. 다시 시도해주세요.");
+            openFailedAlerts("인증에 실패하였습니다. 다시 시도해주세요.");
         })
 }
 
@@ -129,7 +128,7 @@ function memberSignup(element) {
 
     } else {
         element.disabled = false;
-        alert("실패하였습니다. 잠시 후 다시 시도해주세요.");
+        openFailedAlerts("실패하였습니다. 잠시 후 다시 시도해주세요.");
     }
 }
 

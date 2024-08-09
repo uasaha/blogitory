@@ -26,9 +26,6 @@ function logout() {
 }
 
 function isEnterPress() {
-    const email = document.getElementById('login-id-input').value;
-    const pwd = document.getElementById('login-pwd-input').value;
-
     if (window.event.keyCode == 13) {
         this.login();
     }
@@ -68,4 +65,37 @@ function pwdCancel() {
 
     loginBody.classList.remove('d-none');
     pwdBody.classList.add('d-none');
+}
+
+function openSuccessAlerts(msg) {
+    let successAlerts = document.querySelector("#success-alerts");
+    let successMsg = document.querySelector("#success-alerts-msg");
+    successMsg.textContent = msg;
+    successAlerts.classList.remove("d-none");
+
+    setTimeout(function () {
+        successAlerts.classList.add("d-none");
+    }, 5000)
+}
+
+function openFailedAlerts(msg) {
+    let failedAlerts = document.querySelector("#failed-alerts");
+    let failedMsg = document.querySelector("#failed-alerts-msg");
+    failedMsg.textContent = msg;
+    failedAlerts.classList.remove("d-none");
+
+    setTimeout(function () {
+        failedAlerts.classList.add("d-none");
+    }, 5000)
+}
+
+function openWarnAlerts(msg) {
+    let warnAlerts = document.querySelector("#warn-alerts");
+    let warnMsg = document.querySelector("#warn-alerts-msg");
+    warnMsg.textContent = msg;
+    warnAlerts.classList.remove("d-none");
+
+    setTimeout(function () {
+        warnAlerts.classList.add("d-none");
+    }, 5000)
 }
