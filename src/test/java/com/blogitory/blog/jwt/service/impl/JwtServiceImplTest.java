@@ -8,11 +8,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.blogitory.blog.jwt.dto.MemberInfoDto;
+import com.blogitory.blog.jwt.dto.GetMemberInfoDto;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.provider.JwtProvider;
 import com.blogitory.blog.jwt.service.JwtService;
-import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
+import com.blogitory.blog.member.dto.response.LoginMemberResponseDto;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -82,7 +82,7 @@ class JwtServiceImplTest {
   void issue() throws Exception {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
-    MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
+    LoginMemberResponseDto loginMemberResponseDto = new LoginMemberResponseDto(
             1, "test@email.com", "username", "name", "pfp", "password", List.of("ROLE_TEST"));
 
     String expect = "accessToken";
@@ -101,7 +101,7 @@ class JwtServiceImplTest {
     when(redisTemplate.expire(uuid, 14, TimeUnit.DAYS)).thenReturn(true);
     when(objectMapper.writeValueAsString(any())).thenReturn(info);
 
-    String result = jwtService.issue(uuid, memberLoginResponseDto);
+    String result = jwtService.issue(uuid, loginMemberResponseDto);
 
     assertEquals(expect, result);
   }
@@ -116,12 +116,11 @@ class JwtServiceImplTest {
   void issueFailed() throws Exception {
     String secret = "secret";
     Duration expire = Duration.of(600, ChronoUnit.SECONDS);
-    MemberLoginResponseDto memberLoginResponseDto = new MemberLoginResponseDto(
+    LoginMemberResponseDto loginMemberResponseDto = new LoginMemberResponseDto(
             1, "test@email.com", "username", "name", "pfp", "password", List.of("ROLE_TEST"));
 
     String expect = "accessToken";
     String uuid = UUID.randomUUID().toString();
-    List<String> roles = List.of("ROLE_TEST");
 
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
 
@@ -135,7 +134,7 @@ class JwtServiceImplTest {
     when(redisTemplate.expire(uuid, 14, TimeUnit.DAYS)).thenReturn(true);
     when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
-    assertThrows(AuthenticationException.class, () -> jwtService.issue(uuid, memberLoginResponseDto));
+    assertThrows(AuthenticationException.class, () -> jwtService.issue(uuid, loginMemberResponseDto));
   }
 
   /**
@@ -147,7 +146,7 @@ class JwtServiceImplTest {
   @DisplayName("재발급 성공")
   void reIssue() throws Exception {
     String uuid = UUID.randomUUID().toString();
-    MemberInfoDto info = new MemberInfoDto(
+    GetMemberInfoDto info = new GetMemberInfoDto(
             1, "test@email.com", "username", "name", "pfp", List.of("ROLE_TEST"), "refreshToken");
     Claims claims = new DefaultClaims(Map.of());
     String accessToken = "accessToken";
@@ -207,7 +206,7 @@ class JwtServiceImplTest {
   @DisplayName("재발급 실패 - object mapper")
   void reIssueFailedObjectMapper() throws Exception {
     String uuid = UUID.randomUUID().toString();
-    MemberInfoDto info = new MemberInfoDto(
+    GetMemberInfoDto info = new GetMemberInfoDto(
             1, "test@email.com", "username", "name", "pfp", List.of("ROLE_TEST"), "refreshToken");
     Claims claims = new DefaultClaims(Map.of());
     String accessToken = "accessToken";

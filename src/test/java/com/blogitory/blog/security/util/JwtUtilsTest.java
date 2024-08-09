@@ -4,8 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import jakarta.servlet.http.Cookie;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseCookie;
 
 /**
  * JwtUtilsText.
@@ -19,13 +20,13 @@ class JwtUtilsTest {
   void makeSecureCookie() {
     String key = "cookie";
     String value = "value";
-    Integer expireTime = 3600;
+    Duration expireTime = Duration.ofSeconds(3600);
     String path = "/";
 
-    Cookie cookie = JwtUtils.makeSecureCookie(key, value, expireTime);
+    ResponseCookie cookie = JwtUtils.makeSecureCookie(key, value, 3600);
 
     assertAll(
-            () -> assertTrue(cookie.getSecure()),
+            () -> assertTrue(cookie.isSecure()),
             () -> assertEquals(cookie.getMaxAge(), expireTime),
             () -> assertEquals(cookie.getPath(), path),
             () -> assertEquals(cookie.getValue(), value),

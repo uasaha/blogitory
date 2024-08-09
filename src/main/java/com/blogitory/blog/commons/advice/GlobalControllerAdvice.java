@@ -1,6 +1,6 @@
 package com.blogitory.blog.commons.advice;
 
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import java.util.Objects;
 import org.springframework.http.HttpStatus;
@@ -26,13 +26,12 @@ public class GlobalControllerAdvice {
   /**
    * Handle 404.
    *
-   * @param ex    exception
    * @param model model
    * @return error page
    */
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(value = {NoHandlerFoundException.class})
-  public String handleNoHandlerFoundException(NoHandlerFoundException ex, Model model) {
+  public String handleNoHandlerFoundException(Model model) {
     addErrorAttributes(model, HttpStatus.NOT_FOUND.value());
 
     return DEFAULT_ERROR_VIEW;
@@ -43,8 +42,8 @@ public class GlobalControllerAdvice {
 
     if (authentication.isAuthenticated()
             && authentication.getDetails() instanceof UserDetailsImpl userDetails) {
-      MemberPersistInfoDto infoDto =
-              new MemberPersistInfoDto(
+      GetMemberPersistInfoDto infoDto =
+              new GetMemberPersistInfoDto(
                       userDetails.getIdName(), userDetails.getName(), userDetails.getPfp());
 
       if (Objects.isNull(infoDto.getThumb()) || infoDto.getThumb().isEmpty()) {

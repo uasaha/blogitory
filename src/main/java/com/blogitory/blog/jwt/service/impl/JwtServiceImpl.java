@@ -1,10 +1,10 @@
 package com.blogitory.blog.jwt.service.impl;
 
-import com.blogitory.blog.jwt.dto.MemberInfoDto;
+import com.blogitory.blog.jwt.dto.GetMemberInfoDto;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.provider.JwtProvider;
 import com.blogitory.blog.jwt.service.JwtService;
-import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
+import com.blogitory.blog.member.dto.response.LoginMemberResponseDto;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,13 +38,13 @@ public class JwtServiceImpl implements JwtService {
    * {@inheritDoc}
    */
   @Override
-  public String issue(String uuid, MemberLoginResponseDto responseDto) {
+  public String issue(String uuid, LoginMemberResponseDto responseDto) {
     String refreshToken = jwtProvider.createToken(
             jwtProperties.getRefreshSecret(),
             uuid,
             jwtProperties.getRefreshExpire().toMillis());
 
-    MemberInfoDto infoDto = new MemberInfoDto(
+    GetMemberInfoDto infoDto = new GetMemberInfoDto(
             responseDto.getMemberNo(),
             responseDto.getEmail(),
             responseDto.getUsername(),
@@ -82,10 +82,10 @@ public class JwtServiceImpl implements JwtService {
       throw new AuthenticationException("JWT reissue failed");
     }
 
-    MemberInfoDto infoDto;
+    GetMemberInfoDto infoDto;
     try {
       infoDto = objectMapper.readValue(
-              info, MemberInfoDto.class);
+              info, GetMemberInfoDto.class);
     } catch (IllegalArgumentException e) {
       throw new AuthenticationException("JWT reissue failed");
     }

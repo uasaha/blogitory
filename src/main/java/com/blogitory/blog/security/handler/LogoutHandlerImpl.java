@@ -12,6 +12,7 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -44,8 +45,9 @@ public class LogoutHandlerImpl implements LogoutHandler {
 
     redisTemplate.opsForValue().getAndDelete(uuid);
 
-    Cookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, "", 0);
-    response.addCookie(cookie);
+    ResponseCookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, "", 0);
+
+    response.addHeader("Set-Cookie", cookie.toString());
 
     HashOperations<String, String, String> operations = redisTemplate.opsForHash();
     operations.put(BLACK_LIST_KEY, uuid, accessToken);

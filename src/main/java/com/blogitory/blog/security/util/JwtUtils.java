@@ -5,7 +5,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
-import jakarta.servlet.http.Cookie;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
@@ -14,6 +13,7 @@ import lombok.NoArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.ResponseCookie;
 
 /**
  * Util class for JWT.
@@ -35,14 +35,15 @@ public class JwtUtils {
    * @param expire expire time
    * @return new cookie
    */
-  public static Cookie makeSecureCookie(String key, String value, Integer expire) {
-    Cookie cookie = new Cookie(key, value);
-    cookie.setSecure(true);
-    cookie.setHttpOnly(true);
-    cookie.setMaxAge(expire);
-    cookie.setPath("/");
-
-    return cookie;
+  public static ResponseCookie makeSecureCookie(String key, String value, Integer expire) {
+    return ResponseCookie.from(key, value)
+            .secure(true)
+            .httpOnly(true)
+            .maxAge(expire)
+            .sameSite("Strict")
+            .path("/")
+            .domain("localhost")
+            .build();
   }
 
   /**
@@ -124,7 +125,8 @@ public class JwtUtils {
     Claims claims = parseToken(secret, token);
 
     LocalDateTime exp = claims.getExpiration().toInstant()
-            .atZone(ZoneId.systemDefault()).toLocalDateTime().minusHours(1);
+            .atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime().minusHours(2L);
+
 
     LocalDateTime now = LocalDateTime.now();
 

@@ -1,6 +1,6 @@
 package com.blogitory.blog.jwt.service;
 
-import com.blogitory.blog.member.dto.response.MemberLoginResponseDto;
+import com.blogitory.blog.member.dto.response.LoginMemberResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ public interface JwtService {
    * @param responseDto infos of login member
    * @return new Access Token
    */
-  String issue(String uuid, MemberLoginResponseDto responseDto);
+  String issue(String uuid, LoginMemberResponseDto responseDto);
 
   /**
    * ReIssue JWT Token.
