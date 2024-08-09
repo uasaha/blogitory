@@ -55,4 +55,26 @@ public class Comment extends BaseCreatedAtEntity {
 
   @Column(name = "comment_deleted")
   private boolean deleted;
+
+  /**
+   * Constructor creating comment.
+   *
+   * @param member   member
+   * @param posts    posts
+   * @param contents contents
+   */
+  public Comment(Member member, Posts posts, String contents) {
+    this.member = member;
+    this.posts = posts;
+    this.contents = contents;
+  }
+
+  /**
+   * Set parent comment.
+   *
+   * @param parent parent comment
+   */
+  public void makeParent(Comment parent) {
+    this.parentComment = parent;
+  }
 }
