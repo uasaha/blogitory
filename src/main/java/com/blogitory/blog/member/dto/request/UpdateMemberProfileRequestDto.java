@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
  **/
 @Getter
 @NoArgsConstructor
-public class MemberUpdateProfileRequestDto {
+public class UpdateMemberProfileRequestDto {
   @NotBlank
   @Size(min = 2, max = 20, message = "Name must be between 2 and 20 characters long")
   @Pattern(regexp = "^[a-zA-Zㄱ-힣0-9]*$")

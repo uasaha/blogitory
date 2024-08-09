@@ -15,7 +15,7 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
-public class MemberSignupRequestDto {
+public class SignupMemberRequestDto {
   @NotBlank
   @Size(min = 1, max = 30, message = "Username must be between 1 and 30 characters long")
   @Pattern(regexp = "^[a-zA-Z0-9-]+$")

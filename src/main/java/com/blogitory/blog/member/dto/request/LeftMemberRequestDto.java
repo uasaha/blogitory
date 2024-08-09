@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
  **/
 @NoArgsConstructor
 @Getter
-public class MemberLeftRequestDto {
+public class LeftMemberRequestDto {
   private String password;
 }

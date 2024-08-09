@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberLoginRequestDto {
+public class LoginMemberRequestDto {
   @Email
   private String email;
 

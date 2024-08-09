@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Dto for User status on.
+ * Dto for MemberProfile view.
  *
  * @author woonseok
  * @since 1.0
  **/
-@Getter
 @AllArgsConstructor
-public class MemberPersistInfoDto {
-  private String username;
-  private String name;
-  private String thumb;
+@Getter
+public class GetMemberProfileLinkResponseDto {
+  private Long linkNo;
+  private String linkUrl;
 }

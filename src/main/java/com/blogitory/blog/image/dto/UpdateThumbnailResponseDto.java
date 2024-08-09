@@ -11,7 +11,7 @@ import lombok.Getter;
  **/
 @AllArgsConstructor
 @Getter
-public class ThumbnailUpdateResponseDto {
+public class UpdateThumbnailResponseDto {
   private String url;
   private String originName;
 }

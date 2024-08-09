@@ -1,4 +1,4 @@
-package com.blogitory.blog.mail.dto;
+package com.blogitory.blog.mail.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,6 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
-public class MailVerificationResponseDto {
+public class GetMailVerificationResponseDto {
   private final boolean isVerified;
 }

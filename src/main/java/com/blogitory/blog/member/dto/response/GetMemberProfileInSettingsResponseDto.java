@@ -13,7 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
-public class MemberSettingsProfileResponseDto {
+public class GetMemberProfileInSettingsResponseDto {
   private String username;
   private String name;
   private String pfpUrl;

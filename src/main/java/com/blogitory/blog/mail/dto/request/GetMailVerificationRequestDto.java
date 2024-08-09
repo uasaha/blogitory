@@ -1,4 +1,4 @@
-package com.blogitory.blog.mail.dto;
+package com.blogitory.blog.mail.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MailVerificationRequestDto {
+public class GetMailVerificationRequestDto {
   @NotBlank
   @Email
   private String email;

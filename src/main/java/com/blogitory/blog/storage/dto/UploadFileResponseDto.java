@@ -13,7 +13,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 @Getter
-public class FileUploadResponseDto {
+public class UploadFileResponseDto {
   private String url;
   private String originName;
   private String savedName;

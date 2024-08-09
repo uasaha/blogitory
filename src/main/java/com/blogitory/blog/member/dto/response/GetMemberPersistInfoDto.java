@@ -1,23 +1,18 @@
 package com.blogitory.blog.member.dto.response;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Dto for login response.
+ * Dto for User status on.
  *
  * @author woonseok
  * @since 1.0
  **/
 @Getter
 @AllArgsConstructor
-public class MemberLoginResponseDto {
-  private Integer memberNo;
-  private String email;
+public class GetMemberPersistInfoDto {
   private String username;
   private String name;
-  private String pfp;
-  private String password;
-  private List<String> roles;
+  private String thumb;
 }

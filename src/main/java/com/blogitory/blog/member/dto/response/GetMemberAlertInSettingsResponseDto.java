@@ -12,7 +12,7 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
-public class MemberSettingsAlertResponseDto {
+public class GetMemberAlertInSettingsResponseDto {
   boolean followAlert;
   boolean commentAlert;
   boolean heartAlert;
