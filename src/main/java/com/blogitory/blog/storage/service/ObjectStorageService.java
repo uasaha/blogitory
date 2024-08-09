@@ -1,6 +1,6 @@
 package com.blogitory.blog.storage.service;
 
-import com.blogitory.blog.storage.dto.FileUploadResponseDto;
+import com.blogitory.blog.storage.dto.UploadFileResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -17,7 +17,7 @@ public interface ObjectStorageService {
    * @param file file
    * @return uploaded file info
    */
-  FileUploadResponseDto uploadFile(String type, MultipartFile file);
+  UploadFileResponseDto uploadFile(String type, MultipartFile file);
 
   /**
    * Delete file.

@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.blogitory.blog.commons.properties.ObjectStorageProperties;
-import com.blogitory.blog.storage.dto.FileUploadResponseDto;
+import com.blogitory.blog.storage.dto.UploadFileResponseDto;
 import com.blogitory.blog.storage.exception.FileUploadException;
 import com.blogitory.blog.storage.service.impl.ObjectStorageServiceImpl;
 import java.io.IOException;
@@ -67,13 +67,13 @@ class ObjectStorageServiceTest {
     String type = "type";
     MultipartFile file = new MockMultipartFile("filename.jpg", "filename.jpg", "contentType", "content".getBytes(StandardCharsets.UTF_8));
     String bucket = "bucket";
-    String returnUrl = "returnUrl";
+    String returnUrl = "blogitory/";
 
     when(properties.getBucket()).thenReturn(bucket);
     when(s3Client.putObject((PutObjectRequest) any(), (RequestBody) any())).thenReturn(null);
-    when(properties.getReturnUrl()).thenReturn(returnUrl);
+    when(properties.getCdnCname()).thenReturn(returnUrl);
 
-    FileUploadResponseDto responseDto = objectStorageService.uploadFile(type, file);
+    UploadFileResponseDto responseDto = objectStorageService.uploadFile(type, file);
 
     assertAll(
             () -> assertTrue(responseDto.getUrl().contains(returnUrl+type+"/")),
@@ -95,7 +95,7 @@ class ObjectStorageServiceTest {
 
     when(file.isEmpty()).thenReturn(true);
 
-    FileUploadResponseDto responseDto = objectStorageService.uploadFile(type, file);
+    UploadFileResponseDto responseDto = objectStorageService.uploadFile(type, file);
 
     assertNull(responseDto);
   }
@@ -112,7 +112,7 @@ class ObjectStorageServiceTest {
     when(file.isEmpty()).thenReturn(false);
     when(file.getOriginalFilename()).thenReturn(null);
 
-    FileUploadResponseDto responseDto = objectStorageService.uploadFile(type, file);
+    UploadFileResponseDto responseDto = objectStorageService.uploadFile(type, file);
 
     assertNull(responseDto);
   }

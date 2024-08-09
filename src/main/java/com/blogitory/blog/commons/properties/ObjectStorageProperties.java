@@ -23,4 +23,6 @@ public class ObjectStorageProperties {
   private String bucket;
   @Value("${cloud.aws.s3.return-url}")
   private String returnUrl;
+  @Value("${cloud.aws.cdn.cname}")
+  private String cdnCname;
 }

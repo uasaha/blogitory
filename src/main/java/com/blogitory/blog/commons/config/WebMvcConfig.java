@@ -1,5 +1,6 @@
 package com.blogitory.blog.commons.config;
 
+import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.interceptor.AuthenticatedInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
+  private final BlogService blogService;
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
@@ -28,6 +30,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
   @Bean
   public HandlerInterceptor addUserInModelInterceptor() {
-    return new AuthenticatedInterceptor();
+    return new AuthenticatedInterceptor(blogService);
   }
 }

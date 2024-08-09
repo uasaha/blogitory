@@ -1,7 +1,7 @@
 package com.blogitory.blog.storage.service.impl;
 
 import com.blogitory.blog.commons.properties.ObjectStorageProperties;
-import com.blogitory.blog.storage.dto.FileUploadResponseDto;
+import com.blogitory.blog.storage.dto.UploadFileResponseDto;
 import com.blogitory.blog.storage.exception.FileUploadException;
 import com.blogitory.blog.storage.exception.NoOriginalFileNameException;
 import com.blogitory.blog.storage.service.ObjectStorageService;
@@ -33,7 +33,7 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
    * {@inheritDoc}
    */
   @Override
-  public FileUploadResponseDto uploadFile(String type, MultipartFile file) {
+  public UploadFileResponseDto uploadFile(String type, MultipartFile file) {
     if (file.isEmpty() || Objects.isNull(file.getOriginalFilename())) {
       return null;
     }
@@ -66,8 +66,8 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
       throw new FileUploadException();
     }
 
-    return FileUploadResponseDto.builder()
-            .url(objectStorageProperties.getReturnUrl() + keyPrefix + fileName)
+    return UploadFileResponseDto.builder()
+            .url(objectStorageProperties.getCdnCname() + keyPrefix + fileName)
             .originName(originalFileName)
             .savedName(fileName)
             .extension(fileEx)
