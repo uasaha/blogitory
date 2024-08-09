@@ -8,10 +8,9 @@ import static com.blogitory.blog.security.util.JwtUtils.isExpiredToken;
 import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 import static com.blogitory.blog.security.util.JwtUtils.needReissue;
 
-import com.blogitory.blog.jwt.dto.MemberInfoDto;
+import com.blogitory.blog.jwt.dto.GetMemberInfoDto;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.service.JwtService;
-import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -29,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -94,20 +94,33 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
     Optional<String> black = Optional.ofNullable(operations.get(BLACK_LIST_KEY, uuid));
 
     if (black.isPresent() && accessToken.equals(black.get())) {
-      response.sendRedirect("/");
-      throw new AuthenticationException("Access token is blocked.");
+      filterChain.doFilter(request, response);
+      return;
     }
 
     if (needReissue(jwtProperties.getAccessSecret(), accessToken)) {
       Map<String, String> tokenMap = jwtService.reIssue(uuid);
-      response.addCookie(makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME,
-              tokenMap.get("accessToken"), ACCESS_COOKIE_EXPIRE));
+
+      HashOperations<String, String, String> blackListOperation = redisTemplate.opsForHash();
+      blackListOperation.put(BLACK_LIST_KEY, uuid, accessToken);
+
+      ResponseCookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME,
+              tokenMap.get("accessToken"), ACCESS_COOKIE_EXPIRE);
+
+      response.addHeader("Set-Cookie", cookie.toString());
 
       uuid = tokenMap.get("uuid");
     }
 
-    MemberInfoDto info = objectMapper.readValue(
-            (String) redisTemplate.opsForValue().get(uuid), MemberInfoDto.class);
+    String infoString = (String) redisTemplate.opsForValue().get(uuid);
+
+    if (infoString == null) {
+      filterChain.doFilter(request, response);
+      return;
+    }
+
+    GetMemberInfoDto info = objectMapper.readValue(
+            infoString, GetMemberInfoDto.class);
 
     List<SimpleGrantedAuthority> authorities = info.getRoles()
             .stream().map(SimpleGrantedAuthority::new).toList();

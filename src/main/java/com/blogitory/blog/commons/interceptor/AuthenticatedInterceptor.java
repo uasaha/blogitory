@@ -1,9 +1,12 @@
 package com.blogitory.blog.commons.interceptor;
 
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInHeaderResponseDto;
+import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Objects;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
  **/
 @RequiredArgsConstructor
 public class AuthenticatedInterceptor implements HandlerInterceptor {
+  private final BlogService blogService;
 
   @Override
   public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
@@ -28,8 +32,8 @@ public class AuthenticatedInterceptor implements HandlerInterceptor {
 
     if (authentication.isAuthenticated()
             && authentication.getDetails() instanceof UserDetailsImpl userDetails) {
-      MemberPersistInfoDto infoDto =
-              new MemberPersistInfoDto(userDetails.getIdName(),
+      GetMemberPersistInfoDto infoDto =
+              new GetMemberPersistInfoDto(userDetails.getIdName(),
                       userDetails.getName(),
                       userDetails.getPfp());
 
@@ -38,6 +42,10 @@ public class AuthenticatedInterceptor implements HandlerInterceptor {
       }
 
       mav.addObject("members", infoDto);
+
+      List<GetBlogInHeaderResponseDto> blogs =
+              blogService.blogListForHeader(userDetails.getIdName());
+      mav.addObject("headerBlogs", blogs);
     }
   }
 }

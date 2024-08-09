@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +39,7 @@ class AuthenticatedInterceptorTest {
    * The Authenticated interceptor.
    */
   AuthenticatedInterceptor authenticatedInterceptor;
+  BlogService blogService;
 
   /**
    * Sets .
@@ -45,7 +47,8 @@ class AuthenticatedInterceptorTest {
   @BeforeEach
   void setup() {
     memberService = mock(MemberService.class);
-    authenticatedInterceptor = new AuthenticatedInterceptor();
+    blogService = mock(BlogService.class);
+    authenticatedInterceptor = new AuthenticatedInterceptor(blogService);
   }
 
   /**
@@ -81,6 +84,6 @@ class AuthenticatedInterceptorTest {
 
     authenticatedInterceptor.postHandle(request, response, new Object(), mav);
 
-    verify(mav, times(1)).addObject(any(), any());
+    verify(mav, times(2)).addObject(any(), any());
   }
 }

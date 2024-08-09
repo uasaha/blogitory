@@ -1,6 +1,6 @@
 package com.blogitory.blog.security.filter;
 
-import com.blogitory.blog.member.dto.request.MemberLoginRequestDto;
+import com.blogitory.blog.member.dto.request.LoginMemberRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,8 +38,8 @@ public class AuthenticationProcessingFilterCustom
     }
 
     ObjectMapper objectMapper = new ObjectMapper();
-    MemberLoginRequestDto loginRequest =
-            objectMapper.readValue(request.getInputStream(), MemberLoginRequestDto.class);
+    LoginMemberRequestDto loginRequest =
+            objectMapper.readValue(request.getInputStream(), LoginMemberRequestDto.class);
 
     String email = loginRequest.getEmail();
     String password = loginRequest.getPassword();
