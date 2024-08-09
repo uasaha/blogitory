@@ -2,7 +2,6 @@ package com.blogitory.blog.category.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,7 +13,7 @@ import static org.mockito.Mockito.when;
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.blog.repository.BlogRepository;
-import com.blogitory.blog.category.dto.CategoryCreateResponseDto;
+import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.exception.DuplicateCategoryException;
@@ -68,7 +67,7 @@ class CategoryServiceTest {
             .thenReturn(Optional.of(blog));
     when(categoryRepository.save(any())).thenReturn(category);
 
-    CategoryCreateResponseDto responseDto =
+    CreateCategoryResponseDto responseDto =
             categoryService.createCategory(blog.getUrlName(), category.getName(), 1);
 
     verify(categoryRepository, times(1)).save(any());
@@ -211,7 +210,6 @@ class CategoryServiceTest {
     categoryService.deleteCategory(category.getCategoryNo(), 1);
 
     assertTrue(category.isDeleted());
-    assertNull(posts.getCategory());
   }
 
   @WithMockUser("1")

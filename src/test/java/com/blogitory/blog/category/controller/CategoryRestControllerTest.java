@@ -12,7 +12,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.category.dto.CategoryCreateResponseDto;
+import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
 import com.blogitory.blog.category.service.CategoryService;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,12 +44,15 @@ class CategoryRestControllerTest {
   @MockBean
   CategoryService categoryService;
 
+  @MockBean
+  BlogService blogService;
+
   @WithMockUser("1")
   @Test
   @DisplayName("카테고리 생성")
   void createCategory() throws Exception {
-    CategoryCreateResponseDto responseDto =
-            new CategoryCreateResponseDto(1L, "category");
+    CreateCategoryResponseDto responseDto =
+            new CreateCategoryResponseDto(1L, "category");
 
     when(categoryService.createCategory(any(), anyString(), any())).thenReturn(responseDto);
 

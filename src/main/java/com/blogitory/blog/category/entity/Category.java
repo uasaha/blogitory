@@ -64,12 +64,23 @@ public class Category {
     this.deleted = deleted;
   }
 
+  /**
+   * Update category name.
+   *
+   * @param name new name
+   */
   public void updateName(String name) {
     this.name = name;
   }
 
-  public void delete() {
+  /**
+   * Delete category.
+   *
+   * @param id delete id
+   */
+  public void delete(String id) {
+    this.name = id;
     this.deleted = true;
-    this.posts.forEach(Posts::deleteCategory);
+    this.posts.forEach(Posts::delete);
   }
 }

@@ -1,6 +1,6 @@
 package com.blogitory.blog.category.service;
 
-import com.blogitory.blog.category.dto.CategoryCreateResponseDto;
+import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
 
 /**
  * Category service.
@@ -18,7 +18,7 @@ public interface CategoryService {
    * @param memberNo member no
    * @return new Category
    */
-  CategoryCreateResponseDto createCategory(String blogUrl, String name, Integer memberNo);
+  CreateCategoryResponseDto createCategory(String blogUrl, String name, Integer memberNo);
 
   /**
    * Modify category.

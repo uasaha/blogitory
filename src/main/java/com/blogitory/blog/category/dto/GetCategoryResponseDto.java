@@ -1,19 +1,20 @@
 package com.blogitory.blog.category.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
- * Dto for getting category.
+ * GetCategoryListResponseDto.
  *
  * @author woonseok
- * @Date 2024-07-15
+ * @Date 2024-07-31
  * @since 1.0
  **/
 @AllArgsConstructor
 @Getter
-public class CategorySettingsResponseDto {
+@EqualsAndHashCode
+public class GetCategoryResponseDto {
   private Long categoryNo;
-  private String name;
-  private boolean deleted;
+  private String categoryName;
 }

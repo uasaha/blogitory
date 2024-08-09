@@ -2,7 +2,7 @@ package com.blogitory.blog.category.service;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.repository.BlogRepository;
-import com.blogitory.blog.category.dto.CategoryCreateResponseDto;
+import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.exception.DuplicateCategoryException;
 import com.blogitory.blog.category.repository.CategoryRepository;
@@ -10,6 +10,7 @@ import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.security.exception.AuthorizationException;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
    * {@inheritDoc}
    */
   @Override
-  public CategoryCreateResponseDto createCategory(String blogUrl, String name, Integer memberNo) {
+  public CreateCategoryResponseDto createCategory(String blogUrl, String name, Integer memberNo) {
     Blog blog = blogRepository.findBlogByUrlName(blogUrl)
             .orElseThrow(() -> new NotFoundException(Blog.class));
 
@@ -54,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     category = categoryRepository.save(category);
 
-    return new CategoryCreateResponseDto(
+    return new CreateCategoryResponseDto(
             category.getCategoryNo(),
             category.getName()
     );
@@ -92,12 +93,14 @@ public class CategoryServiceImpl implements CategoryService {
     Category category = categoryRepository.findById(categoryNo)
             .orElseThrow(() -> new NotFoundException(Category.class));
 
+    String uuid = UUID.randomUUID().toString();
+
     Member member = category.getBlog().getMember();
 
     if (!member.getMemberNo().equals(memberNo)) {
       throw new AuthorizationException();
     }
 
-    category.delete();
+    category.delete(uuid);
   }
 }

@@ -1,6 +1,6 @@
 package com.blogitory.blog.category.controller;
 
-import com.blogitory.blog.category.dto.CategoryCreateResponseDto;
+import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
 import com.blogitory.blog.category.service.CategoryService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.security.util.SecurityUtils;
@@ -40,13 +40,13 @@ public class CategoryRestController {
    */
   @RoleUser
   @PostMapping
-  public ResponseEntity<CategoryCreateResponseDto> createCategory(
+  public ResponseEntity<CreateCategoryResponseDto> createCategory(
           @Valid @RequestParam
           @Size(min = 1, max = 30) @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9-]+$")
           String name,
           @RequestParam String blogUrl) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
-    CategoryCreateResponseDto responseDto =
+    CreateCategoryResponseDto responseDto =
             categoryService.createCategory(blogUrl, name, memberNo);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);

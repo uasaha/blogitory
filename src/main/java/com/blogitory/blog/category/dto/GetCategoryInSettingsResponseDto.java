@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Dto for create category.
+ * Dto for getting category.
  *
  * @author woonseok
  * @Date 2024-07-15
@@ -12,7 +12,8 @@ import lombok.Getter;
  **/
 @AllArgsConstructor
 @Getter
-public class CategoryCreateResponseDto {
+public class GetCategoryInSettingsResponseDto {
   private Long categoryNo;
   private String name;
+  private boolean deleted;
 }
