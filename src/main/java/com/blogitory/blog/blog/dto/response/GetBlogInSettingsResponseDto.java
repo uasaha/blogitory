@@ -1,6 +1,6 @@
 package com.blogitory.blog.blog.dto.response;
 
-import com.blogitory.blog.category.dto.CategorySettingsResponseDto;
+import com.blogitory.blog.category.dto.GetCategoryInSettingsResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +13,7 @@ import lombok.Getter;
  * @since 1.0
  **/
 @Getter
-public class BlogListInSettingsResponseDto {
+public class GetBlogInSettingsResponseDto {
   private final String blogName;
   private final String blogBio;
   private final String blogUrl;
@@ -21,7 +21,7 @@ public class BlogListInSettingsResponseDto {
   private boolean thumbIsNull;
   private final String thumbUrl;
   private final String thumbOriginName;
-  private final List<CategorySettingsResponseDto> categories;
+  private final List<GetCategoryInSettingsResponseDto> categories;
 
   /**
    * Constructor for Projections.
@@ -32,10 +32,10 @@ public class BlogListInSettingsResponseDto {
    * @param thumbUrl        thumbnail
    * @param thumbOriginName thumbnail origin name
    */
-  public BlogListInSettingsResponseDto(String blogName, String blogBio, String blogUrl,
-                                       LocalDateTime createdAt,
-                                       String thumbUrl, String thumbOriginName,
-                                       List<CategorySettingsResponseDto> categories) {
+  public GetBlogInSettingsResponseDto(String blogName, String blogBio, String blogUrl,
+                                      LocalDateTime createdAt,
+                                      String thumbUrl, String thumbOriginName,
+                                      List<GetCategoryInSettingsResponseDto> categories) {
     this.blogName = blogName;
     this.blogBio = blogBio;
     this.blogUrl = blogUrl;

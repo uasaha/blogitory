@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
  **/
 @Getter
 @NoArgsConstructor
-public class BlogCreateRequestDto {
+public class CreateBlogRequestDto {
   @Size(min = 1, max = 20)
   @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+$")
   private String name;

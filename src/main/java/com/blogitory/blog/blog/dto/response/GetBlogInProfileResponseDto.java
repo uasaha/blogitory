@@ -11,7 +11,7 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
-public class BlogProfileResponseDto {
+public class GetBlogInProfileResponseDto {
   private String blogUrl;
   private String blogName;
   private String blogBio;
