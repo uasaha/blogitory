@@ -83,8 +83,8 @@ class BlogServiceTest {
 
     List<GetBlogInSettingsResponseDto> actual = blogService.getBlogListByMemberNo(1);
 
-    GetBlogInSettingsResponseDto expectOne = expect.get(0);
-    GetBlogInSettingsResponseDto actualOne = actual.get(0);
+    GetBlogInSettingsResponseDto expectOne = expect.getFirst();
+    GetBlogInSettingsResponseDto actualOne = actual.getFirst();
 
     assertAll(
             () -> assertEquals(expectOne.getBlogBio(), actualOne.getBlogBio()),
