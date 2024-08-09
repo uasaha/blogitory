@@ -20,14 +20,14 @@ import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.link.entity.Link;
 import com.blogitory.blog.link.repository.LinkRepository;
-import com.blogitory.blog.member.dto.request.MemberLoginRequestDto;
+import com.blogitory.blog.member.dto.request.LoginMemberRequestDto;
 import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
-import com.blogitory.blog.member.dto.response.MemberProfileResponseDto;
-import com.blogitory.blog.member.dto.request.MemberSignupRequestDto;
-import com.blogitory.blog.member.dto.request.MemberUpdateProfileRequestDto;
-import com.blogitory.blog.member.dto.response.MemberSettingsAlertResponseDto;
-import com.blogitory.blog.member.dto.response.MemberSettingsProfileResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
+import com.blogitory.blog.member.dto.request.SignupMemberRequestDto;
+import com.blogitory.blog.member.dto.request.UpdateMemberProfileRequestDto;
+import com.blogitory.blog.member.dto.response.GetMemberAlertInSettingsResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileInSettingsResponseDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
@@ -96,7 +96,7 @@ class MemberServiceTest {
     Member member = MemberDummy.dummy();
     Role role = new Role(4, "ROLE_DUMMY");
     RoleMember roleMember = RoleMemberDummy.dummy(role, member);
-    MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
+    SignupMemberRequestDto requestDto = new SignupMemberRequestDto(
             member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
     when(memberRepository.save(any())).thenReturn(member);
@@ -120,7 +120,7 @@ class MemberServiceTest {
     Member member = MemberDummy.dummy();
     Role role = new Role(4, "ROLE_DUMMY");
     RoleMember roleMember = RoleMemberDummy.dummy(role, member);
-    MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
+    SignupMemberRequestDto requestDto = new SignupMemberRequestDto(
             member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
     when(memberRepository.save(any())).thenReturn(member);
@@ -139,7 +139,7 @@ class MemberServiceTest {
   @DisplayName("회원가입 - 실패(이메일 중복)")
   void signupFailExistEmail() {
     Member member = MemberDummy.dummy();
-    MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
+    SignupMemberRequestDto requestDto = new SignupMemberRequestDto(
             member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
     when(memberRepository.existsMemberByEmail(any())).thenReturn(true);
@@ -151,7 +151,7 @@ class MemberServiceTest {
   @DisplayName("회원가입 - 실패(유저네임 중복)")
   void signupFailExistUsername() {
     Member member = MemberDummy.dummy();
-    MemberSignupRequestDto requestDto = new MemberSignupRequestDto(
+    SignupMemberRequestDto requestDto = new SignupMemberRequestDto(
             member.getUsername(), member.getName(), member.getEmail(), member.getPassword());
 
     when(memberRepository.existsMemberByUsername(any())).thenReturn(true);
@@ -200,10 +200,10 @@ class MemberServiceTest {
   @Test
   @DisplayName("로그인 성공")
   void login() {
-    MemberLoginRequestDto testDto = new MemberLoginRequestDto();
+    LoginMemberRequestDto testDto = new LoginMemberRequestDto();
     ReflectionTestUtils.setField(testDto, "email", "test@email.com");
     ReflectionTestUtils.setField(testDto, "password", "123456");
-    MemberLoginRequestDto requestDto = new MemberLoginRequestDto("test@email.com", "password");
+    LoginMemberRequestDto requestDto = new LoginMemberRequestDto("test@email.com", "password");
     Member member = MemberDummy.dummy();
     List<String> roles = List.of("ROLE_DUMMY");
 
@@ -225,7 +225,7 @@ class MemberServiceTest {
   @Test
   @DisplayName("로그인 실패 - 가입안된 이메일")
   void loginFailedNotUser() {
-    MemberLoginRequestDto requestDto = new MemberLoginRequestDto("test@email.com", "password");
+    LoginMemberRequestDto requestDto = new LoginMemberRequestDto("test@email.com", "password");
 
     when(memberRepository.findByEmail(any())).thenReturn(Optional.empty());
 
@@ -238,7 +238,7 @@ class MemberServiceTest {
   @Test
   @DisplayName("로그인 성공 - 비밀번호 틀림")
   void loginFailedNotMatchesPassword() {
-    MemberLoginRequestDto requestDto = new MemberLoginRequestDto("test@email.com", "password");
+    LoginMemberRequestDto requestDto = new LoginMemberRequestDto("test@email.com", "password");
     Member member = MemberDummy.dummy();
 
     when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
@@ -253,11 +253,11 @@ class MemberServiceTest {
   @Test
   @DisplayName("로그인정보 조회")
   void persistInfo() {
-    MemberPersistInfoDto infoDto = new MemberPersistInfoDto("username", "name", "thumb");
+    GetMemberPersistInfoDto infoDto = new GetMemberPersistInfoDto("username", "name", "thumb");
 
     when(memberRepository.getPersistInfo(any())).thenReturn(Optional.of(infoDto));
 
-    MemberPersistInfoDto actual = memberService.persistInfo(0);
+    GetMemberPersistInfoDto actual = memberService.persistInfo(0);
 
     assertAll(
             () -> assertEquals(infoDto.getUsername(), actual.getUsername()),
@@ -354,7 +354,7 @@ class MemberServiceTest {
     when(followRepository.countFollower(anyInt())).thenReturn(follower);
     when(followRepository.countFollowee(anyInt())).thenReturn(followee);
 
-    MemberProfileResponseDto responseDto = memberService.getProfileByUsername(member.getUsername());
+    GetMemberProfileResponseDto responseDto = memberService.getProfileByUsername(member.getUsername());
 
     assertEquals(responseDto.getUsername(), member.getUsername());
     assertEquals(responseDto.getName(), member.getName());
@@ -399,7 +399,7 @@ class MemberServiceTest {
     ReflectionTestUtils.setField(member, "links", List.of(new Link(1L, member, "link")));
     ReflectionTestUtils.setField(member, "blogs", List.of());
 
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
+    UpdateMemberProfileRequestDto requestDto = new UpdateMemberProfileRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "newName");
     ReflectionTestUtils.setField(requestDto, "bio", "newBio");
     ReflectionTestUtils.setField(requestDto, "email", "newEmail@email.com");
@@ -425,7 +425,7 @@ class MemberServiceTest {
     ReflectionTestUtils.setField(member, "links", List.of(new Link(1L, member, "link")));
     ReflectionTestUtils.setField(member, "blogs", List.of());
 
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
+    UpdateMemberProfileRequestDto requestDto = new UpdateMemberProfileRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "newName");
     ReflectionTestUtils.setField(requestDto, "bio", "newBio");
     ReflectionTestUtils.setField(requestDto, "email", "newEmail@email.com");
@@ -446,7 +446,7 @@ class MemberServiceTest {
 
     when(memberRepository.findById(any())).thenReturn(Optional.of(member));
 
-    MemberSettingsProfileResponseDto responseDto = memberService.getSettingsProfile(member.getMemberNo());
+    GetMemberProfileInSettingsResponseDto responseDto = memberService.getSettingsProfile(member.getMemberNo());
 
     assertEquals(responseDto.getUsername(), member.getUsername());
     assertEquals(responseDto.getName(), member.getName());
@@ -454,7 +454,7 @@ class MemberServiceTest {
     assertEquals(responseDto.getEmail(), member.getEmail());
     assertEquals(responseDto.getIntroEmail(), member.getIntroEmail());
     assertEquals(responseDto.getPfpUrl(), member.getProfileThumb());
-    assertEquals(responseDto.getLinks().get(0), link.getUrl());
+    assertEquals(responseDto.getLinks().getFirst(), link.getUrl());
   }
 
   @Test
@@ -471,7 +471,7 @@ class MemberServiceTest {
     Member member = MemberDummy.dummy();
     when(memberRepository.findById(any())).thenReturn(Optional.of(member));
 
-    MemberSettingsAlertResponseDto responseDto = memberService.getSettingsAlert(member.getMemberNo());
+    GetMemberAlertInSettingsResponseDto responseDto = memberService.getSettingsAlert(member.getMemberNo());
 
     assertEquals(responseDto.isCommentAlert(), member.isCommentAlert());
     assertEquals(responseDto.isFollowAlert(), member.isFollowAlert());

@@ -15,7 +15,7 @@ import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.commons.exception.NotFoundException;
-import com.blogitory.blog.image.dto.ThumbnailUpdateResponseDto;
+import com.blogitory.blog.image.dto.UpdateThumbnailResponseDto;
 import com.blogitory.blog.image.entity.Image;
 import com.blogitory.blog.image.entity.ImageDummy;
 import com.blogitory.blog.image.repository.ImageRepository;
@@ -27,7 +27,7 @@ import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.security.exception.AuthenticationException;
-import com.blogitory.blog.storage.dto.FileUploadResponseDto;
+import com.blogitory.blog.storage.dto.UploadFileResponseDto;
 import com.blogitory.blog.storage.service.ObjectStorageService;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -46,33 +46,14 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @since 1.0
  */
 class ImageServiceTest {
-  /**
-   * The Object storage service.
-   */
+
   ObjectStorageService objectStorageService;
-  /**
-   * The Image repository.
-   */
   ImageRepository imageRepository;
-  /**
-   * The Image category repository.
-   */
   ImageCategoryRepository imageCategoryRepository;
-  /**
-   * The Member repository.
-   */
   MemberRepository memberRepository;
-
-  /**
-   * The Image service.
-   */
   ImageService imageService;
-
   BlogRepository blogRepository;
 
-  /**
-   * Sets up.
-   */
   @BeforeEach
   void setUp() {
     objectStorageService = Mockito.mock(ObjectStorageService.class);
@@ -88,16 +69,13 @@ class ImageServiceTest {
             blogRepository);
   }
 
-  /**
-   * Upload thumbnail.
-   */
   @Test
   @DisplayName("프로필 썸네일 업데이트 성공")
   void uploadThumbnail() {
     ImageCategory imageCategory = new ImageCategory(1, "thumb");
     MockMultipartFile file = new MockMultipartFile("name", "content".getBytes(StandardCharsets.UTF_8));
-    FileUploadResponseDto responseDto =
-            FileUploadResponseDto.builder()
+    UploadFileResponseDto responseDto =
+            UploadFileResponseDto.builder()
                     .url("url")
                     .originName("originName")
                     .savedName("savedName")
@@ -119,7 +97,7 @@ class ImageServiceTest {
     when(memberRepository.findById(any())).thenReturn(Optional.of(member));
     when(imageRepository.save(any())).thenReturn(image);
 
-    ThumbnailUpdateResponseDto result = imageService.uploadThumbnail(1, file);
+    UpdateThumbnailResponseDto result = imageService.uploadThumbnail(1, file);
 
     verify(imageCategoryRepository, times(1)).findByName(any());
     verify(objectStorageService, times(1)).uploadFile(any(), any());
@@ -155,8 +133,8 @@ class ImageServiceTest {
   void updateBlogThumbnail() {
     ImageCategory imageCategory = new ImageCategory(1, "thumb");
     MockMultipartFile file = new MockMultipartFile("name", "content".getBytes(StandardCharsets.UTF_8));
-    FileUploadResponseDto responseDto =
-            FileUploadResponseDto.builder()
+    UploadFileResponseDto responseDto =
+            UploadFileResponseDto.builder()
                     .url("url")
                     .originName("originName")
                     .savedName("savedName")
@@ -182,7 +160,7 @@ class ImageServiceTest {
     when(imageRepository.save(any())).thenReturn(image);
     when(blogRepository.findBlogByUrlName(any())).thenReturn(Optional.of(blog));
 
-    ThumbnailUpdateResponseDto result = imageService.updateBlogThumbnail(1, blog.getUrlName(), file);
+    UpdateThumbnailResponseDto result = imageService.updateBlogThumbnail(1, blog.getUrlName(), file);
 
     verify(imageCategoryRepository, times(1)).findByName(any());
     verify(objectStorageService, times(1)).uploadFile(any(), any());
@@ -198,8 +176,8 @@ class ImageServiceTest {
   void updateBlogThumbnailChanged() {
     ImageCategory imageCategory = new ImageCategory(1, "thumb");
     MockMultipartFile file = new MockMultipartFile("name", "content".getBytes(StandardCharsets.UTF_8));
-    FileUploadResponseDto responseDto =
-            FileUploadResponseDto.builder()
+    UploadFileResponseDto responseDto =
+            UploadFileResponseDto.builder()
                     .url("url")
                     .originName("originName")
                     .savedName("savedName")
@@ -226,7 +204,7 @@ class ImageServiceTest {
     when(blogRepository.findBlogByUrlName(any())).thenReturn(Optional.of(blog));
     doNothing().when(imageService).removeBlogThumbnail(anyInt(), anyString());
 
-    ThumbnailUpdateResponseDto result = imageService.updateBlogThumbnail(1, blog.getUrlName(), file);
+    UpdateThumbnailResponseDto result = imageService.updateBlogThumbnail(1, blog.getUrlName(), file);
 
     verify(imageCategoryRepository, times(1)).findByName(any());
     verify(objectStorageService, times(1)).uploadFile(any(), any());
@@ -274,5 +252,49 @@ class ImageServiceTest {
 
     assertThrows(AuthenticationException.class,
             () -> imageService.removeBlogThumbnail(5, "blogUrl"));
+  }
+
+  @Test
+  @DisplayName("블로그 프로필 사진 업데이트 성공")
+  void uploadPostsImage() {
+    ImageCategory imageCategory = new ImageCategory(1, "log_post");
+    MockMultipartFile file = new MockMultipartFile("name", "content".getBytes(StandardCharsets.UTF_8));
+    UploadFileResponseDto responseDto =
+            UploadFileResponseDto.builder()
+                    .url("url")
+                    .originName("originName")
+                    .savedName("savedName")
+                    .extension("extension")
+                    .savePath("savedPath")
+                    .build();
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Image image = Image.builder()
+            .imageCategory(imageCategory)
+            .member(member)
+            .url(responseDto.getUrl())
+            .originName(responseDto.getOriginName())
+            .saveName(responseDto.getSavedName())
+            .savePath(responseDto.getSavePath())
+            .build();
+
+    imageService = Mockito.spy(imageService);
+
+    when(imageCategoryRepository.findByName(any())).thenReturn(Optional.of(imageCategory));
+    when(objectStorageService.uploadFile(any(), any())).thenReturn(responseDto);
+    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+    when(imageRepository.save(any())).thenReturn(image);
+    when(blogRepository.findBlogByUrlName(any())).thenReturn(Optional.of(blog));
+    doNothing().when(imageService).removeBlogThumbnail(anyInt(), anyString());
+
+    UpdateThumbnailResponseDto result = imageService.uploadPostsImages(1, file);
+
+    verify(imageCategoryRepository, times(1)).findByName(any());
+    verify(objectStorageService, times(1)).uploadFile(any(), any());
+    verify(memberRepository, times(1)).findById(any());
+    verify(imageRepository, times(1)).save(any());
+
+    assertThat(result.getOriginName()).isEqualTo(image.getOriginName());
+    assertThat(result.getUrl()).isEqualTo(image.getUrl());
   }
 }

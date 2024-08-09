@@ -8,13 +8,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.dto.response.BlogListInSettingsResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInSettingsResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
-import com.blogitory.blog.member.dto.response.MemberSettingsAlertResponseDto;
-import com.blogitory.blog.member.dto.response.MemberSettingsProfileResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberAlertInSettingsResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileInSettingsResponseDto;
 import com.blogitory.blog.member.service.MemberService;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -96,9 +96,9 @@ class IndexControllerTest {
   @DisplayName("블로그 설정 페이지")
   @WithMockUser("1")
   void blogSettings() throws Exception {
-    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
 
-    BlogListInSettingsResponseDto responseDto = new BlogListInSettingsResponseDto(
+    GetBlogInSettingsResponseDto responseDto = new GetBlogInSettingsResponseDto(
             "name",
             "bio",
             "url",
@@ -107,7 +107,7 @@ class IndexControllerTest {
             "",
             List.of());
 
-    List<BlogListInSettingsResponseDto> responseDtoList = List.of(responseDto);
+    List<GetBlogInSettingsResponseDto> responseDtoList = List.of(responseDto);
 
     when(blogService.getBlogListByMemberNo(anyInt()))
             .thenReturn(responseDtoList);
@@ -131,9 +131,9 @@ class IndexControllerTest {
   @DisplayName("블로그 설정 페이지 - 블로그 없음")
   @WithMockUser("1")
   void blogSettingsNoBlog() throws Exception {
-    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
 
-    List<BlogListInSettingsResponseDto> responseDtoList = List.of();
+    List<GetBlogInSettingsResponseDto> responseDtoList = List.of();
 
     when(blogService.getBlogListByMemberNo(anyInt()))
             .thenReturn(responseDtoList);
@@ -168,10 +168,10 @@ class IndexControllerTest {
   @Test
   @DisplayName("설정 페이지")
   void settingsPage() throws Exception {
-    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
 
-    MemberSettingsProfileResponseDto responseDto =
-            new MemberSettingsProfileResponseDto(
+    GetMemberProfileInSettingsResponseDto responseDto =
+            new GetMemberProfileInSettingsResponseDto(
                     "username",
                     "name",
                     "pfp",
@@ -195,10 +195,10 @@ class IndexControllerTest {
   @Test
   @DisplayName("알림 설정 페이지")
   void notificationPage() throws Exception {
-    MemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
 
-    MemberSettingsAlertResponseDto responseDto =
-            new MemberSettingsAlertResponseDto(true,
+    GetMemberAlertInSettingsResponseDto responseDto =
+            new GetMemberAlertInSettingsResponseDto(true,
                     true,
                     true,
                     true);

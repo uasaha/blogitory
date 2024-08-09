@@ -9,8 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.mail.dto.MailVerificationRequestDto;
+import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
 import com.blogitory.blog.mail.service.MailService;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
 import com.blogitory.blog.member.service.MemberService;
@@ -32,35 +33,22 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  */
 @WebMvcTest(value = {MailRestController.class, TestSecurityConfig.class})
 class MailRestControllerTest {
-  /**
-   * The Mvc.
-   */
+
   @Autowired
   MockMvc mvc;
 
-  /**
-   * The Object mapper.
-   */
   @Autowired
   ObjectMapper objectMapper;
 
-  /**
-   * The Member service.
-   */
   @MockBean
   MemberService memberService;
 
-  /**
-   * The Mail service.
-   */
   @MockBean
   MailService mailService;
 
-  /**
-   * Issue verification code.
-   *
-   * @throws Exception the exception
-   */
+  @MockBean
+  BlogService blogService;
+
   @Test
   @DisplayName("인증번호 발송")
   void issueVerificationCode() throws Exception {
@@ -88,24 +76,19 @@ class MailRestControllerTest {
             .andExpect(status().isConflict());
   }
 
-  /**
-   * Check verification code.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @DisplayName("인증번호 확인")
   void checkVerificationCode() throws Exception {
     String email = "test@email.com";
     String verificationCode = "123456";
-    MailVerificationRequestDto mailVerificationRequestDto =
-            new MailVerificationRequestDto(email, verificationCode);
+    GetMailVerificationRequestDto getMailVerificationRequestDto =
+            new GetMailVerificationRequestDto(email, verificationCode);
 
     when(mailService.checkVerificationCode(any()))
             .thenReturn(true);
 
     mvc.perform(MockMvcRequestBuilders.post("/api/mail/verification")
-            .content(objectMapper.writeValueAsString(mailVerificationRequestDto))
+            .content(objectMapper.writeValueAsString(getMailVerificationRequestDto))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("verified").value(true))

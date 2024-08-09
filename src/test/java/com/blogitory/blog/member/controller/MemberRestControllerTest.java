@@ -13,10 +13,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.mail.service.MailService;
-import com.blogitory.blog.member.dto.request.MemberLeftRequestDto;
-import com.blogitory.blog.member.dto.request.MemberUpdateProfileRequestDto;
+import com.blogitory.blog.member.dto.request.LeftMemberRequestDto;
+import com.blogitory.blog.member.dto.request.UpdateMemberProfileRequestDto;
 import com.blogitory.blog.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -44,26 +45,21 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  */
 @WebMvcTest(value = {MemberRestController.class, TestSecurityConfig.class})
 class MemberRestControllerTest {
-  /**
-   * The Mvc.
-   */
+
   @Autowired
   MockMvc mvc;
 
-  /**
-   * The Object mapper.
-   */
   @Autowired
   ObjectMapper objectMapper;
 
-  /**
-   * The Member service.
-   */
   @MockBean
   MemberService memberService;
 
   @MockBean
   MailService mailService;
+
+  @MockBean
+  BlogService blogService;
 
   /**
    * In duplicated name.
@@ -112,7 +108,7 @@ class MemberRestControllerTest {
     Authentication authentication = new UsernamePasswordAuthenticationToken(1, "email", List.of(new SimpleGrantedAuthority("ROLE_USER")));
     securityContext.setAuthentication(authentication);
 
-    MemberUpdateProfileRequestDto requestDto = new MemberUpdateProfileRequestDto();
+    UpdateMemberProfileRequestDto requestDto = new UpdateMemberProfileRequestDto();
     ReflectionTestUtils.setField(requestDto, "name", "name");
     ReflectionTestUtils.setField(requestDto, "bio", "bio");
     ReflectionTestUtils.setField(requestDto, "email", "email@email.com");
@@ -155,7 +151,7 @@ class MemberRestControllerTest {
   @Test
   @DisplayName("회원탈퇴")
   void deleteUser() throws Exception {
-    MemberLeftRequestDto requestDto = new MemberLeftRequestDto();
+    LeftMemberRequestDto requestDto = new LeftMemberRequestDto();
     ReflectionTestUtils.setField(requestDto, "password", "password");
 
     doNothing().when(memberService).deleteUser(anyInt(), anyString());

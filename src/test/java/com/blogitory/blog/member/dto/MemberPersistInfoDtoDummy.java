@@ -1,9 +1,9 @@
 package com.blogitory.blog.member.dto;
 
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 
 /**
- * 설명 작성 필!
+ * Member persis infos dto dummy.
  *
  * @author woonseok
  * @since 1.0
@@ -14,7 +14,7 @@ public class MemberPersistInfoDtoDummy {
    *
    * @return the member persist info dto
    */
-  public static MemberPersistInfoDto dummy() {
-    return new MemberPersistInfoDto("username", "user", "thumb");
+  public static GetMemberPersistInfoDto dummy() {
+    return new GetMemberPersistInfoDto("username", "user", "thumb");
   }
 }

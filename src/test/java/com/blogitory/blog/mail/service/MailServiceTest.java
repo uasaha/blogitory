@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.blogitory.blog.commons.exception.NotFoundException;
-import com.blogitory.blog.mail.dto.MailVerificationRequestDto;
+import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
 import com.blogitory.blog.mail.exception.EmailNotVerificationException;
 import com.blogitory.blog.mail.service.impl.MailServiceImpl;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
@@ -97,8 +97,8 @@ class MailServiceTest {
   @DisplayName("인증번호 확인")
   void checkVerificationCode() {
     String verificationCode = "123123";
-    MailVerificationRequestDto requestDto =
-            new MailVerificationRequestDto("test@email.com", verificationCode);
+    GetMailVerificationRequestDto requestDto =
+            new GetMailVerificationRequestDto("test@email.com", verificationCode);
 
     ValueOperations<String, Object> valueOperations = mock(ValueOperations.class);
     when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -115,8 +115,8 @@ class MailServiceTest {
   @DisplayName("인증번호 확인 실패 - 인증번호 틀림")
   void checkVerificationCodeFailed() {
     String verificationCode = "123123";
-    MailVerificationRequestDto requestDto =
-            new MailVerificationRequestDto("test@email.com", "321321");
+    GetMailVerificationRequestDto requestDto =
+            new GetMailVerificationRequestDto("test@email.com", "321321");
 
     ValueOperations<String, Object> valueOperations = mock(ValueOperations.class);
     when(redisTemplate.opsForValue()).thenReturn(valueOperations);

@@ -15,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
  * @author woonseok
  * @since 1.0
  */
-@SpringBootTest
+@SpringBootTest()
 @ActiveProfiles("test")
 class PropertiesTest {
   /**

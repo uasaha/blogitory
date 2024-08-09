@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.blogitory.blog.commons.config.JpaConfig;
 import com.blogitory.blog.commons.config.QuerydslConfig;
-import com.blogitory.blog.member.dto.response.MemberPersistInfoDto;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.role.entity.Role;
@@ -28,48 +28,29 @@ import org.springframework.context.annotation.Import;
 @Import({JpaConfig.class, QuerydslConfig.class})
 @DataJpaTest
 class MemberRepositoryTest {
-  /**
-   * The Member repository.
-   */
+
   @Autowired
   MemberRepository memberRepository;
 
-  /**
-   * The Entity manager.
-   */
   @Autowired
   EntityManager entityManager;
 
-  /**
-   * The Member.
-   */
   Member member;
-  /**
-   * The Role.
-   */
+
   Role role;
 
-  /**
-   * Before each.
-   */
   @BeforeEach
   void beforeEach() {
     member = MemberDummy.dummy();
     role = RoleDummy.dummy();
   }
 
-  /**
-   * Teardown.
-   */
   @AfterEach
   void teardown() {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
             .executeUpdate();
   }
 
-  /**
-   * Member save.
-   */
   @Test
   @DisplayName("회원 저장 성공")
   void memberSave() {
@@ -93,9 +74,6 @@ class MemberRepositoryTest {
     );
   }
 
-  /**
-   * Exists member by email.
-   */
   @Test
   @DisplayName("회원 이메일 중복 조회")
   void existsMemberByEmail() {
@@ -108,20 +86,17 @@ class MemberRepositoryTest {
     assertFalse(notExistResult);
   }
 
-  /**
-   * Gets persist info.
-   */
   @Test
   @DisplayName("로그인 정보 조회")
   void getPersistInfo() {
     memberRepository.save(member);
 
-    Optional<MemberPersistInfoDto> responseDto =
+    Optional<GetMemberPersistInfoDto> responseDto =
             memberRepository.getPersistInfo(member.getMemberNo());
 
     assertTrue(responseDto.isPresent());
 
-    MemberPersistInfoDto actual = responseDto.orElseThrow();
+    GetMemberPersistInfoDto actual = responseDto.orElseThrow();
 
     assertAll(
             () -> assertEquals(member.getName(), actual.getName()),

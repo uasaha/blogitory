@@ -9,8 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.image.dto.ThumbnailUpdateResponseDto;
+import com.blogitory.blog.image.dto.UpdateThumbnailResponseDto;
 import com.blogitory.blog.image.service.ImageService;
 import com.blogitory.blog.member.service.MemberService;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 /**
- * 설명 작성 필!
+ * Image rest controller test.
  *
  * @author woonseok
  * @since 1.0
@@ -35,37 +36,27 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @WebMvcTest(value = {ImageRestController.class, TestSecurityConfig.class})
 @ActiveProfiles("test")
 class ImageRestControllerTest {
-  /**
-   * The Mvc.
-   */
+
   @Autowired
   MockMvc mvc;
 
-  /**
-   * The Member service.
-   */
   @MockBean
   MemberService memberService;
 
-  /**
-   * The Image service.
-   */
   @MockBean
   ImageService imageService;
 
-  /**
-   * Update thumbnail.
-   *
-   * @throws Exception the exception
-   */
+  @MockBean
+  BlogService blogService;
+
   @Test
   @DisplayName("프로필 썸네일 업데이트 성공")
   @WithMockUser("1")
   void updateThumbnail() throws Exception {
     MockMultipartFile file = new MockMultipartFile("file",
             "content".getBytes(StandardCharsets.UTF_8));
-    ThumbnailUpdateResponseDto responseDto =
-            new ThumbnailUpdateResponseDto("url", "origin_name");
+    UpdateThumbnailResponseDto responseDto =
+            new UpdateThumbnailResponseDto("url", "origin_name");
 
     when(imageService.uploadThumbnail(any(), any())).thenReturn(responseDto);
 
@@ -86,5 +77,25 @@ class ImageRestControllerTest {
 
     mvc.perform(delete("/api/images/thumbnail"))
             .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("게시글 이미지 등록")
+  void uploadPostsImages() throws Exception {
+    MockMultipartFile file = new MockMultipartFile("file",
+            "content".getBytes(StandardCharsets.UTF_8));
+    UpdateThumbnailResponseDto responseDto =
+            new UpdateThumbnailResponseDto("url", "origin_name");
+
+    when(imageService.uploadPostsImages(any(), any())).thenReturn(responseDto);
+
+    mvc.perform(MockMvcRequestBuilders.multipart("/api/images/posts")
+                    .file(file)
+                    .contentType(MediaType.MULTIPART_FORM_DATA))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("url").value(responseDto.getUrl()))
+            .andExpect(jsonPath("originName").value(responseDto.getOriginName()))
+            .andDo(print());
   }
 }

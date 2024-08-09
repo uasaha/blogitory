@@ -13,11 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.dto.response.BlogProfileResponseDto;
+import com.blogitory.blog.blog.dto.response.GetBlogInProfileResponseDto;
+import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
-import com.blogitory.blog.member.dto.response.MemberProfileLinkResponseDto;
-import com.blogitory.blog.member.dto.response.MemberProfileResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileLinkResponseDto;
+import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.exception.MemberPwdChangeFailedException;
@@ -37,29 +38,19 @@ import org.springframework.test.web.servlet.MockMvc;
  */
 @WebMvcTest(value = {MemberController.class, TestSecurityConfig.class})
 class MemberControllerTest {
-  /**
-   * The Mvc.
-   */
+
   @Autowired
   MockMvc mvc;
 
-  /**
-   * The Object mapper.
-   */
   @Autowired
   ObjectMapper objectMapper;
 
-  /**
-   * The Member service.
-   */
   @MockBean
   MemberService memberService;
 
-  /**
-   * Signup.
-   *
-   * @throws Exception the exception
-   */
+  @MockBean
+  BlogService blogService;
+
   @Test
   @DisplayName("회원가입 페이지")
   void signup() throws Exception {
@@ -80,15 +71,15 @@ class MemberControllerTest {
   @Test
   @DisplayName("프로필 페이지")
   void profile() throws Exception {
-    MemberProfileResponseDto profileDto =
-            new MemberProfileResponseDto(
+    GetMemberProfileResponseDto profileDto =
+            new GetMemberProfileResponseDto(
                     "username",
                     "name",
                     "bio",
                     "profileThumb",
                     "introEmail",
-                    List.of(new MemberProfileLinkResponseDto(1L, "link")),
-                    List.of(new BlogProfileResponseDto("url", "blog", "bio")),
+                    List.of(new GetMemberProfileLinkResponseDto(1L, "link")),
+                    List.of(new GetBlogInProfileResponseDto("url", "blog", "bio")),
                     1L,
                     1L);
 
@@ -130,9 +121,6 @@ class MemberControllerTest {
   @Test
   @DisplayName("비밀번호 수정 실패")
   void updatePasswordFailPage() throws Exception {
-    UpdatePasswordRequestDto updatePasswordDto =
-            new UpdatePasswordRequestDto("ui", "@Test123");
-
     doThrow(MemberPwdChangeFailedException.class)
             .when(memberService).updatePassword(any());
 
