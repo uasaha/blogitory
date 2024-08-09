@@ -21,6 +21,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class BlogController {
   private final BlogService blogService;
 
+  /**
+   * Go to blog page.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param model    model
+   * @return page
+   */
   @GetMapping("/@{username}/{blogUrl}")
   public String blog(@PathVariable("username") String username,
                      @PathVariable("blogUrl") String blogUrl,

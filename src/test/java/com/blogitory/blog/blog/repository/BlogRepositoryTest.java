@@ -142,7 +142,7 @@ class BlogRepositoryTest {
     List<GetBlogInSettingsResponseDto> actual =
             blogRepository.getBlogListByMemberNo(member.getMemberNo());
 
-    GetBlogInSettingsResponseDto actualGet = actual.get(0);
+    GetBlogInSettingsResponseDto actualGet = actual.getFirst();
 
     Blog expect = blog;
     Image expectImage = image;
@@ -169,7 +169,7 @@ class BlogRepositoryTest {
     List<GetBlogInHeaderResponseDto> actual =
             blogRepository.getBlogListInHeaderByUsername(member.getUsername());
 
-    GetBlogInHeaderResponseDto actualGet = actual.get(0);
+    GetBlogInHeaderResponseDto actualGet = actual.getFirst();
 
     Blog expect = blog;
 
