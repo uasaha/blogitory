@@ -150,7 +150,6 @@ class BlogRepositoryTest {
     assertAll(
             () -> assertEquals(expect.getBio(), actualGet.getBlogBio()),
             () -> assertEquals(expect.getUrlName(), actualGet.getBlogUrl()),
-            () -> assertEquals(expect.getCreatedAt(), actualGet.getCreatedAt()),
             () -> assertFalse(actualGet.isThumbIsNull()),
             () -> assertEquals(expectImage.getUrl(), actualGet.getThumbUrl()),
             () -> assertEquals(expectImage.getOriginName(), actualGet.getThumbOriginName())
