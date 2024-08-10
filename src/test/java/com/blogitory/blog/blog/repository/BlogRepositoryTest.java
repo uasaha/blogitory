@@ -154,6 +154,7 @@ class BlogRepositoryTest {
             () -> assertEquals(expectImage.getUrl(), actualGet.getThumbUrl()),
             () -> assertEquals(expectImage.getOriginName(), actualGet.getThumbOriginName())
     );
+    //
   }
 
   @Test
