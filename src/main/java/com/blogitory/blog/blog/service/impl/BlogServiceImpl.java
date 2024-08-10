@@ -136,6 +136,11 @@ public class BlogServiceImpl implements BlogService {
   @Override
   @Transactional(readOnly = true)
   public List<GetBlogWithCategoryResponseDto> getBlogListWithCategory(Integer memberNo) {
-    return blogRepository.getBlogWithCategoryList(memberNo);
+    List<GetBlogWithCategoryResponseDto> blogList =
+            blogRepository.getBlogWithCategoryList(memberNo);
+
+    blogList.forEach(GetBlogWithCategoryResponseDto::distinct);
+
+    return blogList;
   }
 }

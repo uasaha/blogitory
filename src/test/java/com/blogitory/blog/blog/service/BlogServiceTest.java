@@ -292,7 +292,7 @@ class BlogServiceTest {
   @Test
   @DisplayName("블로그 url로 블로그 조회")
   void getBlogByUrl() {
-    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname");
+    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname", false);
 
     GetBlogResponseDto responseDto = new GetBlogResponseDto(
             "blogThumbUrl",
@@ -332,7 +332,7 @@ class BlogServiceTest {
             List.of(
                     new GetCategoryResponseDto(
                             1L,
-                            "cname")));
+                            "cname", false)));
 
     when(blogRepository.getBlogWithCategoryList(anyInt()))
             .thenReturn(List.of(responseDto));

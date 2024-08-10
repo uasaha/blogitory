@@ -18,4 +18,9 @@ public class GetBlogWithCategoryResponseDto {
   private Long blogNo;
   private String blogName;
   private List<GetCategoryResponseDto> categories;
+
+  public void distinct() {
+    categories = this.categories.stream().distinct()
+            .filter(c -> !c.isDeleted()).toList();
+  }
 }

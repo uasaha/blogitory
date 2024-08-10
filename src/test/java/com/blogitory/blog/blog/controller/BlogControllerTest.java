@@ -46,7 +46,7 @@ class BlogControllerTest {
   @Test
   void blog() throws Exception {
     List<GetCategoryResponseDto> categories =
-            List.of(new GetCategoryResponseDto(1L, "category"));
+            List.of(new GetCategoryResponseDto(1L, "category", false));
     List<GetTagResponseDto> tags = List.of(new GetTagResponseDto("tag"));
 
     GetBlogResponseDto responseDto = new GetBlogResponseDto(

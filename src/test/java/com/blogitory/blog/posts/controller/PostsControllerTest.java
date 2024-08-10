@@ -75,7 +75,7 @@ class PostsControllerTest {
             List.of("tag"));
 
     List<GetBlogWithCategoryResponseDto> blogs = List.of(new GetBlogWithCategoryResponseDto(tpDto.getBlogNo(), "blogName", List.of(
-            new GetCategoryResponseDto(1L, "name"))));
+            new GetCategoryResponseDto(1L, "name", false))));
 
     when(postsService.loadTempPosts(any(), any())).thenReturn(tpDto);
     when(blogService.getBlogListWithCategory(anyInt())).thenReturn(blogs);
@@ -93,7 +93,7 @@ class PostsControllerTest {
   @Test
   @DisplayName("게시글 조회")
   void postsPage() throws Exception {
-    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname");
+    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname", false);
 
     GetBlogResponseDto blogResponse = new GetBlogResponseDto(
             "blogThumbUrl",

@@ -31,7 +31,7 @@ public class GetBlogResponseDto {
    * distinct category, tag.
    */
   public void distinct() {
-    categories = categories.stream().distinct().toList();
+    categories = categories.stream().filter(c -> !c.isDeleted()).distinct().toList();
     tags = tags.stream().filter(t -> Objects.nonNull(t.getTagName()))
             .distinct().toList();
   }

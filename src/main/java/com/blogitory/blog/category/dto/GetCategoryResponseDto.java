@@ -17,4 +17,5 @@ import lombok.Getter;
 public class GetCategoryResponseDto {
   private Long categoryNo;
   private String categoryName;
+  private boolean deleted;
 }

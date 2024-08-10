@@ -113,7 +113,6 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
             .leftJoin(tag).on(postsTag.tag.tagNo.eq(tag.tagNo))
             .where(blog.urlName.eq(url))
             .where(blog.deleted.eq(false))
-            .where(category.deleted.eq(false))
             .transform(
                     GroupBy.groupBy(blog.blogNo)
                             .list(
@@ -130,7 +129,8 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
                                                     Projections.constructor(
                                                             GetCategoryResponseDto.class,
                                                             category.categoryNo,
-                                                            category.name
+                                                            category.name,
+                                                            category.deleted
                                                     )),
                                             GroupBy.list(
                                                     Projections.constructor(
@@ -156,7 +156,6 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
             .leftJoin(category).on(blog.blogNo.eq(category.blog.blogNo))
             .where(blog.member.memberNo.eq(memberNo))
             .where(blog.deleted.eq(false))
-            .where(category.deleted.eq(false))
             .orderBy(blog.blogNo.asc())
             .transform(
                     GroupBy.groupBy(blog.blogNo)
@@ -166,7 +165,8 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
                                     GroupBy.list(Projections.constructor(
                                             GetCategoryResponseDto.class,
                                             category.categoryNo,
-                                            category.name
+                                            category.name,
+                                            category.deleted
                                     )))));
   }
 }
