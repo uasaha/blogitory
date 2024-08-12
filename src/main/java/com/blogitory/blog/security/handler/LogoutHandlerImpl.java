@@ -3,8 +3,8 @@ package com.blogitory.blog.security.handler;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
 import static com.blogitory.blog.security.util.JwtUtils.BLACK_LIST_KEY;
 import static com.blogitory.blog.security.util.JwtUtils.getUuid;
-import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 
+import com.blogitory.blog.commons.utils.CookieUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +12,6 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -26,6 +25,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @RequiredArgsConstructor
 public class LogoutHandlerImpl implements LogoutHandler {
   private final RedisTemplate<String, Object> redisTemplate;
+  private final CookieUtils cookieUtils;
 
   @Override
   public void logout(HttpServletRequest request,
@@ -45,9 +45,7 @@ public class LogoutHandlerImpl implements LogoutHandler {
 
     redisTemplate.opsForValue().getAndDelete(uuid);
 
-    ResponseCookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, "", 0);
-
-    response.addHeader("Set-Cookie", cookie.toString());
+    cookieUtils.deleteSecureCookie(response, ACCESS_TOKEN_COOKIE_NAME);
 
     HashOperations<String, String, String> operations = redisTemplate.opsForHash();
     operations.put(BLACK_LIST_KEY, uuid, accessToken);

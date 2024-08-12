@@ -34,6 +34,9 @@ public class JwtServiceImpl implements JwtService {
   private final RedisTemplate<String, Object> redisTemplate;
   private final ObjectMapper objectMapper;
 
+  public static final String REISSUE_MAP_UUID = "uuid";
+  public static final String REISSUE_MAP_TOKEN = "accessToken";
+
   /**
    * {@inheritDoc}
    */
@@ -107,8 +110,8 @@ public class JwtServiceImpl implements JwtService {
             jwtProperties.getAccessExpire().toMillis());
 
     Map<String, String> result = new HashMap<>();
-    result.put("uuid", reUuid);
-    result.put("accessToken", accessToken);
+    result.put(REISSUE_MAP_UUID, reUuid);
+    result.put(REISSUE_MAP_TOKEN, accessToken);
 
     return result;
   }

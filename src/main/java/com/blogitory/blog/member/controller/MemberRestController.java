@@ -1,9 +1,9 @@
 package com.blogitory.blog.member.controller;
 
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
-import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 
 import com.blogitory.blog.commons.annotaion.RoleUser;
+import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.mail.service.MailService;
 import com.blogitory.blog.member.dto.request.LeftMemberRequestDto;
 import com.blogitory.blog.member.dto.request.UpdateMemberProfileRequestDto;
@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberRestController {
   private final MemberService memberService;
   private final MailService mailService;
+  private final CookieUtils cookieUtils;
 
 
   /**
@@ -112,8 +112,7 @@ public class MemberRestController {
 
     memberService.deleteUser(memberNo, requestDto.getPassword());
 
-    ResponseCookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, "", 0);
-    response.addHeader("Set-Cookie", cookie.toString());
+    cookieUtils.deleteSecureCookie(response, ACCESS_TOKEN_COOKIE_NAME);
 
     return ResponseEntity.noContent().build();
   }

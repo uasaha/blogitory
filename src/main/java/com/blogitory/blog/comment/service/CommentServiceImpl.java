@@ -44,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
       Comment parent = commentRepository.findById(parentNo)
               .orElseThrow(() -> new NotFoundException(Posts.class));
 
-      comment.makeParent(parent);
+      comment.parent(parent);
     }
 
     commentRepository.save(comment);

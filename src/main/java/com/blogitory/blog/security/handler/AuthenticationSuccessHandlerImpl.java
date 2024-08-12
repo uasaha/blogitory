@@ -2,8 +2,8 @@ package com.blogitory.blog.security.handler;
 
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_COOKIE_EXPIRE;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
-import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 
+import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.member.dto.response.LoginMemberResponseDto;
 import com.blogitory.blog.security.users.UserDetailsImpl;
@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -26,6 +25,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @RequiredArgsConstructor
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
   private final JwtService jwtService;
+  private final CookieUtils cookieUtils;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -46,9 +46,9 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     String accessToken = jwtService.issue(uuid, loginMemberResponseDto);
 
-    ResponseCookie cookie =
-            makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE);
-
-    response.addHeader("Set-Cookie", cookie.toString());
+    cookieUtils.addSecureCookie(response,
+            ACCESS_TOKEN_COOKIE_NAME,
+            accessToken,
+            ACCESS_COOKIE_EXPIRE);
   }
 }

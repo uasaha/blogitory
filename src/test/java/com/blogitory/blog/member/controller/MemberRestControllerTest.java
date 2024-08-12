@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.mail.service.MailService;
 import com.blogitory.blog.member.dto.request.LeftMemberRequestDto;
@@ -60,6 +61,9 @@ class MemberRestControllerTest {
 
   @MockBean
   BlogService blogService;
+
+  @MockBean
+  CookieUtils cookieUtils;
 
   /**
    * In duplicated name.
@@ -155,6 +159,7 @@ class MemberRestControllerTest {
     ReflectionTestUtils.setField(requestDto, "password", "password");
 
     doNothing().when(memberService).deleteUser(anyInt(), anyString());
+    doNothing().when(cookieUtils).deleteSecureCookie(any(), anyString());
 
     mvc.perform(post("/api/users")
             .content(objectMapper.writeValueAsString(requestDto))

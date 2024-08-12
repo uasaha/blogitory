@@ -74,7 +74,7 @@ public class Comment extends BaseCreatedAtEntity {
    *
    * @param parent parent comment
    */
-  public void makeParent(Comment parent) {
+  public void parent(Comment parent) {
     this.parentComment = parent;
   }
 }

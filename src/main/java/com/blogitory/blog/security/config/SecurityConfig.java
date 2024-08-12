@@ -1,5 +1,6 @@
 package com.blogitory.blog.security.config;
 
+import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.service.JwtService;
 import com.blogitory.blog.member.service.MemberService;
@@ -45,6 +46,8 @@ public class SecurityConfig {
   private final JwtService jwtService;
   private final PasswordEncoder passwordEncoder;
   private final MemberService memberService;
+  private final CookieUtils cookieUtils;
+
   private static final String LOGIN_URL = "/api/login";
   private static final String LOGOUT_URL = "/api/logout";
 
@@ -101,7 +104,7 @@ public class SecurityConfig {
    */
   @Bean
   public LogoutHandler logoutHandler() {
-    return new LogoutHandlerImpl(redisTemplate);
+    return new LogoutHandlerImpl(redisTemplate, cookieUtils);
   }
 
   /**
@@ -111,7 +114,7 @@ public class SecurityConfig {
    */
   @Bean
   public AuthenticationSuccessHandler authenticationSuccessHandler() {
-    return new AuthenticationSuccessHandlerImpl(jwtService);
+    return new AuthenticationSuccessHandlerImpl(jwtService, cookieUtils);
   }
 
   /**
@@ -124,7 +127,8 @@ public class SecurityConfig {
     return new AuthenticationFilterCustom(jwtProperties,
             redisTemplate,
             objectMapper,
-            jwtService);
+            jwtService,
+            cookieUtils);
   }
 
   /**

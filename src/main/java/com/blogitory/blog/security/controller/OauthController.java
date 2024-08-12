@@ -2,12 +2,11 @@ package com.blogitory.blog.security.controller;
 
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_COOKIE_EXPIRE;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
-import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 
+import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.security.service.OauthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class OauthController {
 
   private final OauthService oauthService;
+  private final CookieUtils cookieUtils;
 
   /**
    * Login with GitHub Oauth.
@@ -37,10 +37,8 @@ public class OauthController {
 
     String accessToken = oauthService.githubLogin(githubAccessToken);
 
-    ResponseCookie cookie =
-            makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE);
-
-    response.addHeader("Set-Cookie", cookie.toString());
+    cookieUtils.addSecureCookie(
+            response, ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE);
 
     return "redirect:/";
   }

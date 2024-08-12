@@ -3,6 +3,7 @@ package com.blogitory.blog.commons.properties;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ class PropertiesTest {
    */
   @Autowired
   JwtProperties jwtProperties;
+
+  @Autowired
+  CookieUtils cookieUtils;
 
   /**
    * Object storage properties test.

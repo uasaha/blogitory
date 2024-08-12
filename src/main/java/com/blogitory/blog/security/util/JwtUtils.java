@@ -28,25 +28,6 @@ public class JwtUtils {
   public static final String BLACK_LIST_KEY = "Black-List";
 
   /**
-   * make secure cookie.
-   *
-   * @param key    key
-   * @param value  value
-   * @param expire expire time
-   * @return new cookie
-   */
-  public static ResponseCookie makeSecureCookie(String key, String value, Integer expire) {
-    return ResponseCookie.from(key, value)
-            .secure(true)
-            .httpOnly(true)
-            .maxAge(expire)
-            .sameSite("Strict")
-            .path("/")
-            .domain("localhost")
-            .build();
-  }
-
-  /**
    * Get user's uuid.
    *
    * @param accessToken JWT

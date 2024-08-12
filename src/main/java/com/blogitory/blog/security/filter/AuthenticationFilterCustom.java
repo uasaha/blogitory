@@ -1,13 +1,15 @@
 package com.blogitory.blog.security.filter;
 
+import static com.blogitory.blog.jwt.service.impl.JwtServiceImpl.REISSUE_MAP_TOKEN;
+import static com.blogitory.blog.jwt.service.impl.JwtServiceImpl.REISSUE_MAP_UUID;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_COOKIE_EXPIRE;
 import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME;
 import static com.blogitory.blog.security.util.JwtUtils.BLACK_LIST_KEY;
 import static com.blogitory.blog.security.util.JwtUtils.getUuid;
 import static com.blogitory.blog.security.util.JwtUtils.isExpiredToken;
-import static com.blogitory.blog.security.util.JwtUtils.makeSecureCookie;
 import static com.blogitory.blog.security.util.JwtUtils.needReissue;
 
+import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.jwt.dto.GetMemberInfoDto;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.service.JwtService;
@@ -28,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -48,6 +49,7 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
   private final RedisTemplate<String, Object> redisTemplate;
   private final ObjectMapper objectMapper;
   private final JwtService jwtService;
+  private final CookieUtils cookieUtils;
 
   private static final String PROTECTED = "[PROTECTED]";
 
@@ -104,12 +106,12 @@ public class AuthenticationFilterCustom extends OncePerRequestFilter {
       HashOperations<String, String, String> blackListOperation = redisTemplate.opsForHash();
       blackListOperation.put(BLACK_LIST_KEY, uuid, accessToken);
 
-      ResponseCookie cookie = makeSecureCookie(ACCESS_TOKEN_COOKIE_NAME,
-              tokenMap.get("accessToken"), ACCESS_COOKIE_EXPIRE);
+      cookieUtils.addSecureCookie(response,
+              ACCESS_TOKEN_COOKIE_NAME,
+              tokenMap.get(REISSUE_MAP_TOKEN),
+              ACCESS_COOKIE_EXPIRE);
 
-      response.addHeader("Set-Cookie", cookie.toString());
-
-      uuid = tokenMap.get("uuid");
+      uuid = tokenMap.get(REISSUE_MAP_UUID);
     }
 
     String infoString = (String) redisTemplate.opsForValue().get(uuid);
