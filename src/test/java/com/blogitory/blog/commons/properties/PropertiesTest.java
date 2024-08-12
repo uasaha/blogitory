@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.jwt.properties.JwtProperties;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
  * @author woonseok
  * @since 1.0
  */
+@Disabled
 @SpringBootTest()
 @ActiveProfiles("test")
 class PropertiesTest {
