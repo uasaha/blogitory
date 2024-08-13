@@ -31,6 +31,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "category_no")
@@ -82,5 +83,16 @@ public class Category {
     this.name = id;
     this.deleted = true;
     this.posts.forEach(Posts::delete);
+  }
+
+  /**
+   * Constructor Default category.
+   *
+   * @param blog blog
+   */
+  public Category(Blog blog) {
+    this.blog = blog;
+    this.name = "일반";
+    this.deleted = false;
   }
 }

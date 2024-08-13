@@ -25,6 +25,9 @@ import com.blogitory.blog.blog.exception.BlogLimitException;
 import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.blog.service.impl.BlogServiceImpl;
 import com.blogitory.blog.category.dto.GetCategoryResponseDto;
+import com.blogitory.blog.category.entity.Category;
+import com.blogitory.blog.category.entity.CategoryDummy;
+import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
@@ -48,6 +51,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class BlogServiceTest {
   BlogRepository blogRepository;
   MemberRepository memberRepository;
+  CategoryRepository categoryRepository;
   PasswordEncoder passwordEncoder;
   BlogService blogService;
 
@@ -59,9 +63,10 @@ class BlogServiceTest {
   void setUp() {
     blogRepository = mock(BlogRepository.class);
     memberRepository = mock(MemberRepository.class);
+    categoryRepository = mock(CategoryRepository.class);
     passwordEncoder = mock(PasswordEncoder.class);
 
-    blogService = new BlogServiceImpl(memberRepository, blogRepository, passwordEncoder);
+    blogService = new BlogServiceImpl(memberRepository, blogRepository, categoryRepository, passwordEncoder);
   }
 
   /**
@@ -101,6 +106,7 @@ class BlogServiceTest {
   void createBlogSuccess() {
     Member member = MemberDummy.dummy();
     Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
 
     ReflectionTestUtils.setField(member, "blogs", List.of(blog));
 
@@ -110,10 +116,13 @@ class BlogServiceTest {
     ReflectionTestUtils.setField(requestDto, "bio", "blog bio");
 
     when(memberRepository.findById(member.getMemberNo())).thenReturn(Optional.of(member));
+    when(blogRepository.save(any(Blog.class))).thenReturn(blog);
+    when(categoryRepository.save(any(Category.class))).thenReturn(category);
 
     blogService.createBlog(requestDto, member.getMemberNo());
 
     verify(blogRepository, times(1)).save(any());
+    verify(categoryRepository, times(1)).save(any(Category.class));
   }
 
   @Test
@@ -195,7 +204,6 @@ class BlogServiceTest {
     Member member = MemberDummy.dummy();
     Blog blog = BlogDummy.dummy(member);
 
-    Member another = MemberDummy.dummy();
     ReflectionTestUtils.setField(member, "memberNo", 2);
 
     when(blogRepository.findBlogByUrlName(blog.getUrlName()))
@@ -235,7 +243,6 @@ class BlogServiceTest {
   @DisplayName("블로그 삭제 실패 - 없는 회원")
   void deleteBlogFailed() {
     Member member = MemberDummy.dummy();
-    Blog blog = BlogDummy.dummy(member);
 
     when(memberRepository.findById(member.getMemberNo())).thenReturn(Optional.empty());
 

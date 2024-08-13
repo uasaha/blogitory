@@ -10,6 +10,8 @@ import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.exception.BlogLimitException;
 import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.category.entity.Category;
+import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BlogServiceImpl implements BlogService {
   private final MemberRepository memberRepository;
   private final BlogRepository blogRepository;
+  private final CategoryRepository categoryRepository;
   private final PasswordEncoder passwordEncoder;
 
   private static final Integer MAX_BLOG_SIZE = 3;
@@ -63,8 +66,10 @@ public class BlogServiceImpl implements BlogService {
     }
 
     Blog blog = requestDto.of(member);
+    blog = blogRepository.save(blog);
 
-    blogRepository.save(blog);
+    Category category = new Category(blog);
+    categoryRepository.save(category);
   }
 
   /**
