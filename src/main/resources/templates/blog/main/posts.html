@@ -115,6 +115,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="comment-div"></div>
 <!--            댓글    -->
                 <div id="comment-1" class="card-footer">
                     <div class="row">
@@ -153,7 +154,7 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" href="#">
-                                                수정
+                                            수정
                                         </a>
                                         <a class="dropdown-item" href="#">
                                             삭제
@@ -338,72 +339,13 @@
             plugins: [codeSyntaxHighlight, colorSyntax]
         });
 
-        const viewerMobile = Editor.factory({
-            el: viewers[1],
-            viewer: true,
-            plugins: [codeSyntaxHighlight, colorSyntax],
-        });
-
         const elem = [[${posts.detail}]];
         viewer.setMarkdown(elem);
-        viewerMobile.setMarkdown(elem);
-
-        function openWriteForm() {
-            let writeForms = document.querySelectorAll('#comment-write-form');
-            let writeAreas = document.querySelectorAll('#comment-write-area');
-
-            if (writeForms[0].classList.contains("d-none")) {
-                writeForms[0].classList.remove("d-none");
-                writeForms[1].classList.remove("d-none");
-                writeAreas[1].focus();
-            } else {
-                writeForms[0].classList.add("d-none");
-                writeForms[1].classList.add("d-none");
-                writeAreas[0].value = "";
-                writeAreas[1].value = "";
-            }
-        }
-
-        function openChildComment(el) {
-            let commentNo = el.id.split("-")[2];
-            let parentComment = document.querySelector("#comment-" + commentNo);
-
-            parentComment.after();
-        }
-
-        function clip(){
-            let clipUrl = '';
-            let clipTextarea = document.createElement("textarea");
-            document.body.appendChild(clipTextarea);
-            clipUrl = window.document.location.href;
-            clipTextarea.value = clipUrl;
-            clipTextarea.select();
-            document.execCommand("copy");
-            document.body.removeChild(clipTextarea);
-            openSuccessAlerts("URL이 복사되었습니다.")
-        }
 
         let posts = [[${posts}]];
-
-        function registerComment() {
-            let contents = document.querySelector("#comment-write-area");
-
-            if (contents.value == null || contents.value == "") {
-                openWarnAlerts("댓글을 입력해주세요.");
-                return
-            }
-
-            axios.post("/api/comments", {
-                "postsUrl": posts.postUrl,
-                "content": contents.value,
-            }).then(() => {
-                openSuccessAlerts("등록되었습니다.");
-                location.reload();
-            }).catch(() => {
-                openFailedAlerts("잠시 후 다시 시도해주세요.");
-            })
-        }
+        let loginMember = [[ ${members} ]];
     </script>
+    <script src="/static/js/my/read.js"></script>
 </th:block>
 </body>
 </html>

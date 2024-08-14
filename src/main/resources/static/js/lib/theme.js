@@ -46,9 +46,8 @@ function setTheme(theme) {
 			}
 		}
 
-		if (viewerEl && viewerMobileEl) {
+		if (viewerEl) {
 			viewerEl.className="";
-			viewerMobileEl.className="";
 		}
 
 	} else if (selectedTheme === "dark") {
@@ -58,9 +57,8 @@ function setTheme(theme) {
 			editorEl.classList.add("toastui-editor-dark");
 		}
 
-		if (viewerEl && viewerMobileEl) {
+		if (viewerEl) {
 			viewerEl.className="toastui-editor-dark";
-			viewerMobileEl.className="toastui-editor-dark";
 		}
 	}
 
