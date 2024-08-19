@@ -63,6 +63,7 @@ public class MemberServiceImpl implements MemberService {
 
   private static final String MEMBER_DELETED = "M-D-";
   private static final Integer DEFAULT_ROLE_NO = 4;
+  public static final String DEFAULT_THUMB = "/static/icons/person.svg";
 
   /**
    * {@inheritDoc}
@@ -83,6 +84,7 @@ public class MemberServiceImpl implements MemberService {
             .commentAlert(true)
             .heartAlert(true)
             .newAlert(true)
+            .profileThumb(DEFAULT_THUMB)
             .build();
 
     member = memberRepository.save(member);

@@ -1,12 +1,13 @@
 package com.blogitory.blog.comment.controller;
 
 import com.blogitory.blog.comment.dto.request.CreateCommentRequestDto;
-import com.blogitory.blog.comment.dto.response.GetCommentListResponseDto;
+import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
 import com.blogitory.blog.comment.service.CommentService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
+import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.security.util.SecurityUtils;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -42,13 +43,16 @@ public class CommentRestController {
    * @param pageable pageable
    * @return comment list
    */
-  @GetMapping("/@{username}/{blogUrl}/posts/{postsUrl}/comments")
-  public ResponseEntity<List<GetCommentListResponseDto>> getComments(
+  @GetMapping("/@{username}/{blogUrl}/{postsUrl}/comments")
+  public ResponseEntity<Pages<GetCommentResponseDto>> getComments(
           @PathVariable("username") String username,
           @PathVariable("blogUrl") String blogUrl,
           @PathVariable("postsUrl") String postsUrl,
           @PageableDefault Pageable pageable) {
-    return ResponseEntity.ok().build();
+    String postsKey = "@" + username + "/" + blogUrl + "/" + postsUrl;
+    Pages<GetCommentResponseDto> comments = commentService.getComments(postsKey, pageable);
+
+    return ResponseEntity.ok(comments);
   }
 
   /**
@@ -60,13 +64,18 @@ public class CommentRestController {
    * @param commentNo parent comment no
    * @return child comment list
    */
-  @GetMapping("/@{username}/{blogUrl}/posts/{postsUrl}/comments/{commentNo}/childs")
-  public ResponseEntity<List<GetCommentListResponseDto>> getChildComments(
+  @GetMapping("/@{username}/{blogUrl}/{postsUrl}/comments/{commentNo}/child")
+  public ResponseEntity<Pages<GetChildCommentResponseDto>> getChildComments(
           @PathVariable("username") String username,
           @PathVariable("blogUrl") String blogUrl,
           @PathVariable("postsUrl") String postsUrl,
-          @PathVariable("commentNo") Long commentNo) {
-    return ResponseEntity.ok().build();
+          @PathVariable("commentNo") Long commentNo,
+          @PageableDefault Pageable pageable) {
+    String postsKey = "@" + username + "/" + blogUrl + "/" + postsUrl;
+    Pages<GetChildCommentResponseDto> comments =
+            commentService.getChildComments(postsKey, commentNo, pageable);
+
+    return ResponseEntity.ok(comments);
   }
 
   /**
