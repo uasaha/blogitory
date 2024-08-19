@@ -82,7 +82,9 @@ public class CommentRepositoryImpl
    * {@inheritDoc}
    */
   @Override
-  public Page<GetChildCommentResponseDto> getChildCommentsByParent(String postsUrl, Long commentNo, Pageable pageable) {
+  public Page<GetChildCommentResponseDto> getChildCommentsByParent(String postsUrl,
+                                                                   Long commentNo,
+                                                                   Pageable pageable) {
     QComment comment = QComment.comment;
     QComment parent = new QComment("parent");
     QMember member = QMember.member;
