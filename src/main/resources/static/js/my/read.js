@@ -1,7 +1,10 @@
 const COMMENT_WRITE_FORM_ID = "comment-write-form";
 const COMMENT_WRITE_AREA_ID = "comment-write-area";
 const COMMENT_PREFIX = "comment-";
-const COMMENT_WRITE = "comment-div"
+const COMMENT_WRITE = "comment-div";
+const COMMENT_CONTENT_AREA_PREFIX = "comment-content-area-";
+const COMMENT_MODIFY_AREA_PREFIX = "comment-modify-area-";
+const COMMENT_MODIFY_BTN_PREFIX = "comment-modify-btn-";
 const OPEN_CHILD_COMMENT_BTN_PREFIX = "open-child-comment-btn-";
 const CHILD_COMMENT_WRITE_FORM_PREFIX = "child-comment-write-form-";
 const CHILD_COMMENT_WRITE_BTN_PREFIX = "child-comment-write-btn-";
@@ -115,7 +118,7 @@ function getComment(commentNo, writer, currentMember, commentContent, childCnt) 
     let commentInner = document.createElement("div");
     commentInner.className = "row";
 
-    commentInner.appendChild(getCommentHeader(commentNo, writer, currentMember));
+    commentInner.appendChild(getCommentHeader(commentNo, writer, currentMember, childCnt));
     commentInner.appendChild(getCommentBody(commentContent, currentMember));
 
     if (childCnt > 0) {
@@ -176,14 +179,14 @@ function getDeletedComment(commentNo, childCnt, type) {
     return deletedComment;
 }
 
-function getCommentHeader(commentNo, writer, currentMember) {
+function getCommentHeader(commentNo, writer, currentMember, childCnt) {
     let row = document.createElement("div");
     row.className = "row";
 
     row.appendChild(getCommentWriter(writer));
 
     if (currentMember != null && currentMember.username === writer.username) {
-        row.appendChild(getCommentDropdown(commentNo));
+        row.appendChild(getCommentDropdown(commentNo, childCnt));
     }
 
     return row;
@@ -207,7 +210,7 @@ function getCommentWriter(writer) {
     return col;
 }
 
-function getCommentDropdown(targetNo) {
+function getCommentDropdown(targetNo, childCnt) {
     let col = document.createElement("div");
     col.className = "col-1 d-flex justify-content-end";
 
@@ -233,16 +236,66 @@ function getCommentDropdown(targetNo) {
         "      </svg>\n" +
         "    </button>\n" +
         "    <div class=\"dropdown-menu\">\n" +
-        "      <a class=\"dropdown-item\" onclick=\"modifyComment(" + targetNo + ")\">\n" +
+        "      <a class=\"dropdown-item\" onclick=\"openModifyCommentForm(" + targetNo + ")\">\n" +
         "        수정\n" +
         "      </a>\n" +
-        "      <a class=\"dropdown-item\" onclick=\"deleteComment(" + targetNo + ")\">\n" +
+        "      <a class=\"dropdown-item\" onclick=\"deleteComment(" + targetNo + ", " + childCnt +")\">\n" +
         "      삭제\n" +
         "      </a>\n" +
         "    </div>\n" +
         "</div>"
 
     return col;
+}
+
+function openModifyCommentForm(commentNo) {
+    let commentContentArea = document.getElementById(COMMENT_CONTENT_AREA_PREFIX+commentNo);
+    let commentModifyArea = document.createElement("textarea");
+    commentModifyArea.className = "form-control";
+    commentModifyArea.value = commentContentArea.innerText;
+    commentModifyArea.rows = 4;
+    commentModifyArea.id = COMMENT_MODIFY_AREA_PREFIX + commentNo;
+
+    let commentModifyButton = document.createElement("button");
+    commentModifyButton.textContent = "저장";
+    commentModifyButton.className = "btn btn-outlined-secondary ms-auto mt-1";
+    commentModifyButton.style = "width: 4rem";
+    commentModifyButton.id = COMMENT_MODIFY_BTN_PREFIX + commentNo;
+    commentModifyButton.addEventListener("click", () => {
+        modifyComment(commentNo, commentContentArea, commentModifyArea, commentModifyButton);
+    });
+
+    commentContentArea.classList.add("d-none");
+    commentContentArea.before(commentModifyArea);
+    commentModifyArea.after(commentModifyButton);
+}
+
+function modifyComment(commentNo, commentContentArea, commentModifyArea, commentModifyButton) {
+    axios.put("/api/comments/" + commentNo, {
+        "contents": commentModifyArea.value,
+    }).then(() => {
+        openSuccessAlerts("댓글이 수정되었습니다.");
+        commentContentArea.innerText = commentModifyArea.value;
+        commentModifyArea.classList.add("d-none");
+        commentModifyButton.classList.add("d-none");
+        commentContentArea.classList.remove("d-none");
+    }).catch(() => {
+        openFailedAlerts("댓글 수정에 실패하였습니다.");
+    })
+}
+
+function deleteComment(commentNo, childCnt) {
+    axios.delete("/api/comments/" + commentNo)
+        .then(() => {
+            openSuccessAlerts("삭제되었습니다.");
+
+            let comment = document.getElementById(COMMENT_PREFIX + commentNo);
+            comment.classList.add("d-none");
+            let deletedComment = getDeletedComment(commentNo, childCnt, "parent");
+            comment.before(deletedComment);
+        }).catch(() => {
+            openFailedAlerts("삭제에 실패하였습니다.");
+        });
 }
 
 function getCommentBody(commentContent, currentMember) {
@@ -252,6 +305,7 @@ function getCommentBody(commentContent, currentMember) {
     let content = document.createElement("p");
     content.className = "col-12 m-0";
     content.innerText = commentContent.content;
+    content.id = COMMENT_CONTENT_AREA_PREFIX + commentContent.commentNo;
     row.appendChild(content);
 
     let info = document.createElement("p");
@@ -316,6 +370,7 @@ function getChildCommentBody(commentContent) {
     let content = document.createElement("p");
     content.className = "col-12 m-0";
     content.innerText = commentContent.content;
+    content.id = COMMENT_CONTENT_AREA_PREFIX + commentContent.commentNo;
     row.appendChild(content);
 
     let info = document.createElement("p");
