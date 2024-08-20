@@ -44,4 +44,21 @@ public interface CommentService {
   Pages<GetChildCommentResponseDto> getChildComments(String postUrl,
                                                      Long parentNo,
                                                      Pageable pageable);
+
+  /**
+   * Modify comment.
+   *
+   * @param memberNo  member no
+   * @param commentNo comment no
+   * @param contents  new contents
+   */
+  void modifyComment(Integer memberNo, Long commentNo, String contents);
+
+  /**
+   * Delete comment.
+   *
+   * @param memberNo  member no
+   * @param commentNo comment no
+   */
+  void deleteComment(Integer memberNo, Long commentNo);
 }

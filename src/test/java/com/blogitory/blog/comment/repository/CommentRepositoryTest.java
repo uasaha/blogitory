@@ -10,6 +10,8 @@ import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
+import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
 import com.blogitory.blog.comment.entity.Comment;
 import com.blogitory.blog.comment.entity.CommentDummy;
 import com.blogitory.blog.commons.config.JpaConfig;
@@ -28,6 +30,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Comment repository test.
@@ -129,5 +135,68 @@ class CommentRepositoryTest {
             () -> assertEquals(comment.getUpdatedAt(), actual.getUpdatedAt()),
             () -> assertEquals(comment.isDeleted(), actual.isDeleted())
     );
+  }
+
+  @Test
+  @DisplayName("댓글 조회")
+  void getComments() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Comment comment = CommentDummy.dummy(member, posts);
+    comment = commentRepository.save(comment);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<GetCommentResponseDto> comments =
+            commentRepository.getComments(posts.getUrl(), pageable);
+
+    GetCommentResponseDto result = comments.getContent().getFirst();
+
+    assertEquals(comment.getCommentNo(), result.getCommentNo());
+    assertEquals(comment.getContents(), result.getContent());
+  }
+
+  @Test
+  @DisplayName("답글 조회")
+  void getChildComments() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Comment comment = CommentDummy.dummy(member, posts);
+    comment = commentRepository.save(comment);
+
+    Comment child = CommentDummy.dummy(member, posts, comment);
+    ReflectionTestUtils.setField(child, "commentNo", 2L);
+    child = commentRepository.save(child);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+
+    Page<GetChildCommentResponseDto> comments =
+            commentRepository.getChildCommentsByParent(posts.getUrl(), comment.getCommentNo(), pageable);
+
+    GetChildCommentResponseDto result = comments.getContent().getFirst();
+
+    assertEquals(child.getCommentNo(), result.getCommentNo());
+    assertEquals(child.getContents(), result.getContent());
   }
 }

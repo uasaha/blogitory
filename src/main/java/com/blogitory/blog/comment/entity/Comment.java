@@ -77,4 +77,13 @@ public class Comment extends BaseCreatedAtEntity {
   public void parent(Comment parent) {
     this.parentComment = parent;
   }
+
+  public void modify(String contents) {
+    this.contents = contents;
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  public void delete() {
+    this.deleted = true;
+  }
 }

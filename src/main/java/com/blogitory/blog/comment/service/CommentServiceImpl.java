@@ -11,6 +11,7 @@ import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.repository.PostsRepository;
+import com.blogitory.blog.security.exception.AuthorizationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -116,5 +117,41 @@ public class CommentServiceImpl implements CommentService {
             page.hasPrevious(),
             page.hasNext(),
             page.getTotalElements());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void modifyComment(Integer memberNo, Long commentNo, String contents) {
+    Member member = memberRepository.findById(memberNo)
+            .orElseThrow(() -> new NotFoundException(Member.class));
+
+    Comment comment = commentRepository.findById(commentNo)
+            .orElseThrow(() -> new NotFoundException(Comment.class));
+
+    if (!comment.getMember().getMemberNo().equals(member.getMemberNo())) {
+      throw new AuthorizationException();
+    }
+
+    comment.modify(contents);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void deleteComment(Integer memberNo, Long commentNo) {
+    Member member = memberRepository.findById(memberNo)
+            .orElseThrow(() -> new NotFoundException(Member.class));
+
+    Comment comment = commentRepository.findById(commentNo)
+            .orElseThrow(() -> new NotFoundException(Comment.class));
+
+    if (!comment.getMember().getMemberNo().equals(member.getMemberNo())) {
+      throw new AuthorizationException();
+    }
+
+    comment.delete();
   }
 }
