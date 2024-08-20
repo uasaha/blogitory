@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -65,8 +64,7 @@ class ImageRestControllerTest {
             .contentType(MediaType.MULTIPART_FORM_DATA))
             .andExpect(status().isOk())
             .andExpect(jsonPath("url").value(responseDto.getUrl()))
-            .andExpect(jsonPath("originName").value(responseDto.getOriginName()))
-            .andDo(print());
+            .andExpect(jsonPath("originName").value(responseDto.getOriginName()));
   }
 
   @WithMockUser("1")
@@ -95,7 +93,6 @@ class ImageRestControllerTest {
                     .contentType(MediaType.MULTIPART_FORM_DATA))
             .andExpect(status().isOk())
             .andExpect(jsonPath("url").value(responseDto.getUrl()))
-            .andExpect(jsonPath("originName").value(responseDto.getOriginName()))
-            .andDo(print());
+            .andExpect(jsonPath("originName").value(responseDto.getOriginName()));
   }
 }

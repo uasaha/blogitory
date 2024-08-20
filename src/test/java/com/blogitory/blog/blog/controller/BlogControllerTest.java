@@ -3,7 +3,6 @@ package com.blogitory.blog.blog.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
@@ -63,7 +62,6 @@ class BlogControllerTest {
     when(blogService.getBlogByUrl(any())).thenReturn(responseDto);
 
     mockMvc.perform(get("/@test/test"))
-            .andExpect(status().isOk())
-            .andDo(print());
+            .andExpect(status().isOk());
   }
 }

@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,7 +30,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * 설명 작성 필!
+ * Posts Rest controller test.
  *
  * @author woonseok
  * @Date 2024-08-08
@@ -66,8 +65,7 @@ class PostsRestControllerTest {
 
     mvc.perform(get("/api/posts/key"))
             .andExpect(status().isOk())
-            .andExpect(content().string(key))
-            .andDo(print());
+            .andExpect(content().string(key));
   }
 
   @WithMockUser("1")

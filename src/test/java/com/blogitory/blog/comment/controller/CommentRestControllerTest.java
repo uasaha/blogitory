@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.service.BlogService;
@@ -64,7 +63,6 @@ class CommentRestControllerTest {
     mockMvc.perform(post("/api/comments")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestDto)))
-            .andExpect(status().isCreated())
-            .andDo(print());
+            .andExpect(status().isCreated());
   }
 }

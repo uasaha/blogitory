@@ -127,6 +127,4 @@ class PostsControllerTest {
     mvc.perform(get("/@username/blog/post"))
             .andExpect(status().isOk());
   }
-
-
 }

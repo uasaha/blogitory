@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,8 +57,7 @@ class MailRestControllerTest {
 
     mvc.perform(MockMvcRequestBuilders.get("/api/mail/verification")
             .param("email", email))
-            .andExpect(status().isOk())
-            .andDo(print());
+            .andExpect(status().isOk());
   }
 
   @Test
@@ -91,7 +89,6 @@ class MailRestControllerTest {
             .content(objectMapper.writeValueAsString(getMailVerificationRequestDto))
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("verified").value(true))
-            .andDo(print());
+            .andExpect(jsonPath("verified").value(true));
   }
 }

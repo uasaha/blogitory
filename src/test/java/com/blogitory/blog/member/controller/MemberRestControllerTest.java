@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,8 +80,7 @@ class MemberRestControllerTest {
             .param("username", name)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string("false"))
-            .andDo(print());
+            .andExpect(content().string("false"));
   }
 
   /**
@@ -101,8 +99,7 @@ class MemberRestControllerTest {
                     .param("username", name)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().string("true"))
-            .andDo(print());
+            .andExpect(content().string("true"));
   }
 
   @Test
@@ -123,8 +120,7 @@ class MemberRestControllerTest {
     mvc.perform(put("/api/users/profiles")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(requestDto)))
-            .andExpect(status().isNoContent())
-            .andDo(print());
+            .andExpect(status().isNoContent());
   }
 
   @WithMockUser("1")

@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.blogitory.blog.blog.dto.response.GetBlogInProfileResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
-import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
 import com.blogitory.blog.member.dto.response.GetMemberProfileLinkResponseDto;
 import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
 import com.blogitory.blog.member.entity.Member;
@@ -64,8 +63,7 @@ class MemberControllerTest {
             .param("name", member.getName())
             .param("email", member.getEmail())
             .param("pwd", "@poilklj1234"))
-            .andExpect(status().is3xxRedirection())
-            .andDo(print());
+            .andExpect(status().is3xxRedirection());
   }
 
   @Test
