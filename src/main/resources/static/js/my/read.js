@@ -62,7 +62,7 @@ function registerComment() {
     });
 }
 
-function registerChildComment(commentNo) {
+function registerChildComment(commentNo, childWriteInput) {
     let contents = document.querySelector("#" + CHILD_COMMENT_WRITE_INPUT_PREFIX + commentNo);
 
     if (contents.value == null || contents.value == "") {
@@ -101,6 +101,8 @@ function registerChildComment(commentNo) {
         openSuccessAlerts("등록되었습니다.");
         let parentComment = document.getElementById(COMMENT_PREFIX + commentNo);
         parentComment.after(getChildComment(0, writer, currentMember, commentContent));
+        childWriteInput.value = "";
+        document.getElementById(CHILD_COMMENT_WRITE_FORM_PREFIX+commentNo).classList.add("d-none");
     }).catch(() => {
         openFailedAlerts("잠시 후 다시 시도해주세요.");
     })
@@ -329,7 +331,7 @@ function getCommentBody(commentContent, currentMember) {
                 let childWriteInput = document.querySelector('#' + CHILD_COMMENT_WRITE_INPUT_PREFIX + commentContent.commentNo);
 
                 childWriteBtn.addEventListener("click", () => {
-                    registerChildComment(commentContent.commentNo);
+                    registerChildComment(commentContent.commentNo, childWriteInput);
                 });
             } else {
                 if (childWriteForm.classList.contains("d-none")) {
@@ -564,6 +566,7 @@ function drawComments(targetEl, comments, pages) {
             let moreComment = document.createElement("div");
             moreComment.className = "hr-text my-5";
             moreComment.innerText = "댓글 더 보기";
+            moreComment.style.cursor = "pointer";
             moreComment.addEventListener("click", function () {
                 moreComment.classList.add("d-none");
 
