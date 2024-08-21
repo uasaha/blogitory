@@ -40,4 +40,27 @@ public class UrlUtil {
 
     return Objects.isNull(refererUrl) ? INDEX_PAGE : refererUrl;
   }
+
+  /**
+   * Make Blog key.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @return blog key
+   */
+  public static String getBlogKey(String username, String blogUrl) {
+    return "@" + username + "/" + blogUrl;
+  }
+
+  /**
+   * Make Post key.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param postsUrl posts url
+   * @return post key
+   */
+  public static String getPostsKey(String username, String blogUrl, String postsUrl) {
+    return getBlogKey(username, blogUrl) + "/" + postsUrl;
+  }
 }

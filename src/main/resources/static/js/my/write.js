@@ -4,7 +4,7 @@ const {colorSyntax} = Editor.plugin;
 
 const tagInput = document.querySelector("#tag-input");
 const tagRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9]+$/;
-const titleRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9\s]+$/;
+const titleRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9!@#$%^&*()_+=~₩\s]+$/;
 const urlRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+$/;
 
 const tagify = new Tagify(tagInput, {
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (posts.details !== null) {
         editor.setMarkdown(posts.details);
     }
-})
+});
 
 function tempSave() {
     let tp = new URL(window.location.href).searchParams.get("tp");
@@ -108,13 +108,33 @@ function savePosts(el) {
     let selectedSummary = document.querySelector("#posts-summary").value;
     let selectedContents = editor.getMarkdown();
 
+    if (!selectedBlog || selectedBlog === "") {
+        openWarnAlerts("블로그를 선택해주세요.");
+        el.disabled = false;
+        return;
+    }
+
+    if (!selectedCategory || selectedCategory === "") {
+        openWarnAlerts("카테고리를 선택해주세요.");
+        el.disabled = false;
+        return;
+    }
+
     if (!validateTitle(selectedTitle)) {
-        openWarnAlerts("제목을 입력하세요.");
+        openWarnAlerts("제목의 형식이 잘못되었습니다.");
+        el.disabled = false;
         return;
     }
 
     if (!validateUrl(selectedUrl)) {
         openWarnAlerts("올바른 URL 형식이 아닙니다.");
+        el.disabled = false;
+        return;
+    }
+
+    if (!selectedContents || selectedContents === "") {
+        openWarnAlerts("내용을 입력하세요.");
+        el.disabled = false;
         return;
     }
 
@@ -187,6 +207,7 @@ function deleteTempPosts(tp) {
 
 function uploadPostsThumb(el) {
     let postsThumbUrlInput = document.querySelector("#posts-thumb-url");
+    let postsThumbImg = document.querySelector("#posts-thumb-img");
 
     let formData = new FormData();
     formData.append("file", el.files[0]);
@@ -197,5 +218,6 @@ function uploadPostsThumb(el) {
         }
     }).then(response => {
         postsThumbUrlInput.value = response.data.url;
+        postsThumbImg.src = response.data.url;
     });
 }

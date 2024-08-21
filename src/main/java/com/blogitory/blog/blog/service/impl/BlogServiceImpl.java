@@ -61,7 +61,10 @@ public class BlogServiceImpl implements BlogService {
     Member member = memberRepository.findById(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
 
-    if (member.getBlogs().size() >= MAX_BLOG_SIZE) {
+    List<Blog> blogs = member.getBlogs()
+            .stream().filter(blog -> !blog.isDeleted()).toList();
+
+    if (blogs.size() >= MAX_BLOG_SIZE) {
       throw new BlogLimitException();
     }
 

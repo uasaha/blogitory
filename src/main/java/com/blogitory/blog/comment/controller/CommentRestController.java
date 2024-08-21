@@ -1,5 +1,7 @@
 package com.blogitory.blog.comment.controller;
 
+import static com.blogitory.blog.commons.utils.UrlUtil.getPostsKey;
+
 import com.blogitory.blog.comment.dto.request.CreateCommentRequestDto;
 import com.blogitory.blog.comment.dto.request.ModifyCommentRequestDto;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
@@ -52,7 +54,7 @@ public class CommentRestController {
           @PathVariable("blogUrl") String blogUrl,
           @PathVariable("postsUrl") String postsUrl,
           @PageableDefault Pageable pageable) {
-    String postsKey = getPostKey(username, blogUrl, postsUrl);
+    String postsKey = getPostsKey(username, blogUrl, postsUrl);
     Pages<GetCommentResponseDto> comments = commentService.getComments(postsKey, pageable);
 
     return ResponseEntity.ok(comments);
@@ -74,7 +76,7 @@ public class CommentRestController {
           @PathVariable("postsUrl") String postsUrl,
           @PathVariable("commentNo") Long commentNo,
           @PageableDefault Pageable pageable) {
-    String postsKey = getPostKey(username, blogUrl, postsUrl);
+    String postsKey = getPostsKey(username, blogUrl, postsUrl);
     Pages<GetChildCommentResponseDto> comments =
             commentService.getChildComments(postsKey, commentNo, pageable);
 
@@ -132,17 +134,5 @@ public class CommentRestController {
     commentService.deleteComment(memberNo, commentNo);
 
     return ResponseEntity.ok().build();
-  }
-
-  /**
-   * Make Post key.
-   *
-   * @param username username
-   * @param blogUrl  blog url
-   * @param postsUrl posts url
-   * @return post key
-   */
-  private String getPostKey(String username, String blogUrl, String postsUrl) {
-    return "@" + username + "/" + blogUrl + "/" + postsUrl;
   }
 }

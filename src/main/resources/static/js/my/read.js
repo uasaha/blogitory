@@ -606,6 +606,12 @@ function getCommentsByRest(page, commentWriteForm) {
 
 }
 
+function hrefModifyPage() {
+    let path = window.location.pathname + "/mod";
+
+    location.href = path;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     let commentWriteForm = document.getElementById(COMMENT_WRITE);
 

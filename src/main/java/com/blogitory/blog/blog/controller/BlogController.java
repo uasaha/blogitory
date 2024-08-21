@@ -1,5 +1,7 @@
 package com.blogitory.blog.blog.controller;
 
+import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
+
 import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +35,7 @@ public class BlogController {
   public String blog(@PathVariable("username") String username,
                      @PathVariable("blogUrl") String blogUrl,
                      Model model) {
-    String url = "@" + username + "/" + blogUrl;
+    String url = getBlogKey(username, blogUrl);
     GetBlogResponseDto response = blogService.getBlogByUrl(url);
     model.addAttribute("blog", response);
 
