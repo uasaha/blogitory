@@ -13,5 +13,11 @@ import org.springframework.data.repository.NoRepositoryBean;
  **/
 @NoRepositoryBean
 public interface TempPostsRepositoryCustom {
+  /**
+   * Get temp posts by member no.
+   *
+   * @param memberNo member no
+   * @return Temp posts dto list
+   */
   List<GetTempPostsResponseDto> getTempPostsByMemberNo(Integer memberNo);
 }
