@@ -71,6 +71,7 @@ function uploadPostsThumb(el) {
     }).then(response => {
         postsThumbUrlInput.value = response.data.url;
         postsThumbImg.src = response.data.url;
+        postsThumbImg.style.display = "";
     });
 }
 
@@ -107,4 +108,8 @@ function savePosts(el) {
     }).catch(() => {
         openFailedAlerts("문제가 발생하였습니다.");
     })
+}
+
+function cancelModifyPosts() {
+    history.back();
 }

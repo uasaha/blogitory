@@ -52,9 +52,9 @@
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <div class="form-label">썸네일 이미지</div>
+                        <img id="posts-thumb-img" th:src="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''" alt="thumb" onerror="this.style.display='none'"/>
                         <input id="posts-thumb" type="file" class="form-control" onchange="uploadPostsThumb(this)"/>
                         <input id="posts-thumb-url" class="d-none" type="text" th:value="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''"/>
-                        <img id="posts-thumb-img" th:src="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''" alt="thumb"/>
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <div class="form-label">태그</div>

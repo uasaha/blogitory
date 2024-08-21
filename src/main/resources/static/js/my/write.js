@@ -219,5 +219,6 @@ function uploadPostsThumb(el) {
     }).then(response => {
         postsThumbUrlInput.value = response.data.url;
         postsThumbImg.src = response.data.url;
+        postsThumbImg.style.display = "";
     });
 }
