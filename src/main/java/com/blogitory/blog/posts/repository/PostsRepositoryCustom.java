@@ -1,5 +1,6 @@
 package com.blogitory.blog.posts.repository;
 
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -21,4 +22,6 @@ public interface PostsRepositoryCustom {
    * @return post
    */
   Optional<GetPostResponseDto> getPostByPostUrl(String url);
+
+  Optional<GetPostForModifyResponseDto> getPostForModifyByUrl(Integer memberNo, String postUrl);
 }

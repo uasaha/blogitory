@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogitory - 글 수정</title>
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" href="/static/css/lib/toastui-editor.css"/>
+        <link rel="stylesheet" href="/static/css/lib/toastui-editor-dark.css">
+        <link rel="stylesheet"
+              href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
+        <link rel="stylesheet"
+              href="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight.min.css"/>
+        <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.css"/>
+        <link rel="stylesheet" href="/static/css/lib/tagify.css" type="text/css"/>
+    </th:block>
+</head>
+<body>
+<div class="container-lg" layout:fragment="main-content">
+    <div class="page-body">
+        <div class="card">
+            <div class="card-body mt-3">
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="form-label">블로그</div>
+                        <input type="text" class="form-control" th:value="${posts.blogName}" readonly/>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="form-label">카테고리</div>
+                        <input type="text" class="form-control" th:value="${posts.categoryName}" readonly/>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label">제목</label>
+                        <input id="posts-title" type="text" class="form-control" name="title"
+                               th:value="${posts.title}"
+                               placeholder="제목을 입력하세요.">
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <label class="form-label">URL</label>
+                        <input id="posts-url" type="text" class="form-control" name="url"
+                               th:value="${posts.postUrl}" readonly>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="form-label">썸네일 이미지</div>
+                        <input id="posts-thumb" type="file" class="form-control" onchange="uploadPostsThumb(this)"/>
+                        <input id="posts-thumb-url" class="d-none" type="text" th:value="${posts.thumbnailUrl}"/>
+                        <img id="posts-thumb-img" th:src="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''" alt="thumb"/>
+                    </div>
+                    <div class="col-12 col-md-6 mb-3">
+                        <div class="form-label">태그</div>
+                        <input id="tag-input" type="text" class="form-control" placeholder="태그를 입력하고 엔터를 눌러주세요."/>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label">요약</label>
+                        <input id="posts-summary" type="text" class="form-control" name="summary"
+                               th:value="${posts.summary}"
+                               placeholder="요약을 입력하세요.">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mb-3">
+                        <div id="editor-div"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+                        <button id="submitButton" type="button" style="width: 100px"
+                                class="btn btn-outline-danger ms-md-auto" onclick="">
+                            취소
+                        </button>
+                        <button id="submitButton" type="button" style="width: 100px"
+                                class="btn ms-md-auto float-end" onclick="savePosts(this)">
+                            저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        let posts = [[${posts}]];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.js"></script>
+    <script src="https://uicdn.toast.com/editor/latest/i18n/ko-kr.js"></script>
+    <script src="/static/js/my/posts.js" defer></script>
+    <script src="/static/js/my/modify.js" defer></script>
+</th:block>
+</body>
+</html>

@@ -16,6 +16,7 @@ import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
@@ -136,5 +137,29 @@ class PostsRepositoryTest {
     assertEquals(posts.getDetail(), actual.getDetail());
   }
 
+  @Test
+  @DisplayName("글 수정을 위한 정보 조회")
+  void getPostForModifyByUrl() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
 
+    Optional<GetPostForModifyResponseDto> postOptional =
+            postsRepository.getPostForModifyByUrl(member.getMemberNo(), posts.getUrl());
+
+    assertTrue(postOptional.isPresent());
+
+    GetPostForModifyResponseDto actual = postOptional.get();
+    assertEquals(blog.getName(), actual.getBlogName());
+    assertEquals(category.getName(), actual.getCategoryName());
+    assertEquals(posts.getUrl(), actual.getPostUrl());
+    assertEquals(posts.getThumbnail(), actual.getThumbnailUrl());
+    assertEquals(posts.getSummary(), actual.getSummary());
+    assertEquals(posts.getDetail(), actual.getDetail());
+  }
 }

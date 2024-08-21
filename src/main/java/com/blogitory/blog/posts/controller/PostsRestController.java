@@ -1,6 +1,9 @@
 package com.blogitory.blog.posts.controller;
 
+import static com.blogitory.blog.commons.utils.UrlUtil.getPostsKey;
+
 import com.blogitory.blog.commons.annotaion.RoleUser;
+import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
@@ -26,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0
  **/
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PostsRestController {
   private final PostsService postsService;
@@ -37,7 +40,7 @@ public class PostsRestController {
    * @return temp post key
    */
   @RoleUser
-  @GetMapping("/key")
+  @GetMapping("/posts/key")
   public ResponseEntity<String> key() {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
@@ -52,7 +55,7 @@ public class PostsRestController {
    * @return 200
    */
   @RoleUser
-  @PostMapping("/{tp}")
+  @PostMapping("/posts/{tp}")
   public ResponseEntity<Void> tempSave(@PathVariable String tp,
                                        @RequestBody SaveTempPostsDto saveDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
@@ -70,7 +73,7 @@ public class PostsRestController {
    * @return 204
    */
   @RoleUser
-  @PostMapping
+  @PostMapping("/posts")
   public ResponseEntity<CreatePostsResponseDto> createPosts(
           @RequestParam String tp, @RequestBody @Valid SaveTempPostsDto saveDto) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
@@ -81,13 +84,57 @@ public class PostsRestController {
   }
 
   /**
+   * Modify posts.
+   *
+   * @param username   username
+   * @param blogUrl    blog url
+   * @param postUrl    post url
+   * @param requestDto requests
+   * @return 200
+   */
+  @RoleUser
+  @PostMapping("/@{username}/{blogUrl}/{postUrl}")
+  public ResponseEntity<Void> modifyPosts(@PathVariable String username,
+                                          @PathVariable String blogUrl,
+                                          @PathVariable String postUrl,
+                                          @RequestBody @Valid ModifyPostsRequestDto requestDto) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+    String postKey = getPostsKey(username, blogUrl, postUrl);
+
+    postsService.modifyPosts(memberNo, postKey, requestDto);
+
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Delete posts.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param postUrl  post url
+   * @return 200
+   */
+  @RoleUser
+  @DeleteMapping("/@{username}/{blogUrl}/{postUrl}")
+  public ResponseEntity<Void> deletePosts(@PathVariable String username,
+                                          @PathVariable String blogUrl,
+                                          @PathVariable String postUrl) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+    String postKey = getPostsKey(username, blogUrl, postUrl);
+
+    postsService.deletePosts(memberNo, postKey);
+
+    return ResponseEntity.ok().build();
+  }
+
+  /**
    * Delete temp post.
    *
    * @param tp temp post id
    * @return 200
    */
   @RoleUser
-  @DeleteMapping
+  @DeleteMapping("/posts")
   public ResponseEntity<Void> deleteTemp(@RequestParam String tp) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
     postsService.deleteTempPosts(memberNo, tp);

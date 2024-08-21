@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
@@ -15,6 +16,7 @@ import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -90,6 +93,32 @@ class PostsControllerTest {
             .andExpect(status().isOk());
   }
 
+  @WithMockUser("1")
+  @Test
+  @DisplayName("글 작성 페이지 - 블로그 없음")
+  void issuePostsPageNoBlog() throws Exception {
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
+            1L,
+            1,
+            "title",
+            1L,
+            "url",
+            "summary",
+            "thumb",
+            "detail",
+            List.of("tag"));
+
+    List<GetBlogWithCategoryResponseDto> blogs = List.of();
+
+    when(postsService.loadTempPosts(any(), any())).thenReturn(tpDto);
+    when(blogService.getBlogListWithCategory(anyInt())).thenReturn(blogs);
+
+    mvc.perform(get("/posts")
+                    .param("tp", "12345"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/settings/blog"));
+  }
+
   @Test
   @DisplayName("게시글 조회")
   void postsPage() throws Exception {
@@ -125,6 +154,33 @@ class PostsControllerTest {
     when(postsService.getPostByUrl(anyString())).thenReturn(postResponse);
 
     mvc.perform(get("/@username/blog/post"))
+            .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("게시글 수정 페이지")
+  void modifyPostsPage() throws Exception {
+    GetPostForModifyResponseDto responseDto = new GetPostForModifyResponseDto();
+    ReflectionTestUtils.setField(responseDto, "blogName", "blog");
+    ReflectionTestUtils.setField(responseDto, "categoryName", "categoryName");
+    ReflectionTestUtils.setField(responseDto, "title", "title");
+    ReflectionTestUtils.setField(responseDto, "postUrl", "postUrl");
+    ReflectionTestUtils.setField(responseDto, "thumbnailUrl", "thumbnailUrl");
+    ReflectionTestUtils.setField(responseDto, "summary", "summary");
+    ReflectionTestUtils.setField(responseDto, "detail", "detail");
+    responseDto.tags(List.of());
+
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+    attrs.put("noBlog", false);
+
+
+    when(postsService.getPostForModifyByUrl(anyInt(), anyString())).thenReturn(responseDto);
+
+    mvc.perform(get("/@username/blog/post/mod")
+                    .flashAttrs(attrs))
             .andExpect(status().isOk());
   }
 }

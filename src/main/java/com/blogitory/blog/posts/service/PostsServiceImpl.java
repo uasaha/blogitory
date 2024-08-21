@@ -6,8 +6,10 @@ import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.exception.InvalidPostsUrlException;
@@ -62,6 +64,13 @@ public class PostsServiceImpl implements PostsService {
 
     Member member = memberRepository.findById(memberNo)
             .orElseThrow(() -> new NotFoundException(Member.class));
+
+    List<TempPosts> tempPostsList =
+            tempPostsRepository.findAllByMemberMemberNoOrderByCreatedAtDesc(memberNo);
+
+    if (tempPostsList.size() >= 10) {
+      deleteTempPosts(memberNo, tempPostsList.getLast().getTempPostsId().toString());
+    }
 
     TempPosts tempPosts = new TempPosts(uuid, member);
 
@@ -126,6 +135,8 @@ public class PostsServiceImpl implements PostsService {
     }
 
     redisTemplate.opsForHash().put(POST_KEY, id, saved);
+
+
   }
 
   /**
@@ -161,17 +172,7 @@ public class PostsServiceImpl implements PostsService {
 
     posts = postsRepository.save(posts);
 
-    for (String tagName : saveDto.getTags()) {
-      Tag tag = tagRepository.findByName(tagName)
-              .orElse(new Tag(tagName));
-
-      tag = tagRepository.save(tag);
-
-      PostsTag postsTag =
-              new PostsTag(null, tag, posts, blog);
-
-      postsTagRepository.save(postsTag);
-    }
+    connectTags(blog, posts, saveDto.getTags());
 
     deleteTempPosts(memberNo, tp);
 
@@ -197,6 +198,7 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public GetPostResponseDto getPostByUrl(String postUrl) {
     GetPostResponseDto responseDto = postsRepository.getPostByPostUrl(postUrl)
@@ -206,6 +208,78 @@ public class PostsServiceImpl implements PostsService {
     responseDto.setTags(tags);
 
     return responseDto;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public GetPostForModifyResponseDto getPostForModifyByUrl(Integer memberNo, String postUrl) {
+    GetPostForModifyResponseDto responseDto =
+            postsRepository.getPostForModifyByUrl(memberNo, postUrl)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+
+    responseDto.tags(tagRepository.getTagListByPost(postUrl));
+
+    return responseDto;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void modifyPosts(Integer memberNo, String postKey, ModifyPostsRequestDto requestDto) {
+    Posts posts = postsRepository.findByUrl(postKey)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+    Category category = posts.getCategory();
+    Blog blog = category.getBlog();
+
+    if (!blog.getMember().getMemberNo().equals(memberNo)) {
+      throw new AuthorizationException();
+    }
+
+    posts.modify(requestDto.getTitle(),
+            requestDto.getSummary(),
+            requestDto.getContent(),
+            requestDto.getThumb());
+
+    List<PostsTag> postsTagList = postsTagRepository.findByPostsNo(posts.getPostsNo());
+
+    postsTagRepository.deleteAll(postsTagList);
+
+    connectTags(blog, posts, requestDto.getTags());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void deletePosts(Integer memberNo, String postKey) {
+    Posts posts = postsRepository.findByUrl(postKey)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+
+    Category category = posts.getCategory();
+    Blog blog = category.getBlog();
+
+    if (!blog.getMember().getMemberNo().equals(memberNo)) {
+      throw new AuthorizationException();
+    }
+
+    posts.delete();
+  }
+
+  private void connectTags(Blog blog, Posts posts, List<String> tags) {
+    for (String tagName : tags) {
+      Tag tag = tagRepository.findByName(tagName)
+              .orElse(new Tag(tagName));
+
+      tag = tagRepository.save(tag);
+
+      PostsTag postsTag = new PostsTag(null, tag, posts, blog);
+
+      postsTagRepository.save(postsTag);
+    }
   }
 
   /**

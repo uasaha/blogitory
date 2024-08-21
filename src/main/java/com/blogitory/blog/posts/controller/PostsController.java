@@ -1,10 +1,14 @@
 package com.blogitory.blog.posts.controller;
 
+import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
+import static com.blogitory.blog.commons.utils.UrlUtil.getPostsKey;
+
 import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
 import com.blogitory.blog.blog.dto.response.GetBlogWithCategoryResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
@@ -28,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PostsController {
   private final BlogService blogService;
   private final PostsService postsService;
+  private static final String POSTS_ATTR = "posts";
 
   /**
    * Posts issue page.
@@ -41,13 +46,44 @@ public class PostsController {
   public String issuePostsPage(@RequestParam String tp, Model model) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
-    SaveTempPostsDto saveDto = postsService.loadTempPosts(tp, memberNo);
     List<GetBlogWithCategoryResponseDto> blogs = blogService.getBlogListWithCategory(memberNo);
 
+    if (blogs.isEmpty()) {
+      return "redirect:/settings/blog";
+    }
+
+    SaveTempPostsDto saveDto = postsService.loadTempPosts(tp, memberNo);
+
     model.addAttribute("blogs", blogs);
-    model.addAttribute("posts", saveDto);
+    model.addAttribute(POSTS_ATTR, saveDto);
 
     return "index/posts/write";
+  }
+
+  /**
+   * Go to modify posts page.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param postUrl  post url
+   * @param model    model
+   * @return page
+   */
+  @RoleUser
+  @GetMapping("/@{username}/{blogUrl}/{postUrl}/mod")
+  public String modifyPostsPage(
+          @PathVariable String username,
+          @PathVariable String blogUrl,
+          @PathVariable String postUrl,
+          Model model) {
+    String postKey = getPostsKey(username, blogUrl, postUrl);
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+
+    GetPostForModifyResponseDto response = postsService.getPostForModifyByUrl(memberNo, postKey);
+
+    model.addAttribute(POSTS_ATTR, response);
+
+    return "index/posts/modify";
   }
 
   /**
@@ -64,14 +100,14 @@ public class PostsController {
                           @PathVariable String blogUrl,
                           @PathVariable String postUrl,
                           Model model) {
-    String blogKey = "@" + username + "/" + blogUrl;
-    String postKey = blogKey + "/" + postUrl;
+    String blogKey = getBlogKey(username, blogUrl);
+    String postKey = getPostsKey(username, blogUrl, postUrl);
 
     GetBlogResponseDto blogResponse = blogService.getBlogByUrl(blogKey);
     GetPostResponseDto postsResponse = postsService.getPostByUrl(postKey);
 
     model.addAttribute("blog", blogResponse);
-    model.addAttribute("posts", postsResponse);
+    model.addAttribute(POSTS_ATTR, postsResponse);
 
     return "blog/main/posts";
   }

@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
+import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
@@ -124,6 +125,31 @@ class PostsRestControllerTest {
     doNothing().when(postsService).deleteTempPosts(anyInt(), anyString());
 
     mvc.perform(delete("/api/posts?tp=qklwntqnwtq"))
+            .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("게시물 수정")
+  void modifyPosts() throws Exception {
+    ModifyPostsRequestDto requestDto = new ModifyPostsRequestDto();
+
+    doNothing().when(postsService).modifyPosts(any(), anyString(), any());
+
+    mvc.perform(post("/api/@username/blog/post")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(requestDto)))
+            .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("게시물 삭제")
+  void deletePosts() throws Exception {
+    doNothing().when(postsService).deletePosts(anyInt(), anyString());
+
+    mvc.perform(delete("/api/@username/blog/post")
+                    .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
   }
 }

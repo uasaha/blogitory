@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,8 +21,10 @@ import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
@@ -45,6 +50,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Posts service test.
@@ -494,5 +500,115 @@ class PostsServiceTest {
     Posts posts = new Posts(category, "url", "subject", "summary", "thumb", "detail");
 
     assertEquals(posts.getCategory().getCategoryNo(), category.getCategoryNo());
+  }
+
+  @Test
+  @DisplayName("글 수정페이지 정보 조회")
+  void getPostForModifyByUrl() {
+    GetPostForModifyResponseDto responseDto = new GetPostForModifyResponseDto();
+    ReflectionTestUtils.setField(responseDto, "blogName", "blog");
+    ReflectionTestUtils.setField(responseDto, "categoryName", "categoryName");
+    ReflectionTestUtils.setField(responseDto, "title", "title");
+    ReflectionTestUtils.setField(responseDto, "postUrl", "postUrl");
+    ReflectionTestUtils.setField(responseDto, "thumbnailUrl", "thumbnailUrl");
+    ReflectionTestUtils.setField(responseDto, "summary", "summary");
+    ReflectionTestUtils.setField(responseDto, "detail", "detail");
+
+    when(postsRepository.getPostForModifyByUrl(anyInt(), anyString()))
+            .thenReturn(Optional.of(responseDto));
+
+    when(tagRepository.getTagListByPost(anyString())).thenReturn(List.of(new GetTagResponseDto("tag")));
+
+    GetPostForModifyResponseDto result = postsService.getPostForModifyByUrl(1, "postUrl");
+
+    assertEquals(responseDto.getBlogName(), result.getBlogName());
+    assertEquals(responseDto.getCategoryName(), result.getCategoryName());
+    assertEquals(responseDto.getTitle(), result.getTitle());
+    assertEquals(responseDto.getPostUrl(), result.getPostUrl());
+    assertEquals(responseDto.getThumbnailUrl(), result.getThumbnailUrl());
+    assertEquals(responseDto.getSummary(), result.getSummary());
+    assertEquals(responseDto.getDetail(), result.getDetail());
+    assertEquals(responseDto.getTags().getFirst(), result.getTags().getFirst());
+  }
+
+  @Test
+  @DisplayName("글 수정 성공")
+  void modifyPosts() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+    List<PostsTag> postsTagList = List.of();
+    ModifyPostsRequestDto requestDto = new ModifyPostsRequestDto();
+    ReflectionTestUtils.setField(requestDto, "title", "title");
+    ReflectionTestUtils.setField(requestDto, "summary", "summary");
+    ReflectionTestUtils.setField(requestDto, "content", "content");
+    ReflectionTestUtils.setField(requestDto, "thumb", "thumb");
+    ReflectionTestUtils.setField(requestDto, "tags", List.of("tag"));
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+    when(postsTagRepository.findByPostsNo(anyLong())).thenReturn(postsTagList);
+    doNothing().when(postsTagRepository).delete(any());
+
+    postsService.modifyPosts(1, "postKey", requestDto);
+
+    verify(postsTagRepository, times(1)).deleteAll(any());
+
+    assertEquals("title", posts.getSubject());
+    assertEquals("summary", posts.getSummary());
+  }
+
+  @Test
+  @DisplayName("글 수정 실패 - 다른 유저")
+  void modifyPostsFailed() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+    List<PostsTag> postsTagList = List.of();
+    ModifyPostsRequestDto requestDto = new ModifyPostsRequestDto();
+    ReflectionTestUtils.setField(requestDto, "title", "title");
+    ReflectionTestUtils.setField(requestDto, "summary", "summary");
+    ReflectionTestUtils.setField(requestDto, "content", "content");
+    ReflectionTestUtils.setField(requestDto, "thumb", "thumb");
+    ReflectionTestUtils.setField(requestDto, "tags", List.of("tag"));
+    ReflectionTestUtils.setField(member, "memberNo", 2);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+    when(postsTagRepository.findByPostsNo(anyLong())).thenReturn(postsTagList);
+    doNothing().when(postsTagRepository).delete(any());
+
+    assertThrows(AuthorizationException.class,
+            () -> postsService.modifyPosts(1, "postKey", requestDto));
+  }
+
+  @Test
+  @DisplayName("글 삭제")
+  void deletePosts() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+
+    postsService.deletePosts(1, "postKey");
+
+    assertTrue(posts.isDeleted());
+  }
+
+  @Test
+  @DisplayName("글 삭제 실패 - 다른 유저")
+  void deletePostsFailed() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+    ReflectionTestUtils.setField(member, "memberNo", 2);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+
+    assertThrows(AuthorizationException.class,
+            () -> postsService.deletePosts(1, "postKey"));
   }
 }

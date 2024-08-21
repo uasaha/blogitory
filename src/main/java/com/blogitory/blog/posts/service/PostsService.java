@@ -1,7 +1,9 @@
 package com.blogitory.blog.posts.service;
 
+import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 
 /**
@@ -64,4 +66,30 @@ public interface PostsService {
    * @return post
    */
   GetPostResponseDto getPostByUrl(String postUrl);
+
+  /**
+   * Get post for modifying.
+   *
+   * @param memberNo current member no
+   * @param postUrl  post url
+   * @return response dto
+   */
+  GetPostForModifyResponseDto getPostForModifyByUrl(Integer memberNo, String postUrl);
+
+  /**
+   * Modify post.
+   *
+   * @param memberNo   member no
+   * @param postKey    post key
+   * @param requestDto requests
+   */
+  void modifyPosts(Integer memberNo, String postKey, ModifyPostsRequestDto requestDto);
+
+  /**
+   * Delete post.
+   *
+   * @param memberNo member no
+   * @param postKey  post key
+   */
+  void deletePosts(Integer memberNo, String postKey);
 }

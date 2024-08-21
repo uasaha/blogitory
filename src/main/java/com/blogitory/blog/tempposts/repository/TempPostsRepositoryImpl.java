@@ -1,5 +1,6 @@
 package com.blogitory.blog.tempposts.repository;
 
+
 import com.blogitory.blog.member.entity.QMember;
 import com.blogitory.blog.tempposts.dto.GetTempPostsResponseDto;
 import com.blogitory.blog.tempposts.entity.QTempPosts;

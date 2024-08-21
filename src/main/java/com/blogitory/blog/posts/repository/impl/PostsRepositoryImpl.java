@@ -3,6 +3,7 @@ package com.blogitory.blog.posts.repository.impl;
 import com.blogitory.blog.blog.entity.QBlog;
 import com.blogitory.blog.category.entity.QCategory;
 import com.blogitory.blog.member.entity.QMember;
+import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.QPosts;
@@ -63,5 +64,38 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                     .where(blog.deleted.isFalse())
                     .where(member.blocked.isFalse().and(member.left.isFalse()))
                     .fetchOne());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<GetPostForModifyResponseDto> getPostForModifyByUrl(Integer memberNo, String postUrl) {
+    QPosts posts = QPosts.posts;
+    QMember member = QMember.member;
+    QCategory category = QCategory.category;
+    QBlog blog = QBlog.blog;
+
+    return Optional.ofNullable(
+            from(posts)
+            .select(Projections.fields(
+                    GetPostForModifyResponseDto.class,
+                    blog.name.as("blogName"),
+                    category.name.as("categoryName"),
+                    posts.subject.as("title"),
+                    posts.url.as("postUrl"),
+                    posts.thumbnail.as("thumbnailUrl"),
+                    posts.summary.as("summary"),
+                    posts.detail.as("detail")))
+            .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
+            .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
+            .where(posts.url.eq(postUrl))
+            .where(posts.deleted.isFalse())
+            .where(category.deleted.isFalse())
+            .where(blog.deleted.isFalse())
+            .where(member.memberNo.eq(memberNo))
+            .where(member.blocked.isFalse().and(member.left.isFalse()))
+            .fetchOne());
   }
 }

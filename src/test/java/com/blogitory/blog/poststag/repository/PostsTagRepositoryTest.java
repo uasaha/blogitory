@@ -2,6 +2,7 @@ package com.blogitory.blog.poststag.repository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
@@ -23,6 +24,7 @@ import com.blogitory.blog.tag.entity.Tag;
 import com.blogitory.blog.tag.entity.TagDummy;
 import com.blogitory.blog.tag.repository.TagRepository;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -131,5 +133,27 @@ class PostsTagRepositoryTest {
             () -> assertEquals(postsTag.getPosts().getPostsNo(), actual.getPosts().getPostsNo()),
             () -> assertEquals(postsTag.getBlog(), actual.getBlog())
     );
+  }
+
+  @Test
+  @DisplayName("글 번호로 posts tag 조회")
+  void findByPostsNo() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Tag tag = TagDummy.dummy();
+    tag = tagRepository.save(tag);
+    PostsTag postsTag = PostsTagDummy.dummy(tag, posts, blog);
+    postsTagRepository.save(postsTag);
+
+    List<PostsTag> actual = postsTagRepository.findByPostsNo(posts.getPostsNo());
+
+    assertFalse(actual.isEmpty());
+    assertEquals(tag.getName(), actual.getFirst().getTag().getName());
   }
 }

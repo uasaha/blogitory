@@ -82,6 +82,14 @@ public class Posts extends BaseCreatedAtEntity {
     this.detail = detail;
   }
 
+  public void modify(String title, String summary, String content, String thumb) {
+    this.subject = title;
+    this.summary = summary;
+    this.detail = content;
+    this.thumbnail = thumb;
+    this.updatedAt = LocalDateTime.now();
+  }
+
   public void delete() {
     this.deleted = true;
   }

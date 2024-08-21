@@ -617,3 +617,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     getCommentsByRest(0, commentWriteForm);
 });
+
+function deletePosts() {
+    let path = window.location.pathname;
+
+    axios.delete("/api" + path)
+        .then(() => {
+            let blogPath = path.split("/");
+
+            location.href = "/" + blogPath[1] + "/" + blogPath[2];
+        })
+}
