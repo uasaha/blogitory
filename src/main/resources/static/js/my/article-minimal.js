@@ -148,6 +148,12 @@ function getSummaryComponent(article) {
 
     let summaryP = document.createElement('p');
     summaryP.className = "text-over-summary-2 mb-1";
+
+    if (article.thumb == null || article.thumb == "") {
+        summaryP.className = "mb-1";
+        summaryDiv.className = "col-12";
+    }
+
     summaryP.innerText = article.summary;
 
     summaryDiv.appendChild(summaryP);
