@@ -3,6 +3,7 @@ package com.blogitory.blog.posts.service;
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.repository.CategoryRepository;
+import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -11,6 +12,7 @@ import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.exception.InvalidPostsUrlException;
 import com.blogitory.blog.posts.exception.PostsJsonConvertException;
@@ -29,6 +31,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -218,7 +223,7 @@ public class PostsServiceImpl implements PostsService {
   public GetPostForModifyResponseDto getPostForModifyByUrl(Integer memberNo, String postUrl) {
     GetPostForModifyResponseDto responseDto =
             postsRepository.getPostForModifyByUrl(memberNo, postUrl)
-            .orElseThrow(() -> new NotFoundException(Posts.class));
+                    .orElseThrow(() -> new NotFoundException(Posts.class));
 
     responseDto.tags(tagRepository.getTagListByPost(postUrl));
 
@@ -269,6 +274,50 @@ public class PostsServiceImpl implements PostsService {
     posts.delete();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public Pages<GetRecentPostResponseDto> getRecentPost(Pageable pageable) {
+    Page<GetRecentPostResponseDto> result = postsRepository.getRecentPosts(pageable);
+
+    return new Pages<>(result.getContent(),
+            pageable.getPageNumber(),
+            result.hasPrevious(),
+            result.hasNext(),
+            result.getTotalElements());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public List<GetRecentPostResponseDto> getRecentPostByUsername(String username) {
+    Pageable pageable = PageRequest.of(0, 4);
+
+    return postsRepository.getRecentPostByUsername(pageable, username);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public List<GetRecentPostResponseDto> getRecentPostByBlog(String blogUrl) {
+    Pageable pageable = PageRequest.of(0, 4);
+
+    return postsRepository.getRecentPostByBlog(pageable, blogUrl);
+  }
+
+  /**
+   * Connect tag to blog.
+   *
+   * @param blog  blog
+   * @param posts posts
+   * @param tags  tags
+   */
   private void connectTags(Blog blog, Posts posts, List<String> tags) {
     for (String tagName : tags) {
       Tag tag = tagRepository.findByName(tagName)

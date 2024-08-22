@@ -13,10 +13,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -26,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -150,6 +154,37 @@ class PostsRestControllerTest {
 
     mvc.perform(delete("/api/@username/blog/post")
                     .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("최근 글 조회")
+  void getRecentPosts() throws Exception {
+    Pageable pageable = PageRequest.of(0, 10);
+    Pages<GetRecentPostResponseDto> pages = new Pages<>(List.of(), 0, false, false, 0L);
+    when(postsService.getRecentPost(any())).thenReturn(pages);
+
+    mvc.perform(get("/api/posts/recent"))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("회원의 최근 글 조회")
+  void getRecentPostsByUsername() throws Exception {
+    List<GetRecentPostResponseDto> list = List.of();
+    when(postsService.getRecentPostByUsername(anyString())).thenReturn(list);
+
+    mvc.perform(get("/api/@username/posts/recent"))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("블로그의 최근 글 조회")
+  void getRecentPostsByBlog() throws Exception {
+    List<GetRecentPostResponseDto> list = List.of();
+    when(postsService.getRecentPostByBlog(anyString())).thenReturn(list);
+
+    mvc.perform(get("/api/@username/blog/posts/recent"))
             .andExpect(status().isOk());
   }
 }

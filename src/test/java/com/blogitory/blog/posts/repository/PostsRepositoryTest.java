@@ -2,6 +2,7 @@ package com.blogitory.blog.posts.repository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,9 +19,11 @@ import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +31,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Posts repository test.
@@ -161,5 +167,67 @@ class PostsRepositoryTest {
     assertEquals(posts.getThumbnail(), actual.getThumbnailUrl());
     assertEquals(posts.getSummary(), actual.getSummary());
     assertEquals(posts.getDetail(), actual.getDetail());
+  }
+
+  @Test
+  @DisplayName("최근 글 조회")
+  void getRecentPosts() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<GetRecentPostResponseDto> page = postsRepository.getRecentPosts(pageable);
+
+    assertFalse(page.hasPrevious());
+    assertFalse(page.hasNext());
+    assertEquals(1L, page.getTotalElements());
+    assertEquals(posts.getSubject(), page.getContent().getFirst().getTitle());
+  }
+
+  @Test
+  @DisplayName("회원 최근 글 조회")
+  void getRecentPostsByUsername() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+    List<GetRecentPostResponseDto> list = postsRepository.getRecentPostByUsername(pageable, member.getUsername());
+    GetRecentPostResponseDto actual = list.getFirst();
+
+    assertEquals(posts.getSubject(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("회원 최근 글 조회")
+  void getRecentPostsByBlog() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+    List<GetRecentPostResponseDto> list = postsRepository.getRecentPostByBlog(pageable, blog.getUrlName());
+    GetRecentPostResponseDto actual = list.getFirst();
+
+    assertEquals(posts.getSubject(), actual.getTitle());
   }
 }

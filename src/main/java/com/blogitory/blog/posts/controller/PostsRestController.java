@@ -1,15 +1,21 @@
 package com.blogitory.blog.posts.controller;
 
+import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
 import static com.blogitory.blog.commons.utils.UrlUtil.getPostsKey;
 
 import com.blogitory.blog.commons.annotaion.RoleUser;
+import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -139,5 +145,45 @@ public class PostsRestController {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
     postsService.deleteTempPosts(memberNo, tp);
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Get recent posts.
+   *
+   * @param pageable pageable
+   * @return 200
+   */
+  @GetMapping("/posts/recent")
+  public ResponseEntity<Pages<GetRecentPostResponseDto>> getRecentPosts(
+          @PageableDefault(size = 24) Pageable pageable) {
+    return ResponseEntity.ok(postsService.getRecentPost(pageable));
+  }
+
+  /**
+   * Get recent posts by username.
+   *
+   * @param username username
+   * @return 200
+   */
+  @GetMapping("/@{username}/posts/recent")
+  public ResponseEntity<List<GetRecentPostResponseDto>> getRecentPostsByUsername(
+          @PathVariable String username) {
+    return ResponseEntity.ok(postsService.getRecentPostByUsername(username));
+  }
+
+  /**
+   * Get recent posts by blog.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @return 200
+   */
+  @GetMapping("/@{username}/{blogUrl}/posts/recent")
+  public ResponseEntity<List<GetRecentPostResponseDto>> getRecentPostsByBlog(
+          @PathVariable String username,
+          @PathVariable String blogUrl) {
+    String blogKey = getBlogKey(username, blogUrl);
+
+    return ResponseEntity.ok(postsService.getRecentPostByBlog(blogKey));
   }
 }

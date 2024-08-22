@@ -141,66 +141,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 2em">
+                <div id="recent-posting" class="row row-deck row-cards" style="margin-top: 2em">
                     <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
-                    <div class="row">
-                        <div class="col-6 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
-            <div class="profile col-dm-4 d-lg-none">
+            <div class="profile col-md-4 d-lg-none">
                 <div class="col">
                     <div class="row d-flex">
                         <div class="col-4" style="width: 110px; height: 110px; vertical-align: middle;">
@@ -274,7 +221,7 @@
                         </div>
                     </div>
                     <div id="profile-bio-mobile" th:if="${profile.bio} != null" class="row justify-content-center">
-                        <span th:text="${profile.bio}"></span>
+                        <textarea class="form-control" th:text="${profile.bio}"></textarea>
                     </div>
                     <div id="profile-button-mobile" sec:authorize="isAuthenticated()" class="row justify-content-center" style="margin-top: 5px">
                         <button th:if="${profile.username} != ${members.username}" type="button" class="btn">팔로우</button>
@@ -345,59 +292,8 @@
                 </div>
                 <div class="row mt-4">
                     <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
-                    <div class="col">
-                        <div class="col-12 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <div class="card placeholder-glow">
-                                <div class="ratio ratio-21x9 card-img-top placeholder"></div>
-                                <div class="card-body">
-                                    <div class="placeholder col-9 mb-3"></div>
-                                    <div class="placeholder placeholder-xs col-10"></div>
-                                    <div class="placeholder placeholder-xs col-11"></div>
-                                    <div class="mt-3">
-                                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-4" aria-hidden="true"></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="recent-posting-mobile" class="">
+
                     </div>
                 </div>
             </div>
@@ -406,6 +302,28 @@
 </div>
 <th:block layout:fragment="script">
     <script src="/static/js/my/profile.js" defer></script>
+    <script src="/static/js/my/article-minimal.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let path = window.location.pathname;
+
+            axios.get("/api" + path + "/posts/recent")
+                .then((response) => {
+                    let postingArea = document.getElementById("recent-posting");
+                    let postingAreaMobile = document.getElementById("recent-posting-mobile");
+
+                    let articles = response.data;
+
+                    for (let article of articles) {
+                        let articleDiv = getPostComponentForProfile(article);
+                        let articleMobile = getPostComponentForProfile(article);
+                        articleMobile.classList.add("mb-3");
+                        postingArea.appendChild(articleDiv);
+                        postingAreaMobile.appendChild(articleMobile);
+                    }
+                });
+        })
+    </script>
 </th:block>
 </body>
 </html>

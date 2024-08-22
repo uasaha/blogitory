@@ -1,10 +1,14 @@
 package com.blogitory.blog.posts.service;
 
+import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
+import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Posts service.
@@ -92,4 +96,28 @@ public interface PostsService {
    * @param postKey  post key
    */
   void deletePosts(Integer memberNo, String postKey);
+
+  /**
+   * Get recent posts.
+   *
+   * @param pageable pageable
+   * @return recent posts
+   */
+  Pages<GetRecentPostResponseDto> getRecentPost(Pageable pageable);
+
+  /**
+   * Get recent posts by username.
+   *
+   * @param username username
+   * @return recent posts
+   */
+  List<GetRecentPostResponseDto> getRecentPostByUsername(String username);
+
+  /**
+   * Get recent posts by blog url.
+   *
+   * @param blogUrl blog url
+   * @return recent posts
+   */
+  List<GetRecentPostResponseDto> getRecentPostByBlog(String blogUrl);
 }

@@ -1,6 +1,7 @@
 package com.blogitory.blog.posts.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,6 +19,7 @@ import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
+import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -26,6 +28,7 @@ import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import com.blogitory.blog.posts.exception.InvalidPostsUrlException;
@@ -48,6 +51,10 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -610,5 +617,68 @@ class PostsServiceTest {
 
     assertThrows(AuthorizationException.class,
             () -> postsService.deletePosts(1, "postKey"));
+  }
+
+  @Test
+  @DisplayName("최근 글 조회")
+  void getRecentPost() {
+    GetRecentPostResponseDto response = new GetRecentPostResponseDto(
+            "blogUrl", "blogName", "username",
+            "blogPfp", "postUrl", "title",
+            "summary", "thumb", LocalDateTime.now(),
+            0L, 0L);
+    Pageable pageable = PageRequest.of(0, 10);
+    Page<GetRecentPostResponseDto> page = new PageImpl<>(List.of(response), pageable, 1L);
+
+    when(postsRepository.getRecentPosts(any())).thenReturn(page);
+
+    Pages<GetRecentPostResponseDto> result = postsService.getRecentPost(pageable);
+    GetRecentPostResponseDto resultDto = result.body().getFirst();
+
+    assertEquals(resultDto.getTitle(), response.getTitle());
+    assertEquals(resultDto.getSummary(), response.getSummary());
+    assertFalse(result.hasNext());
+    assertFalse(result.hasPrevious());
+    assertEquals(1L, result.total());
+  }
+
+  @Test
+  @DisplayName("회원 최근 글 조회")
+  void getRecentPostByUsername() {
+    GetRecentPostResponseDto response = new GetRecentPostResponseDto(
+            "blogUrl", "blogName", "username",
+            "blogPfp", "postUrl", "title",
+            "summary", "thumb", LocalDateTime.now(),
+            0L, 0L);
+    Pageable pageable = PageRequest.of(0, 10);
+    List<GetRecentPostResponseDto> list = List.of(response);
+
+    when(postsRepository.getRecentPostByUsername(any(), anyString())).thenReturn(list);
+
+    List<GetRecentPostResponseDto> result = postsService.getRecentPostByUsername("username");
+    GetRecentPostResponseDto resultDto = result.getFirst();
+
+    assertEquals(resultDto.getTitle(), response.getTitle());
+    assertEquals(resultDto.getSummary(), response.getSummary());
+  }
+
+  @Test
+  @DisplayName("블로그 최근 글 조회")
+  void getRecentPostByBlog() {
+    GetRecentPostResponseDto response = new GetRecentPostResponseDto(
+            "blogUrl", "blogName", "username",
+            "blogPfp", "postUrl", "title",
+            "summary", "thumb", LocalDateTime.now(),
+            0L, 0L);
+    Pageable pageable = PageRequest.of(0, 10);
+    List<GetRecentPostResponseDto> list = List.of(response);
+
+    when(postsRepository.getRecentPostByBlog(any(), anyString())).thenReturn(list);
+
+    List<GetRecentPostResponseDto> result = postsService.getRecentPostByBlog("blogUrl");
+    GetRecentPostResponseDto resultDto = result.getFirst();
+
+    assertEquals(resultDto.getTitle(), response.getTitle());
+    assertEquals(resultDto.getSummary(), response.getSummary());
   }
 }
