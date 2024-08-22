@@ -650,7 +650,6 @@ class PostsServiceTest {
             "blogPfp", "postUrl", "title",
             "summary", "thumb", LocalDateTime.now(),
             0L, 0L);
-    Pageable pageable = PageRequest.of(0, 10);
     List<GetRecentPostResponseDto> list = List.of(response);
 
     when(postsRepository.getRecentPostByUsername(any(), anyString())).thenReturn(list);
@@ -670,7 +669,6 @@ class PostsServiceTest {
             "blogPfp", "postUrl", "title",
             "summary", "thumb", LocalDateTime.now(),
             0L, 0L);
-    Pageable pageable = PageRequest.of(0, 10);
     List<GetRecentPostResponseDto> list = List.of(response);
 
     when(postsRepository.getRecentPostByBlog(any(), anyString())).thenReturn(list);
