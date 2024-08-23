@@ -74,6 +74,7 @@ function getThumbnailComponent(article) {
 
     let img = document.createElement('img');
     img.src = article.thumb;
+    img.style.objectFit = "cover";
     img.addEventListener('error', () => {
         imageDiv.classList.add('d-none');
     });
