@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
   private final RedisTemplate<String, Object> redisTemplate;
 
   private static final String MEMBER_DELETED = "M-D-";
-  private static final Integer DEFAULT_ROLE_NO = 4;
+  public static final Integer DEFAULT_ROLE_NO = 4;
   public static final String DEFAULT_THUMB = "/static/icons/person.svg";
 
   /**

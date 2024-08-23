@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * MemberRepository test.
@@ -66,7 +67,7 @@ class MemberRepositoryTest {
             () -> assertEquals(member.getIntroEmail(), savedMember.getIntroEmail()),
             () -> assertEquals(member.isBlocked(), savedMember.isBlocked()),
             () -> assertEquals(member.isLeft(), savedMember.isLeft()),
-            () -> assertEquals(member.isOauth(), savedMember.isOauth()),
+            () -> assertEquals(member.getOauth(), savedMember.getOauth()),
             () -> assertEquals(member.isHeartAlert(), savedMember.isHeartAlert()),
             () -> assertEquals(member.isCommentAlert(), savedMember.isCommentAlert()),
             () -> assertEquals(member.isNewAlert(), savedMember.isNewAlert()),
@@ -102,5 +103,16 @@ class MemberRepositoryTest {
             () -> assertEquals(member.getName(), actual.getName()),
             () -> assertEquals(member.getProfileThumb(), actual.getThumb())
     );
+  }
+
+  @Test
+  @DisplayName("OAuth 가입자 정보 조회")
+  void findByOauthId() {
+    member = memberRepository.save(member);
+    ReflectionTestUtils.setField(member, "oauth", "test");
+
+    Optional<Member> actual = memberRepository.findByOauthId("test", member.getEmail());
+
+    assertTrue(actual.isPresent());
   }
 }

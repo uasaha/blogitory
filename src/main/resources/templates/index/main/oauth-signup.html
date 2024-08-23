@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogitory - 회원가입</title>
+</head>
+<body class="body-background">
+<div class="container-md padding-top-5" layout:fragment="main-content">
+    <div class="row ms-md-auto justify-content-center">
+        <div class="col-3 d-none d-lg-block" style="height: 300px">
+
+        </div>
+        <div class="col" style="max-width: 500px">
+            <div class="card mt-8">
+                <div class="card-header">
+                    <h2 class="text-center">소셜 회원가입</h2>
+                </div>
+                <div class="card-body">
+                    <form id="signupForm" name="requestDto" method="POST" action="/signup/oauth" class="ol-12">
+                        <input class="" id="provider-input" name="provider" type="text" th:value="${user.provider}" readonly>
+                        <input class="" id="id-input" name="id" type="text" th:value="${user.id}" readonly>
+                        <input class="" id="thumb-input" name="profileThumb" type="text" th:value="${user.thumb}" readonly>
+                        <div class="form-group mb-4">
+                            <label for="username-input" class="col-3">유저네임</label>
+                            <input id="username-input" name="username" type="text" class="form-control" maxlength="20"
+                                   onkeyup="usernameCheck()" required>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="name-input" class="col-3">이름</label>
+                            <input id="name-input" name="name" type="text" class="form-control" maxlength="20"
+                                   th:value="${user.name}"
+                                   onkeyup="nameValidate(this)" required>
+                        </div>
+                        <button id="submitButton" type="button"
+                                class="btn btn-outline-secondary ms-md-auto float-end" onclick="memberSignup(this)">
+                            가입하기
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 d-none d-lg-block" style="height: 300px">
+
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script src="/static/js/my/oauth-signup.js" defer></script>
+</th:block>
+</body>
+</html>

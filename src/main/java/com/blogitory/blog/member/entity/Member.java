@@ -69,7 +69,7 @@ public class Member extends BaseCreatedAtEntity {
   private boolean left;
 
   @Column(name = "member_oauth")
-  private boolean oauth;
+  private String oauth;
 
   @Column(name = "member_follow_alert")
   private boolean followAlert;
@@ -109,7 +109,7 @@ public class Member extends BaseCreatedAtEntity {
                 String introEmail,
                 boolean blocked,
                 boolean left,
-                boolean oauth,
+                String oauth,
                 boolean followAlert,
                 boolean commentAlert,
                 boolean heartAlert,

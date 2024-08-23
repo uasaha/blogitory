@@ -209,6 +209,7 @@ Date.prototype.yyyymmdd = function() {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+    //demo code start.
     function getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }

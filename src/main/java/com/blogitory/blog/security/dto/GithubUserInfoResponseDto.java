@@ -1,7 +1,9 @@
 package com.blogitory.blog.security.dto;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Dto for getting User's info from GitHub.
@@ -9,10 +11,13 @@ import lombok.Getter;
  * @author woonseok
  * @since 1.0
  **/
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class GithubUserInfoResponseDto {
-  private String thumbnail;
-  private String email;
-  private String username;
+  //username
+  private String login;
+  private String id;
+  private String avatarUrl;
+  private String name;
 }

@@ -1,6 +1,7 @@
 package com.blogitory.blog.member.repository;
 
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
+import com.blogitory.blog.member.entity.Member;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -20,4 +21,13 @@ public interface MemberRepositoryCustom {
    * @return user info
    */
   Optional<GetMemberPersistInfoDto> getPersistInfo(Integer memberNo);
+
+  /**
+   * Get user by oauth id.
+   *
+   * @param provider oauth provider
+   * @param id       oauth id
+   * @return member
+   */
+  Optional<Member> findByOauthId(String provider, String id);
 }

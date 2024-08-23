@@ -24,7 +24,7 @@ public class MemberDummy {
             "test@test.com",
             false,
             false,
-            false,
+            null,
             true,
             true,
             true,

@@ -1,5 +1,7 @@
 package com.blogitory.blog.security.service;
 
+import com.blogitory.blog.member.dto.request.SignupOauthMemberRequestDto;
+
 /**
  * Oauth Service.
  *
@@ -7,6 +9,8 @@ package com.blogitory.blog.security.service;
  * @since 1.0
  **/
 public interface OauthService {
+
+  void oauthSignup(SignupOauthMemberRequestDto requestDto);
 
   /**
    * Get GitHub access token.
