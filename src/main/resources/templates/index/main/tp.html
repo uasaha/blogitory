@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{index/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Blogitory - 임시 글</title>
+    <title>Blogitory - 임시 작성 글</title>
+    <link rel="canonical" href="https://blogitory.com">
+    <meta property="og:url" content="https://blogitory.com">
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
 </head>
 <body>
 <div class="container-xl" layout:fragment="main-content">
@@ -34,12 +41,16 @@
                         </tr>
                         </thead>
                         <tbody class="table-tbody">
-                            <tr th:each="tempPost : ${tempPosts}">
-                                <td class="col-2" th:text="${#temporals.format(tempPost.getCreatedAt(), 'yyyy. MM. dd HH:mm')}"></td>
-                                <td class="col" th:text="${tempPost.getTempPostsTitle()}"></td>
-                                <td class="col-1"><a class="btn" th:href="'posts?tp=' + ${tempPost.getTempPostsId()}" style="height: 25px">수정</a></td>
-                                <td class="col-1"><a class="btn btn-outline-danger" th:onclick="deleteTempPosts([[${tempPost.getTempPostsId()}]])" style="height: 25px">삭제</a></td>
-                            </tr>
+                        <tr th:each="tempPost : ${tempPosts}">
+                            <td class="col-2"
+                                th:text="${#temporals.format(tempPost.getCreatedAt(), 'yyyy. MM. dd HH:mm')}"></td>
+                            <td class="col" th:text="${tempPost.getTempPostsTitle()}"></td>
+                            <td class="col-1"><a class="btn" th:href="'posts?tp=' + ${tempPost.getTempPostsId()}"
+                                                 style="height: 25px">수정</a></td>
+                            <td class="col-1"><a class="btn btn-outline-danger"
+                                                 th:onclick="deleteTempPosts([[${tempPost.getTempPostsId()}]])"
+                                                 style="height: 25px">삭제</a></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -54,7 +65,7 @@
                 .then(response => {
                     window.location.reload();
                 }).catch(error => {
-                    openFailedAlerts("삭제에 실패하였습니다.");
+                openFailedAlerts("삭제에 실패하였습니다.");
             })
         }
     </script>

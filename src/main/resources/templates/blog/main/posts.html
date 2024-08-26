@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{blog/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${posts.blogName} + ' - ' + ${posts.subject}"></title>
+    <title th:text="${blog.name} + ' - ' + ${posts.subject}"></title>
+    <link rel="canonical" th:href="${'https://blogitory.com/' + posts.postUrl}">
+    <meta property="og:url" th:content="${'https://blogitory.com' + posts.postUrl}">
+    <meta property="og:title" th:content="${blog.name} + ' - ' + ${posts.subject}">
+    <meta property="og:description" th:content="${posts.summary}">
+    <meta property="og:image" th:content="${posts.postThumb}">
+    <meta name="description" th:content="${posts.summary}">
     <th:block layout:fragment="css">
         <link rel="stylesheet" href="/static/css/lib/toastui-editor.css"/>
         <link rel="stylesheet" href="/static/css/lib/toastui-editor-dark.css">

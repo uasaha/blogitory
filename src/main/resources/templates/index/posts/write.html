@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{index/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Blogitory - 글 작성</title>
+    <title>Blogitory - 글 쓰기</title>
+    <link rel="canonical" href="https://blogitory.com">
+    <meta property="og:url" content="https://blogitory.com">
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
 
     <th:block layout:fragment="css">
         <link rel="stylesheet" href="/static/css/lib/toastui-editor.css"/>
@@ -29,7 +36,8 @@
                         <div class="form-label">블로그</div>
                         <select id="blog-select" class="form-select" onchange="setCategory(this.value)">
                             <option th:value="null">---블로그---</option>
-                            <option  th:each="blog : ${blogs}" th:value="${blog.blogNo}" th:text="${blog.blogName}"></option>
+                            <option th:each="blog : ${blogs}" th:value="${blog.blogNo}"
+                                    th:text="${blog.blogName}"></option>
                         </select>
                     </div>
                     <div class="col-12 col-md-6 mb-3">
@@ -52,9 +60,12 @@
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <div class="form-label">썸네일 이미지</div>
-                        <img id="posts-thumb-img" th:src="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''" alt="thumb" onerror="this.style.display='none'"/>
+                        <img id="posts-thumb-img"
+                             th:src="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''"
+                             alt="thumb" onerror="this.style.display='none'"/>
                         <input id="posts-thumb" type="file" class="form-control" onchange="uploadPostsThumb(this)"/>
-                        <input id="posts-thumb-url" class="d-none" type="text" th:value="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''"/>
+                        <input id="posts-thumb-url" class="d-none" type="text"
+                               th:value="${not #strings.isEmpty(posts.thumbnailUrl)} ? ${posts.thumbnailUrl} : ''"/>
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <div class="form-label">태그</div>

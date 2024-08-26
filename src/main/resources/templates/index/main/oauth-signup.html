@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{index/layout/layout}">
 <head>
     <meta charset="UTF-8">
     <title>Blogitory - 회원가입</title>
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
 </head>
 <body class="body-background">
 <div class="container-md padding-top-5" layout:fragment="main-content">
@@ -19,9 +24,11 @@
                 </div>
                 <div class="card-body">
                     <form id="signupForm" name="requestDto" method="POST" action="/signup/oauth" class="ol-12">
-                        <input class="d-none" id="provider-input" name="provider" type="text" th:value="${user.provider}" readonly>
+                        <input class="d-none" id="provider-input" name="provider" type="text"
+                               th:value="${user.provider}" readonly>
                         <input class="d-none" id="id-input" name="id" type="text" th:value="${user.id}" readonly>
-                        <input class="d-none" id="thumb-input" name="profileThumb" type="text" th:value="${user.thumb}" readonly>
+                        <input class="d-none" id="thumb-input" name="profileThumb" type="text" th:value="${user.thumb}"
+                               readonly>
                         <div class="form-group mb-4">
                             <label for="username-input" class="col-3">유저네임</label>
                             <input id="username-input" name="username" type="text" class="form-control" maxlength="20"

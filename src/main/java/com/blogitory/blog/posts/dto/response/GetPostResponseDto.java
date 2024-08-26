@@ -24,6 +24,7 @@ public class GetPostResponseDto {
   private String categoryName;
   private String postUrl;
   private String subject;
+  private String postThumb;
   private String summary;
   private String detail;
   private Integer views;
@@ -33,10 +34,14 @@ public class GetPostResponseDto {
   @Setter
   private List<GetTagResponseDto> tags = new ArrayList<>();
 
+  /**
+   * Constructor.
+   */
   public GetPostResponseDto(String username, String memberName,
                             String blogName, String blogUrl,
                             Long categoryNo, String categoryName,
                             String postUrl, String subject,
+                            String postThumb,
                             String summary, String detail,
                             Integer views,
                             LocalDateTime createdAt, LocalDateTime updatedAt) {
@@ -48,6 +53,7 @@ public class GetPostResponseDto {
     this.categoryName = categoryName;
     this.postUrl = postUrl;
     this.subject = subject;
+    this.postThumb = postThumb;
     this.summary = summary;
     this.detail = detail;
     this.views = views;

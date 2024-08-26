@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{index/layout/layout}">
 <head>
     <meta charset="UTF-8">
     <title>Blogitory - 설정</title>
+    <meta property="og:url" content="https://blogitory.com/settings">
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
 </head>
 <body>
 <div class="container-xl" layout:fragment="main-content">
@@ -43,7 +49,8 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <button type="button" class="btn btn-ghost-danger" data-bs-toggle="modal" data-bs-target="#blogQuitModal">
+                                <button type="button" class="btn btn-ghost-danger" data-bs-toggle="modal"
+                                        data-bs-target="#blogQuitModal">
                                     폐쇄
                                 </button>
                             </div>
@@ -53,14 +60,19 @@
                             <div class="row align-items-center">
                                 <div class="col-auto">
                                     <img class="avatar avatar-xl" id="blogPfp" alt="pfp"/>
-                                    <input id="blogThumbInput" type="file" class="d-none" accept="image/*" onchange="updateBlogThumb()"/>
+                                    <input id="blogThumbInput" type="file" class="d-none" accept="image/*"
+                                           onchange="updateBlogThumb()"/>
                                 </div>
-                                <div class="col-auto"><button class="btn" onclick="updateBlogThumbOpen()">
-                                    변경
-                                </button></div>
-                                <div class="col-auto"><button href="#" class="btn btn-ghost-danger" onclick="deleteBlogThumb()">
-                                    삭제
-                                </button></div>
+                                <div class="col-auto">
+                                    <button class="btn" onclick="updateBlogThumbOpen()">
+                                        변경
+                                    </button>
+                                </div>
+                                <div class="col-auto">
+                                    <button href="#" class="btn btn-ghost-danger" onclick="deleteBlogThumb()">
+                                        삭제
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <h3 class="card-title mt-4">블로그 이름</h3>
@@ -137,10 +149,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 <div class="modal-status bg-danger"></div>
                 <div class="modal-body text-center py-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M12 9v2m0 4v.01" />
-                        <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M12 9v2m0 4v.01"/>
+                        <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"/>
                     </svg>
                     <h3>블로그 폐쇄</h3>
                     <div class="text-secondary">모든 활동이 함께 삭제되며 복구가 불가능합니다.</div>
@@ -156,7 +170,8 @@
                                 <button class="btn w-100" data-bs-dismiss="modal">취소</button>
                             </div>
                             <div class="col">
-                                <button class="btn btn-danger w-100" data-bs-dismiss="modal" onclick="deleteBlog()">폐쇄</button>
+                                <button class="btn btn-danger w-100" data-bs-dismiss="modal" onclick="deleteBlog()">폐쇄
+                                </button>
                             </div>
                         </div>
                     </div>

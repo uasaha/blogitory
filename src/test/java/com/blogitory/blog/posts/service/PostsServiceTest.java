@@ -481,6 +481,7 @@ class PostsServiceTest {
             "categoryName",
             "postUrl",
             "subject",
+            "postsThumb",
             "summary",
             "detail",
             10,

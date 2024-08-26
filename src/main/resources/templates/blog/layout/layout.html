@@ -1,12 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:xmls="http://www.w3.org/1999/xhtml">
 <head>
+    <title>Blogitory - 기록하는 공간</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:locale" content="ko">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <link rel="shortcut icon" href="/static/logo/logo-375582.png">
     <link rel="apple-touch-icon" href="/static/logo/logo-375582.png">
-    <link rel="icon" href="/static/logo/logo-375582.png">
+    <link rel="icon" type="image/png" href="/static/logo/logo-375582.png">
+    <link rel="msapplication-TileColor" content="#375582">
+    <link rel="msapplication-TileImage" content="/static/logo/logo-375582.png">
+    <link rel="icon" type="image/svg+xml" href="/static/logo/logo-375582.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link href="/static/css/lib/tabler.css" rel="stylesheet"/>
     <link href="/static/css/lib/tabler-vendors.min.css" rel="stylesheet"/>
     <link href="/static/css/my/blogi.css" rel="stylesheet"/>
@@ -69,17 +79,20 @@
             <div class="card">
                 <div id="login-body" class="card-body">
                     <div class="card-title">
-                        <img class="navbar-brand-image" src="/static/logo/logo-375582.png" width="25" height="25" alt="">
+                        <img class="navbar-brand-image" src="/static/logo/logo-375582.png" width="25" height="25"
+                             alt="">
                         <p class="navbar-brand">Blogitory&nbsp;로그인</p>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">이메일</label>
-                        <input type="email" id="login-id-input" name="id" class="form-control" placeholder="email" onkeyup="isEnterPress()">
+                        <input type="email" id="login-id-input" name="id" class="form-control" placeholder="email"
+                               onkeyup="isEnterPress()">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">비밀번호</label>
-                        <input type="password" id="login-pwd-input" name="pwd" class="form-control" placeholder="password" onkeyup="isEnterPress()">
+                        <input type="password" id="login-pwd-input" name="pwd" class="form-control"
+                               placeholder="password" onkeyup="isEnterPress()">
                     </div>
                     <div id="failed-reason" class="mb-3 d-none">
                         <span style="color: firebrick">이메일 혹은 비밀번호가 일치하지 않습니다.</span>
@@ -98,29 +111,34 @@
                     </div>
                     <div class="mb-3">
                         <div class="row justify-content-center align-items-center">
-<!--                            <a href="#" class="col-2">-->
-<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/kakao-icon.png" alt="kakao">-->
-<!--                            </a>-->
-<!--                            <a href="#" class="col-2">-->
-<!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/naver-icon.png" alt="naver">-->
-<!--                            </a>-->
+                            <!--                            <a href="#" class="col-2">-->
+                            <!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/kakao-icon.png" alt="kakao">-->
+                            <!--                            </a>-->
+                            <!--                            <a href="#" class="col-2">-->
+                            <!--                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/naver-icon.png" alt="naver">-->
+                            <!--                            </a>-->
                             <a href="/login/oauth/github/auth" class="col-2">
-                                <img class="avatar avatar-md rounded-circle m-auto d-block" src="/static/icons/github-icon.png" alt="github">
+                                <img class="avatar avatar-md rounded-circle m-auto d-block"
+                                     src="/static/icons/github-icon.png" alt="github">
                             </a>
                         </div>
                     </div>
                 </div>
                 <div id="pwd-body" class="card-body d-none">
                     <div class="card-title">
-                        <img class="navbar-brand-image" src="/static/logo/logo-375582.png" width="25" height="25" alt="">
+                        <img class="navbar-brand-image" src="/static/logo/logo-375582.png" width="25" height="25"
+                             alt="">
                         <p class="navbar-brand">비밀번호 초기화</p>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">이메일</label>
-                        <input type="email" id="pwd-id-input" name="id" class="form-control" placeholder="email" onkeyup="pwdEnterPress()">
-                        <p id="pwdSent" class="mt-2 d-none" style="color: var(--tblr-form-valid-color)">이메일로 비밀번호 변경 메일이 발송되었습니다.</p>
-                        <p id="pwdSentFail" class="mt-2 d-none" style="color: var(--tblr-form-invalid-color)">가입되지 않은 이메일입니다.</p>
+                        <input type="email" id="pwd-id-input" name="id" class="form-control" placeholder="email"
+                               onkeyup="pwdEnterPress()">
+                        <p id="pwdSent" class="mt-2 d-none" style="color: var(--tblr-form-valid-color)">이메일로 비밀번호 변경 메일이
+                            발송되었습니다.</p>
+                        <p id="pwdSentFail" class="mt-2 d-none" style="color: var(--tblr-form-invalid-color)">가입되지 않은
+                            이메일입니다.</p>
                     </div>
                     <div class="mb-3">
                         <button class="btn" onclick="pwdMailPush()">메일 발송</button>

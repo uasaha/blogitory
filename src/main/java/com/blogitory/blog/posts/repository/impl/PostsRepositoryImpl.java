@@ -73,6 +73,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                             category.name,
                             posts.url,
                             posts.subject,
+                            posts.thumbnail,
                             posts.summary,
                             posts.detail,
                             posts.views,

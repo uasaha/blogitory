@@ -1,10 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{index/layout/layout}">
 <head>
     <meta charset="UTF-8">
     <title>Blogitory - 셔플</title>
+    <link rel="canonical" href="https://blogitory.com/shuffle">
+    <meta property="og:url" content="https://blogitory.com/shuffle">
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
 </head>
 <body>
 <div class="container-xl" layout:fragment="main-content">
@@ -79,20 +86,34 @@
                             <div class="highlight">
                         <pre class="highlight"><code><span class="nv">$extra-colors</span><span class="p">:</span> <span
                                 class="p">(</span>
-                          <span class="s2">"blue"</span><span class="o">:</span> <span class="nv">$blue</span><span class="o">,</span>
-                          <span class="s2">"azure"</span><span class="o">:</span> <span class="nv">$azure</span><span class="o">,</span>
-                          <span class="s2">"indigo"</span><span class="o">:</span> <span class="nv">$indigo</span><span class="o">,</span>
-                          <span class="s2">"purple"</span><span class="o">:</span> <span class="nv">$purple</span><span class="o">,</span>
-                          <span class="s2">"pink"</span><span class="o">:</span> <span class="nv">$pink</span><span class="o">,</span>
-                          <span class="s2">"red"</span><span class="o">:</span> <span class="nv">$red</span><span class="o">,</span>
-                          <span class="s2">"orange"</span><span class="o">:</span> <span class="nv">$orange</span><span class="o">,</span>
-                          <span class="s2">"yellow"</span><span class="o">:</span> <span class="nv">$yellow</span><span class="o">,</span>
-                          <span class="s2">"lime"</span><span class="o">:</span> <span class="nv">$lime</span><span class="o">,</span>
-                          <span class="s2">"green"</span><span class="o">:</span> <span class="nv">$green</span><span class="o">,</span>
-                          <span class="s2">"teal"</span><span class="o">:</span> <span class="nv">$teal</span><span class="o">,</span>
-                          <span class="s2">"cyan"</span><span class="o">:</span> <span class="nv">$cyan</span><span class="o">,</span>
-                          <span class="s2">"gray"</span><span class="o">:</span> <span class="nv">$gray-600</span><span class="o">,</span>
-                          <span class="s2">"gray-dark"</span><span class="o">:</span> <span class="nv">$gray-800</span><span class="o">,</span>
+                          <span class="s2">"blue"</span><span class="o">:</span> <span class="nv">$blue</span><span
+                                    class="o">,</span>
+                          <span class="s2">"azure"</span><span class="o">:</span> <span class="nv">$azure</span><span
+                                    class="o">,</span>
+                          <span class="s2">"indigo"</span><span class="o">:</span> <span class="nv">$indigo</span><span
+                                    class="o">,</span>
+                          <span class="s2">"purple"</span><span class="o">:</span> <span class="nv">$purple</span><span
+                                    class="o">,</span>
+                          <span class="s2">"pink"</span><span class="o">:</span> <span class="nv">$pink</span><span
+                                    class="o">,</span>
+                          <span class="s2">"red"</span><span class="o">:</span> <span class="nv">$red</span><span
+                                    class="o">,</span>
+                          <span class="s2">"orange"</span><span class="o">:</span> <span class="nv">$orange</span><span
+                                    class="o">,</span>
+                          <span class="s2">"yellow"</span><span class="o">:</span> <span class="nv">$yellow</span><span
+                                    class="o">,</span>
+                          <span class="s2">"lime"</span><span class="o">:</span> <span class="nv">$lime</span><span
+                                    class="o">,</span>
+                          <span class="s2">"green"</span><span class="o">:</span> <span class="nv">$green</span><span
+                                    class="o">,</span>
+                          <span class="s2">"teal"</span><span class="o">:</span> <span class="nv">$teal</span><span
+                                    class="o">,</span>
+                          <span class="s2">"cyan"</span><span class="o">:</span> <span class="nv">$cyan</span><span
+                                    class="o">,</span>
+                          <span class="s2">"gray"</span><span class="o">:</span> <span class="nv">$gray-600</span><span
+                                    class="o">,</span>
+                          <span class="s2">"gray-dark"</span><span class="o">:</span> <span
+                                    class="nv">$gray-800</span><span class="o">,</span>
                           <span class="s2">"dark"</span><span class="o">:</span> <span class="nv">$dark</span>
                         <span class="p">)</span> <span class="o">!</span><span class="nb">default</span><span class="p">;</span>
                         </code></pre>
@@ -105,8 +126,9 @@
                         <p>What do you mean? Listen. Strange women lying in ponds distributing swords is no
                             basis for a system of government. Supreme executive power derives from a mandate
                             from the masses, not from some farcical aquatic ceremony.</p>
-                        <p><img src="https://emate-bucket.s3.ap-northeast-2.amazonaws.com/mem_thumb/a84af2b6-88b0-428f-94a2-2cad67eff0ca.jpeg"
-                                alt="Image Alt"/></p>
+                        <p>
+                            <img src="https://emate-bucket.s3.ap-northeast-2.amazonaws.com/mem_thumb/a84af2b6-88b0-428f-94a2-2cad67eff0ca.jpeg"
+                                 alt="Image Alt"/></p>
                         <p>Well, how’d you become king, then? You can’t expect to wield supreme power just
                             ‘cause some watery tart threw a sword at you! The Lady of the Lake, her arm clad in
                             the purest shimmering samite, held aloft Excalibur from the bosom of the water,
@@ -193,12 +215,14 @@
                         <pre class="highlight"><code><span class="kd">var</span> <span class="nx">foo</span> <span
                                 class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span
                                 class="nx">bar</span><span class="p">)</span> <span class="p">{</span>
-                              <span class="k">return</span> <span class="nx">bar</span><span class="o">++</span><span class="p">;</span>
+                              <span class="k">return</span> <span class="nx">bar</span><span class="o">++</span><span
+                                    class="p">;</span>
                             <span class="p">};</span>
 
-                            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span
-                                                                class="nx">foo</span><span class="p">(</span><span class="mi">5</span><span
-                                                                class="p">));</span>
+                            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span
+                                    class="p">(</span><span
+                                    class="nx">foo</span><span class="p">(</span><span class="mi">5</span><span
+                                    class="p">));</span>
                             </code></pre>
                             </div>
                         </div>
@@ -206,28 +230,31 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-1 d-flex align-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                     viewBox="0 0 24 24"
                                      stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                                      stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572" />
+                                    <path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/>
                                 </svg>
                             </div>
                             <div class="col-1 d-flex align-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                     viewBox="0 0 24 24"
                                      stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                                      stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1" />
+                                    <path d="M3 20l1.3 -3.9c-2.324 -3.437 -1.426 -7.872 2.1 -10.374c3.526 -2.501 8.59 -2.296 11.845 .48c3.255 2.777 3.695 7.266 1.029 10.501c-2.666 3.235 -7.615 4.215 -11.574 2.293l-4.7 1"/>
                                 </svg>
                             </div>
                             <div class="col-1 d-flex align-items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                     viewBox="0 0 24 24"
                                      stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                                      stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-                                    <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                    <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"/>
+                                    <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"/>
                                 </svg>
                             </div>
                             <div class="col-2 ms-auto d-flex align-items-center justify-content-end">
