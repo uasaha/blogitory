@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <title th:text="${blog.name} + ' - ' + ${posts.subject}"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/' + posts.postUrl}">
-    <meta property="og:url" th:content="${'https://blogitory.com' + posts.postUrl}">
+    <meta property="og:url" th:content="${'https://blogitory.com/' + posts.postUrl}">
     <meta property="og:title" th:content="${blog.name} + ' - ' + ${posts.subject}">
     <meta property="og:description" th:content="${posts.summary}">
     <meta property="og:image" th:content="${posts.postThumb}">

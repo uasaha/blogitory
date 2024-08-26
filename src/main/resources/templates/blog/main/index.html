@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <title th:text="${'Blogitory - ' + blog.name}"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/' + blog.blogUrl}">
-    <meta property="og:url" th:content="${'https://blogitory.com' + blog.blogUrl}">
+    <meta property="og:url" th:content="${'https://blogitory.com/' + blog.blogUrl}">
     <meta property="og:title" th:content="${'Blogitory - ' + blog.name}">
     <meta property="og:description" th:content="${blog.blogBio}">
     <meta property="og:image" th:content="${blog.blogThumbUrl}">
@@ -94,8 +94,6 @@
 </div>
 
 <th:block layout:fragment="script">
-    <script src="/static/js/lib/apexcharts.min.js" defer></script>
-    <script src="/static/js/lib/litepicker.js" defer></script>
     <script src="/static/js/my/article-minimal.js"></script>
     <script>
         let path = location.pathname;
