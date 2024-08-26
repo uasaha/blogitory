@@ -19,6 +19,7 @@ async function usernameValidate() {
         })
         .catch(() => {
             usernameInput.className = "form-control is-invalid";
+            return false;
         });
 }
 
@@ -56,7 +57,6 @@ function memberSignup(element) {
         && idInput.value) {
         let signupForm = document.getElementById("signupForm");
         signupForm.submit();
-
     } else {
         element.disabled = false;
         openFailedAlerts("실패하였습니다. 잠시 후 다시 시도해주세요.");

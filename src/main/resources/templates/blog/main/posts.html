@@ -11,7 +11,7 @@
     <meta property="og:url" th:content="${'https://blogitory.com/' + posts.postUrl}">
     <meta property="og:title" th:content="${blog.name} + ' - ' + ${posts.subject}">
     <meta property="og:description" th:content="${posts.summary}">
-    <meta property="og:image" th:content="${posts.postThumb}">
+    <meta property="og:image" th:content="${not #strings.isEmpty(posts.postThumb)} ? ${posts.postThumb} : '/static/logo/logo-375582.png'">
     <meta name="description" th:content="${posts.summary}">
     <th:block layout:fragment="css">
         <link rel="stylesheet" href="/static/css/lib/toastui-editor.css"/>

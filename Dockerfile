@@ -4,4 +4,4 @@ ARG JAR_FILE=./target/*.jar
 COPY ${JAR_FILE} blogitory.jar
 ENV APP_PROFILE prod
 
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=${APP_PROFILE}", "/blogitory.jar"]
+ENTRYPOINT ["java", "-jar", "-Duser.timezone=Asia/Seoul", "-Dspring.profiles.active=${APP_PROFILE}", "/blogitory.jar"]
