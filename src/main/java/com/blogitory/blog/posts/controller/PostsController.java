@@ -7,6 +7,7 @@ import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
 import com.blogitory.blog.blog.dto.response.GetBlogWithCategoryResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
+import com.blogitory.blog.follow.service.FollowService;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PostsController {
   private final BlogService blogService;
   private final PostsService postsService;
+  private final FollowService followService;
   private static final String POSTS_ATTR = "posts";
 
   /**
@@ -108,6 +110,11 @@ public class PostsController {
 
     model.addAttribute("blog", blogResponse);
     model.addAttribute(POSTS_ATTR, postsResponse);
+
+    if (SecurityUtils.isAuthenticated()) {
+      Integer memberNo = SecurityUtils.getCurrentUserNo();
+      model.addAttribute("isFollowed", followService.isFollowed(memberNo, username));
+    }
 
     return "blog/main/posts";
   }

@@ -628,3 +628,23 @@ function deletePosts() {
             location.href = "/" + blogPath[1] + "/" + blogPath[2];
         })
 }
+
+function follow(username) {
+    axios.post("/api/follow/@" + username)
+        .then(res => {
+            location.reload();
+        })
+        .catch(() => {
+            openFailedAlerts("실패하였습니다.");
+        });
+}
+
+function unFollow(username) {
+    axios.delete("/api/follow/@" + username)
+        .then(res => {
+            location.reload();
+        })
+        .catch(() => {
+            openFailedAlerts("실패하였습니다.");
+        });
+}

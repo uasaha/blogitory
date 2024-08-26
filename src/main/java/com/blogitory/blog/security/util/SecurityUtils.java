@@ -1,5 +1,6 @@
 package com.blogitory.blog.security.util;
 
+import com.blogitory.blog.security.users.UserDetailsImpl;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -31,5 +32,10 @@ public class SecurityUtils {
   public static List<? extends GrantedAuthority> getCurrentAuthorities() {
     return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
             .stream().toList();
+  }
+
+  public static boolean isAuthenticated() {
+    return SecurityContextHolder.getContext().getAuthentication()
+            .getDetails() instanceof UserDetailsImpl;
   }
 }

@@ -108,7 +108,8 @@
                     </div>
                 </div>
                 <div id="profile-button" sec:authorize="isAuthenticated()" class="row justify-content-center mt-1">
-                    <button th:if="${profile.username} != ${members.username}" type="button" class="btn">팔로우</button>
+                    <button id="follow-btn" th:if="${profile.username} != ${members.username} and ${not isFollowed}" th:username="${profile.username}" type="button" class="btn" th:onclick="follow( this.getAttribute('username') )">팔로우</button>
+                    <button id="unfollow-btn" th:if="${profile.username} != ${members.username} and ${isFollowed}" th:username="${profile.username}" type="button" class="btn" th:onclick="unFollow( this.getAttribute('username') )">언팔로우</button>
                     <button th:if="${profile.username} == ${members.username}" type="button" class="btn" onclick="disappearProfiles()">프로필 수정</button>
                 </div>
             </div>
@@ -147,7 +148,7 @@
                 </div>
             </div>
 
-            <div class="profile col-md-4 d-lg-none">
+            <div class="profile col-12 d-lg-none">
                 <div class="col">
                     <div class="row d-flex">
                         <div class="col-4" style="width: 110px; height: 110px; vertical-align: middle;">
@@ -224,7 +225,8 @@
                         <textarea class="form-control" th:text="${profile.bio}"></textarea>
                     </div>
                     <div id="profile-button-mobile" sec:authorize="isAuthenticated()" class="row justify-content-center" style="margin-top: 5px">
-                        <button th:if="${profile.username} != ${members.username}" type="button" class="btn">팔로우</button>
+                        <button id="follow-btn" th:if="${profile.username} != ${members.username} and ${not isFollowed}" th:username="${profile.username}" type="button" class="btn" th:onclick="follow( this.getAttribute('username') )">팔로우</button>
+                        <button id="unfollow-btn" th:if="${profile.username} != ${members.username} and ${isFollowed}" th:username="${profile.username}" type="button" class="btn" th:onclick="unFollow( this.getAttribute('username') )">언팔로우</button>
                         <button th:if="${profile.username} == ${members.username}" type="button" class="btn" onclick="disappearProfilesMobile()">프로필 수정</button>
                     </div>
                     <div sec:authorize="isAuthenticated()" id="profile-updatable-mobile" class="row justify-content-center d-none">

@@ -424,4 +424,24 @@ document.addEventListener("DOMContentLoaded", () => {
     let chartMobile = new ApexCharts(document.querySelector("#heatmap-chart-mobile"), options);
     chart.render();
     chartMobile.render();
-})
+});
+
+function follow(username) {
+    axios.post("/api/follow/@" + username)
+        .then(res => {
+            location.reload();
+        })
+        .catch(() => {
+            openFailedAlerts("실패하였습니다.");
+        });
+}
+
+function unFollow(username) {
+    axios.delete("/api/follow/@" + username)
+        .then(res => {
+            location.reload();
+        })
+        .catch(() => {
+            openFailedAlerts("실패하였습니다.");
+        });
+}

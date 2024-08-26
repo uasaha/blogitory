@@ -9,6 +9,7 @@ import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.category.exception.DuplicateCategoryException;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.config.TestSecurityConfig;
+import com.blogitory.blog.follow.service.FollowService;
 import com.blogitory.blog.member.controller.MemberController;
 import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.exception.AuthenticationException;
@@ -35,6 +36,9 @@ class PageControllerAdviceTest {
 
   @MockBean
   MemberService memberService;
+
+  @MockBean
+  FollowService followService;
 
   @MockBean
   BlogService blogService;

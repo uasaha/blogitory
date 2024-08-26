@@ -24,4 +24,6 @@ public interface FollowService {
    * @param username followee
    */
   void unFollow(Integer memberNo, String username);
+
+  boolean isFollowed(Integer followFrom, String followToUsername);
 }

@@ -2,6 +2,7 @@ package com.blogitory.blog.member.controller;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -16,6 +17,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.blogitory.blog.blog.dto.response.GetBlogInProfileResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
+import com.blogitory.blog.follow.service.FollowService;
+import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
+import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.member.dto.response.GetMemberProfileLinkResponseDto;
 import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
 import com.blogitory.blog.member.entity.Member;
@@ -23,13 +27,17 @@ import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.exception.MemberPwdChangeFailedException;
 import com.blogitory.blog.member.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -50,6 +58,9 @@ class MemberControllerTest {
   @MockBean
   BlogService blogService;
 
+  @MockBean
+  FollowService followService;
+
   @Test
   @DisplayName("회원가입 페이지")
   void signup() throws Exception {
@@ -66,6 +77,7 @@ class MemberControllerTest {
             .andExpect(status().is3xxRedirection());
   }
 
+  @WithMockUser("1")
   @Test
   @DisplayName("프로필 페이지")
   void profile() throws Exception {
@@ -81,9 +93,15 @@ class MemberControllerTest {
                     1L,
                     1L);
 
-    when(memberService.getProfileByUsername(anyString())).thenReturn(profileDto);
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
 
-    mvc.perform(get("/@" + profileDto.getUsername()).with(csrf()))
+    when(memberService.getProfileByUsername(anyString())).thenReturn(profileDto);
+    when(followService.isFollowed(anyInt(), anyString())).thenReturn(true);
+
+    mvc.perform(get("/@" + profileDto.getUsername()).with(csrf())
+                    .flashAttrs(attrs))
             .andExpect(status().isOk());
   }
 

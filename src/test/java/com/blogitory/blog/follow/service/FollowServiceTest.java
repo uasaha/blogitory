@@ -1,5 +1,6 @@
 package com.blogitory.blog.follow.service;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -16,6 +17,7 @@ import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,5 +77,22 @@ class FollowServiceTest {
     followService.unFollow(followFrom.getMemberNo(), followTo.getUsername());
 
     verify(followRepository, times(1)).delete(any(Follow.class));
+  }
+
+  @Test
+  @DisplayName("팔로우 여부")
+  void isFollowed() {
+    Member followTo = MemberDummy.dummy();
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+    Follow follow = FollowDummy.dummy(followTo, followFrom);
+
+    when(followRepository.findByFromNoAndToUsername(anyInt(), anyString()))
+            .thenReturn(Optional.of(follow));
+
+    boolean isFollowed = followService.isFollowed(followFrom.getMemberNo(), followTo.getUsername());
+
+    assertTrue(isFollowed);
   }
 }

@@ -13,6 +13,7 @@ import com.blogitory.blog.blog.dto.response.GetBlogWithCategoryResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.category.dto.GetCategoryResponseDto;
 import com.blogitory.blog.config.TestSecurityConfig;
+import com.blogitory.blog.follow.service.FollowService;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
@@ -55,6 +56,9 @@ class PostsControllerTest {
 
   @MockBean
   PostsService postsService;
+
+  @MockBean
+  FollowService followService;
 
   @BeforeEach
   void setUp() {
@@ -119,6 +123,7 @@ class PostsControllerTest {
             .andExpect(redirectedUrl("/settings/blog"));
   }
 
+  @WithMockUser("1")
   @Test
   @DisplayName("게시글 조회")
   void postsPage() throws Exception {
@@ -150,10 +155,16 @@ class PostsControllerTest {
             LocalDateTime.now(),
             null);
 
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+
     when(blogService.getBlogByUrl(anyString())).thenReturn(blogResponse);
     when(postsService.getPostByUrl(anyString())).thenReturn(postResponse);
+    when(followService.isFollowed(anyInt(), anyString())).thenReturn(true);
 
-    mvc.perform(get("/@username/blog/post"))
+    mvc.perform(get("/@username/blog/post")
+                    .flashAttrs(attrs))
             .andExpect(status().isOk());
   }
 

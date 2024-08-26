@@ -29,6 +29,10 @@ public class FollowServiceImpl implements FollowService {
    */
   @Override
   public void follow(Integer followFrom, String followToUsername) {
+    if (followRepository.findByFromNoAndToUsername(followFrom, followToUsername).isPresent()) {
+      return;
+    }
+
     Member followFromMember = memberRepository.findById(followFrom)
             .orElseThrow(() -> new NotFoundException(Member.class));
 
@@ -50,5 +54,12 @@ public class FollowServiceImpl implements FollowService {
             .orElseThrow(() -> new NotFoundException(Follow.class));
 
     followRepository.delete(follow);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public boolean isFollowed(Integer followFrom, String followToUsername) {
+    return followRepository.findByFromNoAndToUsername(followFrom, followToUsername)
+            .isPresent();
   }
 }

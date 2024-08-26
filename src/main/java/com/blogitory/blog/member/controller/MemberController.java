@@ -1,11 +1,13 @@
 package com.blogitory.blog.member.controller;
 
 import com.blogitory.blog.commons.annotaion.RoleAnonymous;
+import com.blogitory.blog.follow.service.FollowService;
 import com.blogitory.blog.member.dto.request.SignupMemberRequestDto;
 import com.blogitory.blog.member.dto.request.UpdatePasswordRequestDto;
 import com.blogitory.blog.member.dto.response.GetMemberProfileResponseDto;
 import com.blogitory.blog.member.exception.MemberPwdChangeFailedException;
 import com.blogitory.blog.member.service.MemberService;
+import com.blogitory.blog.security.util.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class MemberController {
   private final MemberService memberService;
+  private final FollowService followService;
 
   /**
    * Signup Member.
@@ -56,6 +59,11 @@ public class MemberController {
     GetMemberProfileResponseDto profile = memberService.getProfileByUsername(username);
 
     model.addAttribute("profile", profile);
+
+    if (SecurityUtils.isAuthenticated()) {
+      Integer memberNo = SecurityUtils.getCurrentUserNo();
+      model.addAttribute("isFollowed", followService.isFollowed(memberNo, username));
+    }
 
     return "profile/main/index";
   }
