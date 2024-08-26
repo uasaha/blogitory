@@ -18,6 +18,7 @@ import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.exception.DuplicateCategoryException;
 import com.blogitory.blog.category.repository.CategoryRepository;
+import com.blogitory.blog.category.service.impl.CategoryServiceImpl;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;

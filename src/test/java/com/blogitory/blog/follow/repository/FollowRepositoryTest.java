@@ -2,21 +2,25 @@ package com.blogitory.blog.follow.repository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.blogitory.blog.commons.config.JpaConfig;
 import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.follow.entity.Follow;
 import com.blogitory.blog.follow.entity.FollowDummy;
 import com.blogitory.blog.member.entity.Member;
+import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
 import jakarta.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Follow repository test.
@@ -246,5 +250,28 @@ class FollowRepositoryTest {
             follows.getFirst().getFollowFrom().getMemberNo());
     assertEquals(follow.getFollowNo(),
             follows.getFirst().getFollowNo());
+  }
+
+  @Test
+  @DisplayName("팔로우 한 사람 조회")
+  void findByFollowToUsernameAndFollowFromNo() {
+    Member followTo = MemberDummy.dummy();
+    memberRepository.save(followTo);
+
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+    memberRepository.save(followFrom);
+
+    Follow follow = FollowDummy.dummy(followTo, followFrom);
+    followRepository.save(follow);
+
+    Optional<Follow> result = followRepository
+            .findByFromNoAndToUsername(followFrom.getMemberNo(), followTo.getUsername());
+
+    assertTrue(result.isPresent());
+
+    Follow resultEntity = result.get();
+    assertEquals(resultEntity.getFollowTo().getMemberNo(), followTo.getMemberNo());
   }
 }

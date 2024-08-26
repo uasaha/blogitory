@@ -2,6 +2,7 @@ package com.blogitory.blog.follow.repository;
 
 import com.blogitory.blog.follow.entity.Follow;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
@@ -17,4 +18,6 @@ public interface FollowRepositoryCustom {
   Long countFollower(Integer followToNo);
 
   List<Follow> findRelatedByMemberNo(Integer memberNo);
+
+  Optional<Follow> findByFromNoAndToUsername(Integer fromNo, String toUsername);
 }
