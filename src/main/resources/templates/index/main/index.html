@@ -10,24 +10,83 @@
 <div class="container-xl" layout:fragment="main-content">
     <div class="page-body">
         <div id="main-components" class="row row-deck row-cards">
+            <div id="place-holder-1" class="col-12 col-md-6 col-lg-4 col-xl-3 mt-3 place-holder">
+                <div class="card placeholder-glow">
+                    <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                    <div class="card-body">
+                        <div class="placeholder col-9 mb-3"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="place-holder-2" class="col-12 col-md-6 col-lg-4 col-xl-3 mt-3 place-holder">
+                <div class="card placeholder-glow">
+                    <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                    <div class="card-body">
+                        <div class="placeholder col-9 mb-3"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="place-holder-3" class="col-12 col-md-6 col-lg-4 col-xl-3 mt-3 place-holder">
+                <div class="card placeholder-glow">
+                    <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                    <div class="card-body">
+                        <div class="placeholder col-9 mb-3"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="place-holder-4" class="col-12 col-md-6 col-lg-4 col-xl-3 mt-3 place-holder">
+                <div class="card placeholder-glow">
+                    <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                    <div class="card-body">
+                        <div class="placeholder col-9 mb-3"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-3"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <th:block layout:fragment="script">
-    <script src="/static/js/my/article-minimal.js" defer></script>
+    <script src="/static/js/my/article-minimal.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            axios.get("/api/posts/recent")
-                .then((response) => {
-                    let mainComponents = document.getElementById("main-components");
+        const holders = document.querySelectorAll('.place-holder');
+        let page = 0;
 
+        const io = new IntersectionObserver(() => {
+            axios.get("/api/posts/recent?page=" + page)
+                .then((response) => {
                     let articles = response.data.body;
 
                     for (let article of articles) {
                         let articleDiv = getPostComponent(article);
-                        mainComponents.appendChild(articleDiv);
+                        holders[0].before(articleDiv);
+                    }
+
+                    if (!response.data.hasNext) {
+                        for (let i = 0; i < holders.length; i++) {
+                            holders[i].classList.add("d-none");
+                        }
+                        io.unobserve(holders[0]);
+                    } else {
+                        page++;
+                        io.observe(holders[0]);
                     }
                 });
+        }, {threshold: 0.5});
+
+        window.addEventListener("DOMContentLoaded", () => {
+            io.observe(holders[0]);
         });
     </script>
 </th:block>

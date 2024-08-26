@@ -155,7 +155,7 @@ public class PostsRestController {
    */
   @GetMapping("/posts/recent")
   public ResponseEntity<Pages<GetRecentPostResponseDto>> getRecentPosts(
-          @PageableDefault(size = 24) Pageable pageable) {
+          @PageableDefault(size = 12) Pageable pageable) {
     return ResponseEntity.ok(postsService.getRecentPost(pageable));
   }
 

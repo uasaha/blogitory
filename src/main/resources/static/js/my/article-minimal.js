@@ -151,7 +151,7 @@ function getSummaryComponent(article) {
     summaryP.className = "text-over-summary-2 mb-1";
 
     if (article.thumb == null || article.thumb == "") {
-        summaryP.className = "mb-1";
+        summaryP.className = "text-over-summary-8 mb-1";
         summaryDiv.className = "col-12";
     }
 
