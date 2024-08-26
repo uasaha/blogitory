@@ -10,6 +10,10 @@ function getRelativeDate(date) {
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
 
+    if (seconds < 0) {
+        return `${seconds}초 후`;
+    }
+
     if (seconds < 60) {
         return `${seconds}초 전`;
     }
@@ -234,7 +238,7 @@ function getPostComponent(article) {
     postDiv.className = "col-12 col-md-6 col-lg-4 col-xl-3 mt-3";
 
     let postCardDiv = document.createElement('div');
-    postCardDiv.className = "card zoom";
+    postCardDiv.className = "card zoom posts-min";
 
     postCardDiv.appendChild(getThumbnailComponent(article));
     postCardDiv.appendChild(getPostBodyComponent(article));
@@ -249,7 +253,7 @@ function getPostComponentForProfile(article) {
     postDiv.className = "col-12 col-lg-6";
 
     let postCardDiv = document.createElement('div');
-    postCardDiv.className = "card zoom";
+    postCardDiv.className = "card zoom posts-min";
 
     postCardDiv.appendChild(getThumbnailComponent(article));
     postCardDiv.appendChild(getPostBodyComponent(article));
@@ -264,7 +268,7 @@ function getPostsComponentForBlog(article) {
     postDiv.className = "col-12 col-md-6";
 
     let postCardDiv = document.createElement('div');
-    postCardDiv.className = "card zoom";
+    postCardDiv.className = "card zoom posts-min";
 
     postCardDiv.appendChild(getThumbnailComponent(article));
     postCardDiv.appendChild(getPostBodyComponent(article));

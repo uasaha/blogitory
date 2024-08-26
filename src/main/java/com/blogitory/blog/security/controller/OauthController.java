@@ -5,11 +5,9 @@ import static com.blogitory.blog.security.util.JwtUtils.ACCESS_TOKEN_COOKIE_NAME
 
 import com.blogitory.blog.commons.properties.GithubOauthProperties;
 import com.blogitory.blog.commons.utils.CookieUtils;
-import com.blogitory.blog.commons.utils.UrlUtil;
 import com.blogitory.blog.member.dto.request.SignupOauthMemberRequestDto;
 import com.blogitory.blog.security.exception.NotFoundOauthUser;
 import com.blogitory.blog.security.service.OauthService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +45,7 @@ public class OauthController {
    * @return main page view
    */
   @GetMapping("/login/oauth/github")
-  public String githubOauthLogin(HttpServletRequest request,
-                                 @RequestParam String code,
+  public String githubOauthLogin(@RequestParam String code,
                                  HttpServletResponse response) {
     String githubAccessToken = oauthService.getGithubAccessToken(code);
 
@@ -57,7 +54,7 @@ public class OauthController {
     cookieUtils.addSecureCookie(
             response, ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_COOKIE_EXPIRE);
 
-    return "redirect:" + UrlUtil.getRefererUrl(request);
+    return "redirect:/";
   }
 
   /**

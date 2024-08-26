@@ -25,6 +25,10 @@
     overflow: hidden;
 }
 
+.posts-min {
+    min-height: 20rem;
+}
+
 .zoom {
     transition: transform .3s;
 }
