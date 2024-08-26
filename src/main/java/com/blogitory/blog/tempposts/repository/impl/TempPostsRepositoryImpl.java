@@ -1,10 +1,11 @@
-package com.blogitory.blog.tempposts.repository;
+package com.blogitory.blog.tempposts.repository.impl;
 
 
 import com.blogitory.blog.member.entity.QMember;
 import com.blogitory.blog.tempposts.dto.GetTempPostsResponseDto;
 import com.blogitory.blog.tempposts.entity.QTempPosts;
 import com.blogitory.blog.tempposts.entity.TempPosts;
+import com.blogitory.blog.tempposts.repository.TempPostsRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import java.util.List;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;

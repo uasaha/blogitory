@@ -20,6 +20,7 @@ import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
 import com.blogitory.blog.comment.entity.Comment;
 import com.blogitory.blog.comment.entity.CommentDummy;
 import com.blogitory.blog.comment.repository.CommentRepository;
+import com.blogitory.blog.comment.service.impl.CommentServiceImpl;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;

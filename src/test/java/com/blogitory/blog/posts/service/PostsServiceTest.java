@@ -34,6 +34,7 @@ import com.blogitory.blog.posts.entity.PostsDummy;
 import com.blogitory.blog.posts.exception.InvalidPostsUrlException;
 import com.blogitory.blog.posts.exception.PostsJsonConvertException;
 import com.blogitory.blog.posts.repository.PostsRepository;
+import com.blogitory.blog.posts.service.impl.PostsServiceImpl;
 import com.blogitory.blog.poststag.entity.PostsTag;
 import com.blogitory.blog.poststag.repository.PostsTagRepository;
 import com.blogitory.blog.security.exception.AuthorizationException;

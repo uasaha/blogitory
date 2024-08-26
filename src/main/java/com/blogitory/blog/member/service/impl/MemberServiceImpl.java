@@ -320,7 +320,7 @@ public class MemberServiceImpl implements MemberService {
     member.getLinks().forEach(link -> linkRepository.deleteById(link.getLinkNo()));
 
     List<Follow> follows = followRepository.findRelatedByMemberNo(memberNo);
-    follows.forEach(f -> followRepository.deleteById(f.getFollowNo()));
+    followRepository.deleteAll(follows);
 
     member.getBlogs().forEach(b -> {
       Blog blog = blogRepository.findById(b.getBlogNo())

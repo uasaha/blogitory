@@ -1,4 +1,4 @@
-package com.blogitory.blog.category.service;
+package com.blogitory.blog.category.service.impl;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.repository.BlogRepository;
@@ -6,6 +6,7 @@ import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.exception.DuplicateCategoryException;
 import com.blogitory.blog.category.repository.CategoryRepository;
+import com.blogitory.blog.category.service.CategoryService;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.security.exception.AuthorizationException;

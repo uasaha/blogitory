@@ -10,6 +10,7 @@ import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.exception.PostsJsonConvertException;
 import com.blogitory.blog.tempposts.dto.GetTempPostsResponseDto;
 import com.blogitory.blog.tempposts.repository.TempPostsRepository;
+import com.blogitory.blog.tempposts.service.impl.TempPostsServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;

@@ -582,7 +582,7 @@ class MemberServiceTest {
     when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
     doNothing().when(linkRepository).deleteById(anyLong());
     when(followRepository.findRelatedByMemberNo(any())).thenReturn(List.of());
-    doNothing().when(followRepository).deleteById(anyLong());
+    doNothing().when(followRepository).deleteAll(any());
     when(blogRepository.findById(anyLong())).thenReturn(Optional.of(blog));
 
     memberService.deleteUser(member.getMemberNo(), member.getPassword());

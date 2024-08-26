@@ -1,4 +1,4 @@
-package com.blogitory.blog.posts.service;
+package com.blogitory.blog.posts.service.impl;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.category.entity.Category;
@@ -17,6 +17,7 @@ import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.exception.InvalidPostsUrlException;
 import com.blogitory.blog.posts.exception.PostsJsonConvertException;
 import com.blogitory.blog.posts.repository.PostsRepository;
+import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.poststag.entity.PostsTag;
 import com.blogitory.blog.poststag.repository.PostsTagRepository;
 import com.blogitory.blog.security.exception.AuthorizationException;

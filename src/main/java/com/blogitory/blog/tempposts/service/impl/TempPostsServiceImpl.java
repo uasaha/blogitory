@@ -1,11 +1,12 @@
-package com.blogitory.blog.tempposts.service;
+package com.blogitory.blog.tempposts.service.impl;
 
-import static com.blogitory.blog.posts.service.PostsServiceImpl.POST_KEY;
+import static com.blogitory.blog.posts.service.impl.PostsServiceImpl.POST_KEY;
 
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.exception.PostsJsonConvertException;
 import com.blogitory.blog.tempposts.dto.GetTempPostsResponseDto;
 import com.blogitory.blog.tempposts.repository.TempPostsRepository;
+import com.blogitory.blog.tempposts.service.TempPostsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
