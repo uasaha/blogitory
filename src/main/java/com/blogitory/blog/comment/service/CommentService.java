@@ -3,7 +3,9 @@ package com.blogitory.blog.comment.service;
 import com.blogitory.blog.comment.dto.request.CreateCommentRequestDto;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
 import com.blogitory.blog.commons.dto.Pages;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -61,4 +63,13 @@ public interface CommentService {
    * @param commentNo comment no
    */
   void deleteComment(Integer memberNo, Long commentNo);
+
+  /**
+   * Get recent comments.
+   *
+   * @param username blog owner
+   * @param blogUrl blog url
+   * @return comments
+   */
+  List<GetLatestCommentListResponseDto> getRecentComments(String username, String blogUrl);
 }

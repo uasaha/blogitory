@@ -5,12 +5,13 @@
       layout:decorate="~{blog/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${'Blogitory - ' + blog.name}"></title>
+    <title th:text="${blog.blogName}"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/' + blog.blogUrl}">
     <meta property="og:url" th:content="${'https://blogitory.com/' + blog.blogUrl}">
-    <meta property="og:title" th:content="${'Blogitory - ' + blog.name}">
+    <meta property="og:title" th:content="${blog.blogName}">
     <meta property="og:description" th:content="${blog.blogBio}">
-    <meta property="og:image" th:content="${not #strings.isEmpty(blog.blogThumbUrl)} ? ${blog.blogThumbUrl} : '/static/logo/logo-375582.png'">
+    <meta property="og:image"
+          th:content="${not #strings.isEmpty(blog.blogThumbUrl)} ? ${blog.blogThumbUrl} : '/static/logo/logo-375582.png'">
     <meta name="description" th:content="${blog.blogBio}">
 </head>
 <body>
@@ -25,32 +26,24 @@
                     <div class="card-body">
                         <div id="carousel-captions" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                <div class="carousel-item active ratio ratio-16x9">
-                                    <img class="d-block w-100" alt="" src="/static/images/example/coffee-on-a-table-with-other-items.jpg" style="object-fit: cover">
-                                </div>
-                                <div class="carousel-item ratio ratio-16x9 ">
-                                    <img class="d-block w-100" alt="" src="/static/images/example/young-entrepreneur-working-from-a-modern-cafe-2.jpg" style="object-fit: cover">
-                                </div>
-                                <div class="carousel-item ratio ratio-16x9 ">
-                                    <img class="d-block w-100" alt="" src="/static/images/example/soft-photo-of-woman-on-the-bed-with-the-book-and-cup-of-coffee-in-hands.jpg" style="object-fit: cover">
-                                </div>
-                                <div class="carousel-item ratio ratio-16x9 ">
-                                    <img class="d-block w-100" alt="" src="/static/images/example/fairy-lights-at-the-beach-in-bulgaria.jpg" style="object-fit: cover">
-                                </div>
-                                <div class="carousel-item ratio ratio-16x9 ">
-                                    <img class="d-block w-100" alt="" src="/static/images/example/woman-working-on-laptop-at-home-office.jpg" style="object-fit: cover">
-<!--                                    <div class="carousel-caption-background"></div>-->
-<!--                                    <div class="carousel-caption">-->
-<!--                                        <h3>Slide label</h3>-->
-<!--                                        <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>-->
-<!--                                    </div>-->
+                                <div th:each="popularPost : ${popularPosts}" class="carousel-item ratio ratio-16x9">
+                                    <img class="d-block w-100" alt=""
+                                         th:src="${popularPost.thumb}"
+                                         style="object-fit: cover">
+                                    <div class="carousel-caption-background"></div>
+                                    <div class="carousel-caption">
+                                        <h3 th:text="${popularPost.title}" style="font-weight: bold; font-size: 15px; color: white; margin-top: 15em"></h3>
+                                        <p th:text="${popularPost.summary}" style="color: white"></p>
+                                    </div>
                                 </div>
                             </div>
-                            <a class="carousel-control-prev" href="#carousel-captions" role="button" data-bs-slide="prev">
+                            <a class="carousel-control-prev" href="#carousel-captions" role="button"
+                               data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </a>
-                            <a class="carousel-control-next" href="#carousel-captions" role="button" data-bs-slide="next">
+                            <a class="carousel-control-next" href="#carousel-captions" role="button"
+                               data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </a>
@@ -63,8 +56,8 @@
                     <h3 class="card-title mb-2">최근 댓글</h3>
                 </div>
                 <div class="card">
-                    <ul th:each="num : ${#numbers.sequence(0, 2)}" class="list-group list-group-flush placeholder-glow">
-                        <li class="list-group-item">
+                    <ul id="recent-comment" class="list-group list-group-flush">
+                        <li id="comment-placeholder"  class="list-group-item">
                             <div class="row align-items-center">
                                 <div class="col-auto">
                                     <div class="avatar avatar-rounded placeholder"></div>
@@ -82,11 +75,33 @@
                     </ul>
                 </div>
             </div>
-        </div>
-        <div id="recent-posting" class="row row-cards row-deck mt-2">
-            <div class="col-12">
-                <div class="card-header">
-                    <h3 class="card-title mb-0">최근 작성 글</h3>
+            <div id="recent-posting" class="row row-cards row-deck mt-2">
+                <div class="col-12">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0">최근 작성 글</h3>
+                    </div>
+                </div>
+                <div id="place-holder-1" class="col-12 col-md-6 place-holder">
+                    <div class="card placeholder-glow">
+                        <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                        <div class="card-body">
+                            <div class="placeholder col-9 mb-3"></div>
+                            <div class="placeholder placeholder-xs col-12"></div>
+                            <div class="placeholder placeholder-xs col-12"></div>
+                            <div class="placeholder placeholder-xs col-3"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="place-holder-2" class="col-12 col-md-6 place-holder">
+                    <div class="card placeholder-glow">
+                        <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                        <div class="card-body">
+                            <div class="placeholder col-9 mb-3"></div>
+                            <div class="placeholder placeholder-xs col-12"></div>
+                            <div class="placeholder placeholder-xs col-12"></div>
+                            <div class="placeholder placeholder-xs col-3"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,20 +112,88 @@
     <script src="/static/js/my/article-minimal.js"></script>
     <script>
         let path = location.pathname;
+        const holders = document.querySelectorAll('.place-holder');
+
+        function drawIndexComments(comment) {
+            let group = document.createElement("li");
+            group.classList.add("list-group-item");
+
+            let row = document.createElement("div");
+            row.className = "row align-items-center";
+
+            let pfpDiv = document.createElement("div");
+            pfpDiv.className = "col-auto d-flex lh-1 text-body p-0";
+
+            let pfp = document.createElement("img");
+            pfp.className = "avatar avatar-sm rounded-circle cursor-pointer";
+            pfp.src = comment.userPfp;
+
+            pfp.addEventListener("click", () => {
+                location.href = '/@' + comment.username;
+            })
+
+            pfpDiv.appendChild(pfp);
+
+            let contentDiv = document.createElement("div");
+            contentDiv.className = "col-auto me-3";
+
+            let content = document.createElement("span");
+            content.innerText = comment.content;
+
+            contentDiv.appendChild(content);
+
+            let dateDiv = document.createElement("div");
+            dateDiv.className = "col-3 ms-auto text-end";
+
+            let date = document.createElement("span");
+            date.innerText = getRelativeDate(new Date(comment.createdAt));
+
+            dateDiv.appendChild(date);
+
+            row.appendChild(pfpDiv);
+            row.appendChild(contentDiv);
+            row.appendChild(dateDiv);
+
+            group.appendChild(row);
+
+            return group;
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
-            axios.get("/api" + path + "/posts/recent")
+            let carouselItem = document.querySelectorAll('.carousel-item');
+            carouselItem[0].classList.add("active");
+
+            axios.get("/api" + path + "/posts/recent?page=0&size=4")
                 .then(response => {
                     let recentPosting = document.getElementById("recent-posting");
 
-                    let articles = response.data;
+                    let articles = response.data.body;
+
+                    for (let i = 0; i < holders.length; i++) {
+                        holders[i].classList.add("d-none");
+                    }
 
                     for (let article of articles) {
                         let articleDiv = getPostsComponentForBlog(article);
                         recentPosting.appendChild(articleDiv);
                     }
+                });
+
+            axios.get("/api" + path + "/comments/recent")
+                .then(response => {
+                    let commentPlaceHolder = document.getElementById("comment-placeholder");
+                    commentPlaceHolder.classList.add("d-none");
+
+                    let recentComment = document.getElementById("recent-comment");
+
+                    let comments = response.data;
+
+                    for (let comment of comments) {
+                        let commentDiv = drawIndexComments(comment);
+                        recentComment.appendChild(commentDiv);
+                    }
                 })
-        })
+        });
     </script>
 </th:block>
 </body>

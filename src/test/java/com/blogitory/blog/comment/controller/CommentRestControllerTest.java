@@ -17,6 +17,7 @@ import com.blogitory.blog.comment.dto.request.CreateCommentRequestDto;
 import com.blogitory.blog.comment.dto.request.ModifyCommentRequestDto;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
 import com.blogitory.blog.comment.service.CommentService;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.config.TestSecurityConfig;
@@ -133,5 +134,24 @@ class CommentRestControllerTest {
     mockMvc.perform(delete("/api/comments/1")
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("최근 달린 댓글 4개")
+  void getRecentComments() throws Exception {
+    GetLatestCommentListResponseDto responseDto =
+            new GetLatestCommentListResponseDto("name",
+                    "username",
+                    "userpfp",
+                    "postsUrl",
+                    "content",
+                    LocalDateTime.now());
+    List<GetLatestCommentListResponseDto> responseList = List.of(responseDto);
+
+    when(commentService.getRecentComments(anyString(), anyString())).thenReturn(responseList);
+
+    mockMvc.perform(get("/api/@username/blogUrl/comments/recent"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[0].name").value("name"));
   }
 }

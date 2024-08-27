@@ -1,7 +1,10 @@
 package com.blogitory.blog.comment.repository.impl;
 
+import com.blogitory.blog.blog.entity.QBlog;
+import com.blogitory.blog.category.entity.QCategory;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
 import com.blogitory.blog.comment.entity.Comment;
 import com.blogitory.blog.comment.entity.QComment;
 import com.blogitory.blog.comment.repository.CommentRepositoryCustom;
@@ -121,5 +124,38 @@ public class CommentRepositoryImpl
             .where(comment.posts.url.eq(postsUrl));
 
     return PageableExecutionUtils.getPage(comments, pageable, count::fetchOne);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<GetLatestCommentListResponseDto> getRecentCommentsByBlog(String username, String blogUrl) {
+    QComment comment = QComment.comment;
+    QBlog blog = QBlog.blog;
+    QCategory category = QCategory.category;
+    QMember member = QMember.member;
+    QPosts posts = QPosts.posts;
+
+    return queryFactory
+            .from(comment)
+            .select(Projections.constructor(
+                    GetLatestCommentListResponseDto.class,
+                    member.name,
+                    member.username,
+                    member.profileThumb,
+                    posts.url,
+                    comment.contents,
+                    comment.createdAt))
+            .innerJoin(member).on(member.memberNo.eq(comment.member.memberNo))
+            .innerJoin(posts).on(posts.url.eq(comment.posts.url))
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
+            .orderBy(comment.createdAt.desc())
+            .where(comment.deleted.isFalse().and(posts.deleted.isFalse()))
+            .where(comment.member.username.eq(username).not())
+            .where(comment.parentComment.isNull())
+            .limit(4L)
+            .fetch();
   }
 }

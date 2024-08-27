@@ -1,16 +1,19 @@
 package com.blogitory.blog.comment.controller;
 
+import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
 import static com.blogitory.blog.commons.utils.UrlUtil.getPostsKey;
 
 import com.blogitory.blog.comment.dto.request.CreateCommentRequestDto;
 import com.blogitory.blog.comment.dto.request.ModifyCommentRequestDto;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
 import com.blogitory.blog.comment.service.CommentService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.security.util.SecurityUtils;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -134,5 +137,21 @@ public class CommentRestController {
     commentService.deleteComment(memberNo, commentNo);
 
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Get recent comments. (limit 4)
+   *
+   * @param username username
+   * @param blogUrl  blog
+   * @return comments
+   */
+  @GetMapping("/@{username}/{blogUrl}/comments/recent")
+  public ResponseEntity<List<GetLatestCommentListResponseDto>> getRecentComments(
+          @PathVariable("username") String username,
+          @PathVariable("blogUrl") String blogUrl) {
+    String blogKey = getBlogKey(username, blogUrl);
+
+    return ResponseEntity.ok(commentService.getRecentComments(username, blogKey));
   }
 }

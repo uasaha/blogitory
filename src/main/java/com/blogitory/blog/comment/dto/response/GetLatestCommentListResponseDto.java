@@ -1,7 +1,8 @@
 package com.blogitory.blog.comment.dto.response;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 /**
  * GetLatestCommentListResponseDto.
@@ -10,10 +11,13 @@ import lombok.NoArgsConstructor;
  * @Date 2024-07-31
  * @since 1.0
  **/
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class GetLatestCommentListResponseDto {
-  private Long postsNo;
-  private String contents;
-  private String createdAt;
+  private String name;
+  private String username;
+  private String userPfp;
+  private String postUrl;
+  private String content;
+  private LocalDateTime createdAt;
 }

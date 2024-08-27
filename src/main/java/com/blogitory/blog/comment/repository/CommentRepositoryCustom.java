@@ -2,6 +2,8 @@ package com.blogitory.blog.comment.repository;
 
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -35,4 +37,13 @@ public interface CommentRepositoryCustom {
   Page<GetChildCommentResponseDto> getChildCommentsByParent(String postsUrl,
                                                             Long parentNo,
                                                             Pageable pageable);
+
+  /**
+   * Get recent comments. (limit 4)
+   *
+   * @param username blog owner
+   * @param blogUrl post url
+   * @return comments
+   */
+  List<GetLatestCommentListResponseDto> getRecentCommentsByBlog(String username, String blogUrl);
 }

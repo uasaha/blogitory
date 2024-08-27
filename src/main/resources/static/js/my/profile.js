@@ -7,20 +7,41 @@ const profilePfp = document.querySelector('#profile-pfp');
 const profilePfpUpdatable = document.querySelector('#profile-pfp-updatable');
 const profileUpdatable = document.querySelector('#profile-updatable');
 const profileButtonUpdatable = document.querySelector('#profile-button-updatable');
-let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,50}$/;
+let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d\s]{2,30}$/;
+let bioReg = /^.{0,300}$/;
 
 function isNullOrEmpty(value) {
     return value === null || value === '';
 }
 
 function nameValidate(element) {
+    let cantName = document.getElementById("cant-name");
+    let cantNameMobile = document.getElementById("cant-name-mobile");
     if (!nameReg.test(element.value)) {
+        cantName.classList.remove("d-none");
+        cantNameMobile.classList.remove("d-none");
         element.className = "form-control is-invalid";
         return false;
     } else {
+        cantName.classList.add("d-none");
+        cantNameMobile.classList.add("d-none");
         element.className = "form-control is-valid";
         return true;
     }
+}
+
+function bioValidate(element) {
+    let cantBio = document.getElementById("cantBio");
+    let cantBioMobile = document.getElementById("cant-bio-mobile");
+
+    if (!bioReg.test(element.value)) {
+        cantBio.classList.remove("d-none");
+        cantBioMobile.classList.remove("d-none");
+        return false;
+    }
+    cantBio.classList.add("d-none");
+    cantBioMobile.classList.add("d-none");
+    return true;
 }
 
 function disappearProfiles() {

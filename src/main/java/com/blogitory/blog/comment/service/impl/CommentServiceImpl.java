@@ -3,6 +3,7 @@ package com.blogitory.blog.comment.service.impl;
 import com.blogitory.blog.comment.dto.request.CreateCommentRequestDto;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
 import com.blogitory.blog.comment.entity.Comment;
 import com.blogitory.blog.comment.repository.CommentRepository;
 import com.blogitory.blog.comment.service.CommentService;
@@ -154,5 +155,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     comment.delete();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<GetLatestCommentListResponseDto> getRecentComments(String username, String blogUrl) {
+    return commentRepository.getRecentCommentsByBlog(username, blogUrl);
   }
 }

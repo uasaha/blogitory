@@ -2,6 +2,7 @@ package com.blogitory.blog.comment.repository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.blogitory.blog.blog.entity.Blog;
@@ -12,6 +13,7 @@ import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
 import com.blogitory.blog.comment.entity.Comment;
 import com.blogitory.blog.comment.entity.CommentDummy;
 import com.blogitory.blog.commons.config.JpaConfig;
@@ -23,6 +25,7 @@ import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import com.blogitory.blog.posts.repository.PostsRepository;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -198,5 +201,29 @@ class CommentRepositoryTest {
 
     assertEquals(child.getCommentNo(), result.getCommentNo());
     assertEquals(child.getContents(), result.getContent());
+  }
+
+  @Test
+  @DisplayName("최근 댓글 조회")
+  void getRecentCommentsByBlog() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Comment comment = CommentDummy.dummy(member, posts);
+    comment = commentRepository.save(comment);
+
+    List<GetLatestCommentListResponseDto> response =
+            commentRepository.getRecentCommentsByBlog("username", blog.getUrlName());
+
+    assertFalse(response.isEmpty());
+
+    GetLatestCommentListResponseDto result = response.getFirst();
+
+    assertEquals(comment.getContents(), result.getContent());
   }
 }
