@@ -179,11 +179,12 @@ public class PostsRestController {
    * @return 200
    */
   @GetMapping("/@{username}/{blogUrl}/posts/recent")
-  public ResponseEntity<List<GetRecentPostResponseDto>> getRecentPostsByBlog(
+  public ResponseEntity<Pages<GetRecentPostResponseDto>> getRecentPostsByBlog(
           @PathVariable String username,
-          @PathVariable String blogUrl) {
+          @PathVariable String blogUrl,
+          @PageableDefault Pageable pageable) {
     String blogKey = getBlogKey(username, blogUrl);
 
-    return ResponseEntity.ok(postsService.getRecentPostByBlog(blogKey));
+    return ResponseEntity.ok(postsService.getRecentPostByBlog(pageable, blogKey));
   }
 }

@@ -5,15 +5,18 @@ import com.blogitory.blog.category.entity.QCategory;
 import com.blogitory.blog.comment.entity.QComment;
 import com.blogitory.blog.heart.entity.QHeart;
 import com.blogitory.blog.member.entity.QMember;
+import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.QPosts;
 import com.blogitory.blog.posts.repository.PostsRepositoryCustom;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -153,10 +156,58 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
    * {@inheritDoc}
    */
   @Override
-  public List<GetRecentPostResponseDto> getRecentPostByBlog(
+  public Page<GetRecentPostResponseDto> getRecentPostByBlog(
           Pageable pageable, String blogUrl) {
+    List<GetRecentPostResponseDto> postsList = recentPosts(pageable, blog.urlName.eq(blogUrl));
 
-    return recentPosts(pageable, blog.urlName.eq(blogUrl));
+    long total = from(posts)
+            .select(posts.postsNo)
+            .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
+            .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
+            .where(member.left.isFalse().and(member.blocked.isFalse()))
+            .where(blog.urlName.eq(blogUrl))
+            .where(blog.deleted.isFalse())
+            .where(category.deleted.isFalse())
+            .where(posts.deleted.isFalse())
+            .fetchCount();
+
+    return new PageImpl<>(postsList, pageable, total);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl) {
+    NumberPath<Long> heartCnt = Expressions.numberPath(Long.class, "heartCnt");
+    NumberPath<Long> commentCnt = Expressions.numberPath(Long.class, "commentCnt");
+
+    return queryFactory
+            .from(posts)
+            .select(Projections.constructor(
+                    GetPopularPostResponseDto.class,
+                    posts.thumbnail,
+                    posts.subject,
+                    posts.summary,
+                    ExpressionUtils.as(
+                            JPAExpressions.select(heart.count())
+                                    .from(heart)
+                                    .where(heart.posts.postsNo.eq(posts.postsNo))
+                                    .where(heart.deleted.isFalse()), "heartCnt"),
+                    ExpressionUtils.as(
+                            JPAExpressions.select(comment.count())
+                                    .from(comment)
+                                    .where(comment.posts.postsNo.eq(posts.postsNo))
+                                    .where(comment.deleted.isFalse()), "commentCnt")
+            ))
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
+            .where(blog.urlName.eq(blogUrl))
+            .where(posts.deleted.isFalse().and(posts.thumbnail.isNotEmpty()))
+            .orderBy(heartCnt.desc(), commentCnt.desc())
+            .limit(5)
+            .fetch();
   }
 
   /**

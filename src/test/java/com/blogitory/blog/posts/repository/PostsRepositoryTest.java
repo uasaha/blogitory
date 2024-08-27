@@ -17,6 +17,7 @@ import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
@@ -225,8 +226,30 @@ class PostsRepositoryTest {
 
     Pageable pageable = PageRequest.of(0, 10);
 
-    List<GetRecentPostResponseDto> list = postsRepository.getRecentPostByBlog(pageable, blog.getUrlName());
+    List<GetRecentPostResponseDto> list = postsRepository.getRecentPostByBlog(pageable, blog.getUrlName()).getContent();
     GetRecentPostResponseDto actual = list.getFirst();
+
+    assertEquals(posts.getSubject(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("인기글 조회")
+  void getPopularPostsByBlog() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    List<GetPopularPostResponseDto> responseList =
+            postsRepository.getPopularPostsByBlog(blog.getUrlName());
+
+    assertFalse(responseList.isEmpty());
+
+    GetPopularPostResponseDto actual = responseList.getFirst();
 
     assertEquals(posts.getSubject(), actual.getTitle());
   }

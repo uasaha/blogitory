@@ -4,6 +4,7 @@ import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
@@ -116,8 +117,17 @@ public interface PostsService {
   /**
    * Get recent posts by blog url.
    *
-   * @param blogUrl blog url
+   * @param pageable pageable
+   * @param blogUrl  blog url
    * @return recent posts
    */
-  List<GetRecentPostResponseDto> getRecentPostByBlog(String blogUrl);
+  Pages<GetRecentPostResponseDto> getRecentPostByBlog(Pageable pageable, String blogUrl);
+
+  /**
+   * Get popular posts by blog.
+   *
+   * @param blogUrl blog url
+   * @return posts list
+   */
+  List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl);
 }

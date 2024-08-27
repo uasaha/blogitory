@@ -10,6 +10,7 @@ import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
@@ -306,10 +307,19 @@ public class PostsServiceImpl implements PostsService {
    */
   @Transactional(readOnly = true)
   @Override
-  public List<GetRecentPostResponseDto> getRecentPostByBlog(String blogUrl) {
-    Pageable pageable = PageRequest.of(0, 4);
+  public Pages<GetRecentPostResponseDto> getRecentPostByBlog(Pageable pageable, String blogUrl) {
+    Page<GetRecentPostResponseDto> result = postsRepository.getRecentPostByBlog(pageable, blogUrl);
 
-    return postsRepository.getRecentPostByBlog(pageable, blogUrl);
+    return new Pages<>(result.getContent(),
+            pageable.getPageNumber(),
+            result.hasPrevious(),
+            result.hasNext(),
+            result.getTotalElements());
+  }
+
+  @Override
+  public List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl) {
+    return postsRepository.getPopularPostsByBlog(blogUrl);
   }
 
   /**
@@ -339,7 +349,7 @@ public class PostsServiceImpl implements PostsService {
     String url = blog.getUrlName() + "/" + saveDto.getUrl();
 
     if (saveDto.getUrl() == null || saveDto.getUrl().isEmpty()) {
-      String urlTitle = saveDto.getTitle().replaceAll(" ", "-");
+      String urlTitle = saveDto.getTitle().replace(" ", "-");
       url = blog.getUrlName() + "/" + urlTitle;
     } else {
       if (!Pattern.matches(URL_REGEX, saveDto.getUrl())) {

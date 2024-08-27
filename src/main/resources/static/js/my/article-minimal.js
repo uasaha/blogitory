@@ -72,9 +72,6 @@ function getFormattedNumber(num) {
 function getThumbnailComponent(article) {
     let imageDiv = document.createElement('div');
     imageDiv.className = "ratio ratio-16x9 card-img-top cursor-pointer";
-    imageDiv.addEventListener("click", function (event) {
-        location.href = "/" + article.postUrl;
-    });
 
     let img = document.createElement('img');
     img.src = article.thumb;
@@ -134,9 +131,6 @@ function getWriterComponent(article) {
 function getTitleComponent(article) {
     let titleDiv = document.createElement('div');
     titleDiv.className = "col-12 mt-2 mb-1 cursor-pointer";
-    titleDiv.addEventListener("click", function (event) {
-        location.href = "/" + article.postUrl;
-    });
 
     let titleSpan = document.createElement('span');
     titleSpan.className = "post-title";
@@ -238,7 +232,10 @@ function getPostComponent(article) {
     postDiv.className = "col-12 col-md-6 col-lg-4 col-xl-3 mt-3";
 
     let postCardDiv = document.createElement('div');
-    postCardDiv.className = "card zoom posts-min";
+    postCardDiv.className = "card zoom posts-min cursor-pointer";
+    postCardDiv.addEventListener("click", () => {
+        location.href = "/" + article.postUrl;
+    });
 
     postCardDiv.appendChild(getThumbnailComponent(article));
     postCardDiv.appendChild(getPostBodyComponent(article));
@@ -253,7 +250,10 @@ function getPostComponentForProfile(article) {
     postDiv.className = "col-12 col-lg-6";
 
     let postCardDiv = document.createElement('div');
-    postCardDiv.className = "card zoom posts-min";
+    postCardDiv.className = "card zoom posts-min cursor-pointer";
+    postCardDiv.addEventListener("click", () => {
+        location.href = "/" + article.postUrl;
+    });
 
     postCardDiv.appendChild(getThumbnailComponent(article));
     postCardDiv.appendChild(getPostBodyComponent(article));
@@ -268,7 +268,10 @@ function getPostsComponentForBlog(article) {
     postDiv.className = "col-12 col-md-6";
 
     let postCardDiv = document.createElement('div');
-    postCardDiv.className = "card zoom posts-min";
+    postCardDiv.className = "card zoom posts-min cursor-pointer";
+    postCardDiv.addEventListener("click", () => {
+        location.href = "/" + article.postUrl;
+    })
 
     postCardDiv.appendChild(getThumbnailComponent(article));
     postCardDiv.appendChild(getPostBodyComponent(article));

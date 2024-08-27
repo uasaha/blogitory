@@ -12,7 +12,7 @@
             <a href="/">
                 <img src="/static/logo/logo-375582.png" width="30" height="30" alt="">
             </a>
-            <a style="font-size: 22px; font-weight: bold" th:text="${blog.blogName}"></a>
+            <a style="font-size: 22px; font-weight: bold" th:href="'/'+${blog.blogUrl}" th:text="${blog.blogName}"></a>
         </h1>
         <div class="navbar-nav flex-row d-lg-none">
             <div sec:authorize="isAuthenticated()" class="nav-item dropdown">
@@ -62,16 +62,16 @@
             </div>
             <div class="row mt-1 ms-lg-2" style="width: 95%">
                 <span id="profile-name" style="font-size: 22px; font-weight: bold" th:text="${blog.name}"></span>
-                <span style="font-size: 18px" th:text="'@'+${blog.username}"></span>
+                <a class="text-body" style="font-size: 18px" th:text="'@'+${blog.username}" th:href="'/@' + ${blog.username}"></a>
             </div>
-            <div th:if="${blog.blogBio} != null and ${!#strings.isEmpty(blog.blogBio)}" class="row mt-1 ms-lg-2"
+            <div th:if="${not #strings.isEmpty(blog.blogBio)}" class="row mt-1 ms-lg-2"
                  style="width: 95%">
                 <textarea class="form-control" rows="5" th:text="${blog.blogBio}" readonly></textarea>
             </div>
             <ul class="navbar-nav pt-lg-3" style="flex-grow: 0 !important;">
                 <li class="nav-item">
                     <a class="nav-link" th:href="|/${blog.blogUrl}|">
-                  <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                  <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                          stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path
@@ -85,7 +85,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="|/${blog.blogUrl}/posts|">
-                     <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                          <svg
                                  xmlns="http://www.w3.org/2000/svg"
                                  width="24"
@@ -107,33 +107,10 @@
                     <span class="nav-link-title">All</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             width="24"
-                             height="24"
-                             viewBox="0 0 24 24"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="2"
-                             stroke-linecap="round"
-                             stroke-linejoin="round"
-                             class="icon icon-tabler icons-tabler-outline icon-tabler-clock">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/>
-                            <path d="M12 7v5l3 3"/>
-                        </svg>
-                  </span>
-                        <span class="nav-link-title">
-                    Recent
-                  </span>
-                    </a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
                        data-bs-auto-close="false" role="button" aria-expanded="false">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"

@@ -1,5 +1,6 @@
 package com.blogitory.blog.posts.repository;
 
+import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
@@ -61,6 +62,14 @@ public interface PostsRepositoryCustom {
    * @param blogUrl  blog url
    * @return recent posts
    */
-  List<GetRecentPostResponseDto> getRecentPostByBlog(
+  Page<GetRecentPostResponseDto> getRecentPostByBlog(
           Pageable pageable, String blogUrl);
+
+  /**
+   * Get popular posts by blog.
+   *
+   * @param blogUrl blog url
+   * @return posts list
+   */
+  List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl);
 }

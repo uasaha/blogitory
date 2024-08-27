@@ -672,10 +672,13 @@ class PostsServiceTest {
             "summary", "thumb", LocalDateTime.now(),
             0L, 0L);
     List<GetRecentPostResponseDto> list = List.of(response);
+    Pageable pageable = PageRequest.of(0, 4);
 
-    when(postsRepository.getRecentPostByBlog(any(), anyString())).thenReturn(list);
+    Page<GetRecentPostResponseDto> page = new PageImpl<>(list, pageable, 1L);
 
-    List<GetRecentPostResponseDto> result = postsService.getRecentPostByBlog("blogUrl");
+    when(postsRepository.getRecentPostByBlog(any(), anyString())).thenReturn(page);
+
+    List<GetRecentPostResponseDto> result = postsService.getRecentPostByBlog(pageable, "blogUrl").body();
     GetRecentPostResponseDto resultDto = result.getFirst();
 
     assertEquals(resultDto.getTitle(), response.getTitle());

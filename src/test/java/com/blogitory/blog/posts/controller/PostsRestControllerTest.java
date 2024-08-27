@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -160,7 +158,6 @@ class PostsRestControllerTest {
   @Test
   @DisplayName("최근 글 조회")
   void getRecentPosts() throws Exception {
-    Pageable pageable = PageRequest.of(0, 10);
     Pages<GetRecentPostResponseDto> pages = new Pages<>(List.of(), 0, false, false, 0L);
     when(postsService.getRecentPost(any())).thenReturn(pages);
 
@@ -182,9 +179,11 @@ class PostsRestControllerTest {
   @DisplayName("블로그의 최근 글 조회")
   void getRecentPostsByBlog() throws Exception {
     List<GetRecentPostResponseDto> list = List.of();
-    when(postsService.getRecentPostByBlog(anyString())).thenReturn(list);
 
-    mvc.perform(get("/api/@username/blog/posts/recent"))
+    Pages<GetRecentPostResponseDto> pages = new Pages<>(list, 0, false, false, 0L);
+    when(postsService.getRecentPostByBlog(any(), anyString())).thenReturn(pages);
+
+    mvc.perform(get("/api/@username/blog/posts/recent?page=0&size=4"))
             .andExpect(status().isOk());
   }
 }
