@@ -1,4 +1,4 @@
-const nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,20}$/;
+const nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d\s]{2,30}$/;
 const socialLength = 50;
 
 function pfpInputClick() {
@@ -44,7 +44,7 @@ function pfpRemove() {
 }
 
 function profileUpdate() {
-    let name = document.querySelector("#name").value;
+    let name = document.querySelector("#name");
     let introEmail = document.querySelector("#introEmail").value;
     let bio = document.querySelector("#bio").value;
     let $$profileLinks = document.querySelectorAll('.profile-links');
@@ -61,12 +61,12 @@ function profileUpdate() {
     pushLink(links, $$profileLinks[4].value);
 
     axios.put("/api/users/profiles", {
-        "name" : name,
+        "name" : name.value,
         "bio" : bio,
         "email" : introEmail,
         "linkList" : links
     }).then(() => {
-        document.location.reload();
+        openSuccessAlerts("저장되었습니다.");
     }).catch(() => {
         openFailedAlerts("저장에 실패하였습니다.");
     })
@@ -79,7 +79,17 @@ function pushLink(linkArray, val) {
 }
 
 function nameValidate(element) {
-    return nameReg.test(element.value);
+    let cantName = document.getElementById("cant-name");
+
+    if (!nameReg.test(element.value)) {
+        element.className = "form-control is-invalid";
+        cantName.classList.remove("d-none");
+        return false;
+    } else {
+        element.className = "form-control is-valid";
+        cantName.classList.add("d-none");
+        return true;
+    }
 }
 
 function socialValidate(element) {

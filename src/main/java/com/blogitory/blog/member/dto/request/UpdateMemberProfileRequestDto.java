@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class UpdateMemberProfileRequestDto {
   @NotBlank
   @Size(min = 2, max = 20, message = "Name must be between 2 and 20 characters long")
-  @Pattern(regexp = "^[a-zA-Zㄱ-힣0-9]*$")
+  @Pattern(regexp = "^[a-zA-Zㄱ-힣0-9\\s]*$")
   private String name;
 
   @Size(max = 200)

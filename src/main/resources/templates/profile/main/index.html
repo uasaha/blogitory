@@ -6,12 +6,12 @@
       layout:decorate="~{profile/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${'Blogitory - @' + profile.username}"></title>
+    <title th:text="${profile.username  + ' (' + profile.name + ')'}"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/@' + profile.username}">
     <meta property="og:url" th:content="${'https://blogitory.com/@' + profile.username}">
-    <meta property="og:title" th:content="${'Blogitory - @' + profile.username}">
+    <meta property="og:title" th:content="${profile.username  + '(' + profile.name + ')'}">
     <meta property="og:description" th:content="${profile.bio}">
-    <meta property="og:image" th:content="${profile.profileThumb}">
+    <meta property="og:image" th:content="${#strings.isEmpty(profile.profileThumb)} ? '/static/icons/person.svg' : ${profile.profileThumb}">
     <meta name="description" th:content="${profile.bio}">
 </head>
 <body>
@@ -23,11 +23,11 @@
                     <div style="width:100%; vertical-align: middle; aspect-ratio: 1/1">
                         <img id="profile-pfp" class="avatar avatar-md rounded-circle"
                              style="object-fit: cover; width: 100%; height: 100%"
-                             th:src="${profile.profileThumb == null} or  ${profile.profileThumb == ''}? '/static/icons/person.svg' : ${profile.profileThumb}"
+                             th:src="${#strings.isEmpty(profile.profileThumb)} ? '/static/icons/person.svg' : ${profile.profileThumb}"
                              alt="profile_picture">
                         <img id="profile-pfp-updatable" class="avatar avatar-md d-none cursor-pointer rounded-circle"
                              style="object-fit: cover; width: 100%; height: 100%"
-                             th:src="${profile.profileThumb == null} or  ${profile.profileThumb == ''}? '/static/icons/person.svg' : ${profile.profileThumb}"
+                             th:src="${#strings.isEmpty(profile.profileThumb)} ? '/static/icons/person.svg' : ${profile.profileThumb}"
                              alt="profile_picture" title="사진 변경" onclick="updateThumbOpen()">
                         <input id="thumbInput" type="file" class="d-none" accept="image/*" onchange="updateThumb()"/>
                     </div>
@@ -54,7 +54,9 @@
                                         <span class="form-label-description">20</span></label>
                                     <input id="profile-name-updatable" type="text" class="form-control"
                                            aria-label="Name" aria-describedby="name-input" placeholder="name"
+                                           onkeyup="nameValidate(this)"
                                            th:value="${profile.name}">
+                                    <span id="cant-name" class="d-none text-danger">사용할 수 없는 이름입니다.</span>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Bio
@@ -295,13 +297,15 @@
                                     <label class="form-label">Name</label>
                                     <input id="profile-name-updatable-mobile" type="text" class="form-control"
                                            aria-label="Name" aria-describedby="name-input" placeholder="name"
+                                           onkeyup="nameValidate(this)"
                                            th:value="${profile.name}">
+                                    <span id="cant-name-mobile" class="d-none text-danger">사용할 수 없는 이름입니다.</span>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Bio
                                         <span class="form-label-description">100</span></label>
                                     <textarea id="profile-bio-updatable-mobile" class="form-control" rows="6"
-                                              placeholder="Bio.."
+                                              placeholder="Bio..">
                                               th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
                                 </div>
                                 <div class="mb-3">

@@ -6,10 +6,10 @@
       layout:decorate="~{blog/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${blog.name} + ' - ' + ${posts.subject}"></title>
+    <title th:text="${blog.blogName} + ' - ' + ${posts.subject}"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/' + posts.postUrl}">
     <meta property="og:url" th:content="${'https://blogitory.com/' + posts.postUrl}">
-    <meta property="og:title" th:content="${blog.name} + ' - ' + ${posts.subject}">
+    <meta property="og:title" th:content="${blog.blogName} + ' - ' + ${posts.subject}">
     <meta property="og:description" th:content="${posts.summary}">
     <meta property="og:image" th:content="${not #strings.isEmpty(posts.postThumb)} ? ${posts.postThumb} : '/static/logo/logo-375582.png'">
     <meta name="description" th:content="${posts.summary}">

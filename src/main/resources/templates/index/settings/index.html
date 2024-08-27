@@ -54,7 +54,8 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-label">Name</div>
-                                <input id="name" type="text" class="form-control" th:value="${memberProfile.name}">
+                                <input id="name" type="text" class="form-control" th:value="${memberProfile.name}" onkeyup="nameValidate(this)">
+                                <span id="cant-name" class="d-none text-danger">사용할 수 없는 이름입니다.</span>
                             </div>
                         </div>
                         <h3 class="card-title mt-4">이메일</h3>

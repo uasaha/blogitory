@@ -30,11 +30,13 @@
                             <label for="username-input" class="col-3">유저네임</label>
                             <input id="username-input" name="username" type="text" class="form-control" maxlength="20"
                                    onkeyup="usernameCheck()" required>
+                            <span id="cant-username" class="d-none text-danger">사용할 수 없는 유저네임입니다.</span>
                         </div>
                         <div class="form-group mb-4">
                             <label for="name-input" class="col-3">이름</label>
                             <input id="name-input" name="name" type="text" class="form-control" maxlength="20"
                                    onkeyup="nameValidate(this)" required>
+                            <span id="cant-name" class="d-none text-danger">사용할 수 없는 이름입니다.</span>
                         </div>
                         <div class="form-group mb-4">
                             <label for="email-input" class="col-3">이메일</label>
@@ -46,6 +48,9 @@
                                     인증
                                 </button>
                             </div>
+                            <span id="send-email" class="text-success d-none">메일이 발송되었습니다.</span>
+                            <span id="cant-send-email" class="text-danger d-none">메일 발송에 실패하였습니다. 잠시 후 다시 시도해주세요.</span>
+                            <span id="dup-email" class="text-danger d-none">사용중인 이메일입니다.</span>
                         </div>
                         <div class="form-group mb-4 d-none" id="email-verify-div">
                             <label for="email-verify">인증번호</label>
@@ -61,11 +66,13 @@
                             <label for="pwd-input">비밀번호</label>
                             <input id="pwd-input" name="pwd" type="password" class="form-control"
                                    onkeyup="pwdValidate(this)" required>
+                            <span id="cant-pwd" class="text-danger d-none">사용할 수 없는 비밀번호입니다.</span>
                         </div>
                         <div class="form-group mb-4">
                             <label for="pwd-check-input">비밀번호 확인</label>
                             <input id="pwd-check-input" type="password" class="form-control"
                                    onkeyup="pwdCheckValidate(this)" required>
+                            <span id="cant-pwd-check" class="text-danger d-none">비밀번호가 일치하지 않습니다.</span>
                         </div>
                         <button id="submitButton" type="button"
                                 class="btn btn-outline-secondary ms-md-auto float-end" onclick="memberSignup(this)">

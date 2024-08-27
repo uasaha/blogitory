@@ -130,7 +130,8 @@ public class CommentRepositoryImpl
    * {@inheritDoc}
    */
   @Override
-  public List<GetLatestCommentListResponseDto> getRecentCommentsByBlog(String username, String blogUrl) {
+  public List<GetLatestCommentListResponseDto> getRecentCommentsByBlog(
+          String username, String blogUrl) {
     QComment comment = QComment.comment;
     QBlog blog = QBlog.blog;
     QCategory category = QCategory.category;

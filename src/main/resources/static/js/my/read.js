@@ -11,6 +11,63 @@ const CHILD_COMMENT_WRITE_BTN_PREFIX = "child-comment-write-btn-";
 const CHILD_COMMENT_WRITE_INPUT_PREFIX = "child-comment-write-input-";
 let CURRENT_COMMENT_PAGE = 0;
 
+function getRelativeDate(date) {
+    const now = new Date();
+    const diff = (now - date) / 1000;
+
+    const seconds = Math.floor(diff);
+    const minutes = Math.floor(diff / 60);
+    const hours = Math.floor(diff / 3600);
+    const days = Math.floor(diff / 86400);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (seconds < 0) {
+        return `${seconds}초 후`;
+    }
+
+    if (seconds < 60) {
+        return `${seconds}초 전`;
+    }
+
+    if (minutes < 60) {
+        return `${minutes}분 전`;
+    }
+
+    if (hours < 24) {
+        return `${hours}시간 전`;
+    }
+
+    if (days === 1) {
+        return '어제';
+    }
+
+    if (days === 2) {
+        return '그저께';
+    }
+
+    if (days < 7) {
+        return `${days}일 전`;
+    }
+
+    if (weeks < 5) {
+        return `${weeks}주일 전`;
+    }
+
+    if (months < 12) {
+        const remainingWeeks = Math.floor((days % 30) / 7);
+        return remainingWeeks > 0
+            ? `${months}개월 ${remainingWeeks}주 전`
+            : `${months}개월 전`;
+    }
+
+    const remainingMonths = months % 12;
+    return remainingMonths > 0
+        ? `${years}년 ${remainingMonths}개월 전`
+        : `${years}년 전`;
+}
+
 function openWriteForm() {
     let writeForms = document.querySelector('#' + COMMENT_WRITE_FORM_ID);
     let writeAreas = document.querySelector('#' + COMMENT_WRITE_AREA_ID);

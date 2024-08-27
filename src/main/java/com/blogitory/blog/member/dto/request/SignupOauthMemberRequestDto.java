@@ -25,6 +25,6 @@ public class SignupOauthMemberRequestDto {
   private String username;
 
   @Size(min = 2, max = 50, message = "Name must be between 2 and 20 characters long")
-  @Pattern(regexp = "^[a-zA-Zㄱ-ㅣ가-힣\\d]{2,50}$")
+  @Pattern(regexp = "^[a-zA-Zㄱ-ㅣ가-힣\\d\\s]{2,50}$")
   private String name;
 }
