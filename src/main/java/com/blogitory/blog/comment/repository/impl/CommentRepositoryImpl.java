@@ -154,6 +154,7 @@ public class CommentRepositoryImpl
             .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
             .orderBy(comment.createdAt.desc())
             .where(comment.deleted.isFalse().and(posts.deleted.isFalse()))
+            .where(blog.urlName.eq(blogUrl))
             .where(comment.member.username.eq(username).not())
             .where(comment.parentComment.isNull())
             .limit(4L)
