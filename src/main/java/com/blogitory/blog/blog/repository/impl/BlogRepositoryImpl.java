@@ -50,8 +50,10 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
             .innerJoin(blog.member, member)
             .leftJoin(image).on(image.blog.blogNo.eq(blog.blogNo))
             .leftJoin(category).on(blog.blogNo.eq(category.blog.blogNo))
-            .where(blog.member.memberNo.eq(memberNo))
-            .where(blog.deleted.eq(false))
+            .where(blog.member.memberNo.eq(memberNo)
+                    .and(member.blocked.isFalse())
+                    .and(member.left.isFalse()))
+            .where(blog.deleted.isFalse())
             .orderBy(blog.blogNo.asc())
             .transform(
                     GroupBy.groupBy(blog.blogNo)
@@ -85,8 +87,10 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
                     blog.name,
                     blog.urlName))
             .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
-            .where(member.username.eq(username))
-            .where(blog.deleted.eq(false))
+            .where(member.username.eq(username)
+                    .and(member.blocked.isFalse())
+                    .and(member.left.isFalse())
+                    .and(blog.deleted.isFalse()))
             .orderBy(blog.blogNo.asc())
             .fetch();
   }
@@ -128,8 +132,8 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
                     ))
             .innerJoin(blog.member, member)
             .leftJoin(image).on(image.blog.blogNo.eq(blog.blogNo))
-            .where(blog.urlName.eq(url))
-            .where(blog.deleted.eq(false))
+            .where(blog.urlName.eq(url)
+                    .and(blog.deleted.isFalse()))
             .fetchOne());
   }
 
@@ -146,8 +150,8 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
             .select(blog)
             .innerJoin(blog.member, member)
             .leftJoin(category).on(blog.blogNo.eq(category.blog.blogNo))
-            .where(blog.member.memberNo.eq(memberNo))
-            .where(blog.deleted.eq(false))
+            .where(blog.member.memberNo.eq(memberNo)
+                    .and(blog.deleted.isFalse()))
             .orderBy(blog.blogNo.asc())
             .transform(
                     GroupBy.groupBy(blog.blogNo)

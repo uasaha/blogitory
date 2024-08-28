@@ -65,18 +65,20 @@ public class CommentRepositoryImpl
             .innerJoin(member).on(member.memberNo.eq(comment.member.memberNo))
             .innerJoin(posts).on(posts.url.eq(comment.posts.url))
             .orderBy(comment.createdAt.desc())
-            .where(posts.deleted.isFalse())
-            .where(comment.parentComment.isNull())
             .where(comment.posts.url.eq(postsUrl))
+            .where(posts.deleted.isFalse()
+                    .and(posts.open.isTrue())
+                    .and(comment.parentComment.isNull()))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
     JPQLQuery<Long> count = from(comment)
             .select(comment.count())
-            .where(posts.deleted.isFalse())
-            .where(comment.parentComment.isNull())
-            .where(comment.posts.url.eq(postsUrl));
+            .where(comment.posts.url.eq(postsUrl))
+            .where(posts.deleted.isFalse()
+                    .and(posts.open.isTrue())
+                    .and(comment.parentComment.isNull()));
 
     return PageableExecutionUtils.getPage(comments, pageable, count::fetchOne);
   }
@@ -110,18 +112,20 @@ public class CommentRepositoryImpl
             .innerJoin(parent).on(comment.parentComment.commentNo.eq(parent.commentNo))
             .innerJoin(posts).on(posts.url.eq(comment.posts.url))
             .orderBy(comment.createdAt.desc())
-            .where(posts.deleted.isFalse())
-            .where(comment.parentComment.commentNo.eq(commentNo))
             .where(comment.posts.url.eq(postsUrl))
+            .where(comment.parentComment.commentNo.eq(commentNo))
+            .where(posts.deleted.isFalse()
+                    .and(posts.open.isTrue()))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
     JPQLQuery<Long> count = from(comment)
             .select(comment.count())
-            .where(posts.deleted.isFalse())
-            .where(comment.parentComment.commentNo.eq(commentNo))
-            .where(comment.posts.url.eq(postsUrl));
+            .where(posts.deleted.isFalse()
+                    .and(posts.open.isTrue())
+                    .and(comment.parentComment.commentNo.eq(commentNo))
+                    .and(comment.posts.url.eq(postsUrl)));
 
     return PageableExecutionUtils.getPage(comments, pageable, count::fetchOne);
   }
@@ -153,7 +157,9 @@ public class CommentRepositoryImpl
             .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
             .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
             .orderBy(comment.createdAt.desc())
-            .where(comment.deleted.isFalse().and(posts.deleted.isFalse()))
+            .where(comment.deleted.isFalse()
+                    .and(posts.deleted.isFalse())
+                    .and(posts.open.isTrue()))
             .where(blog.urlName.eq(blogUrl))
             .where(comment.member.username.eq(username).not())
             .where(comment.parentComment.isNull())
