@@ -17,8 +17,8 @@
 <body>
 <div class="container-xl" layout:fragment="main-content">
     <div class="page-body">
-        <div th:if="${not popularPosts.isEmpty()}" class="row">
-            <div class="col-12">
+        <div th:if="${blog.postsCnt > 0}" class="row">
+            <div th:if="${not popularPosts.isEmpty()}" class="col-12">
                 <div class="card-header">
                     <h3 class="card-title mb-0">인기 글</h3>
                 </div>
@@ -105,7 +105,7 @@
                 </div>
             </div>
         </div>
-        <div th:if="${popularPosts.isEmpty()}" class="row">
+        <div th:if="${blog.postsCnt <= 0}" class="row">
             <h3>새로운 글을 작성해보세요!</h3>
             <img src="https://cdn.blogitory.com/images/wrting.jpg" alt="writing">
         </div>

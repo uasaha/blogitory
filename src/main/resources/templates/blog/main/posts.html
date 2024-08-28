@@ -135,9 +135,9 @@
                 <div sec:authorize="isAuthenticated()" id="comment-write-form" class="card-footer d-none">
                     <div class="row">
                         <div class="row">
-                            <a href="/@mate" class="d-flex lh-1 text-body p-0">
+                            <a th:href="'/@' + ${members.username}" class="d-flex lh-1 text-body p-0">
                                 <img class="avatar avatar-sm rounded-circle"
-                                     th:if="!${thumbIsNUll}"
+                                     th:if="!${thumbIsNull}"
                                      th:src="${members.thumb}"
                                      alt="pjp">
                                 <div class="ps-2 overflow-hidden">
