@@ -1,5 +1,7 @@
 package com.blogitory.blog.tag.repository.impl;
 
+import com.blogitory.blog.blog.entity.QBlog;
+import com.blogitory.blog.category.entity.QCategory;
 import com.blogitory.blog.posts.entity.QPosts;
 import com.blogitory.blog.poststag.entity.QPostsTag;
 import com.blogitory.blog.tag.dto.GetTagResponseDto;
@@ -43,6 +45,35 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
             .innerJoin(posts).on(posts.postsNo.eq(postsTag.posts.postsNo))
             .where(posts.url.eq(postUrl))
             .where(tag.deleted.eq(false))
+            .fetch();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<GetTagResponseDto> getTagsByBlog(String blogUrl) {
+    QTag tag = QTag.tag;
+    QPostsTag postsTag = QPostsTag.postsTag;
+    QPosts posts = QPosts.posts;
+    QBlog blog = QBlog.blog;
+    QCategory category = QCategory.category;
+
+    return queryFactory
+            .from(tag)
+            .select(Projections.constructor(
+                    GetTagResponseDto.class,
+                    tag.name))
+            .innerJoin(postsTag).on(postsTag.tag.tagNo.eq(tag.tagNo))
+            .innerJoin(posts).on(posts.postsNo.eq(postsTag.posts.postsNo))
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .innerJoin(blog).on(blog.blogNo.eq(category.categoryNo))
+            .where(blog.urlName.eq(blogUrl)
+                    .and(blog.deleted.isFalse())
+                    .and(posts.deleted.isFalse())
+                    .and(posts.open.isTrue())
+                    .and(category.deleted.isFalse())
+                    .and(tag.deleted.isFalse()))
             .fetch();
   }
 }

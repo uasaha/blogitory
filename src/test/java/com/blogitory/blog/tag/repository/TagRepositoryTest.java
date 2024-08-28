@@ -117,7 +117,7 @@ class TagRepositoryTest {
     tag = tagRepository.save(tag);
 
     PostsTag postsTag = PostsTagDummy.dummy(tag, posts, blog);
-    postsTag = postsTagRepository.save(postsTag);
+    postsTagRepository.save(postsTag);
 
     List<GetTagResponseDto> tagList = tagRepository.getTagListByPost(posts.getUrl());
 
@@ -126,5 +126,30 @@ class TagRepositoryTest {
     GetTagResponseDto tagDto = tagList.getFirst();
 
     assertEquals(tag.getName(), tagDto.getTagName());
+  }
+
+  @Test
+  @DisplayName("블로그 태그 조회")
+  void getTagsByBlog() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Tag tag = TagDummy.dummy();
+    tag = tagRepository.save(tag);
+    PostsTag postsTag = PostsTagDummy.dummy(tag, posts, blog);
+    postsTagRepository.save(postsTag);
+
+    List<GetTagResponseDto> tagList = tagRepository.getTagsByBlog(blog.getUrlName());
+
+    assertFalse(tagList.isEmpty());
+
+    GetTagResponseDto actual = tagList.getFirst();
+
+    assertEquals(tag.getName(), actual.getTagName());
   }
 }
