@@ -89,7 +89,7 @@ function setCategory(value) {
     for (let category of categories) {
         let option = document.createElement("option");
         option.value = category.categoryNo;
-        option.text = category.categoryName;
+        option.text = category.name;
 
         categorySelect.appendChild(option);
     }
