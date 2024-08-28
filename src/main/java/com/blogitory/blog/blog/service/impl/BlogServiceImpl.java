@@ -16,6 +16,7 @@ import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.security.exception.AuthorizationException;
+import com.blogitory.blog.tag.repository.TagRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class BlogServiceImpl implements BlogService {
   private final MemberRepository memberRepository;
   private final BlogRepository blogRepository;
   private final CategoryRepository categoryRepository;
+  private final TagRepository tagRepository;
   private final PasswordEncoder passwordEncoder;
 
   private static final Integer MAX_BLOG_SIZE = 3;
@@ -133,7 +135,9 @@ public class BlogServiceImpl implements BlogService {
   public GetBlogResponseDto getBlogByUrl(String url) {
     GetBlogResponseDto responseDto = blogRepository.getBlogByUrl(url)
             .orElseThrow(() -> new NotFoundException(Blog.class));
-    responseDto.distinct();
+
+    responseDto.categories(categoryRepository.getCategoriesByBlog(url));
+    responseDto.tags(tagRepository.getTagsByBlog(url));
 
     return responseDto;
   }

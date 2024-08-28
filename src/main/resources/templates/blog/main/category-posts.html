@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{blog/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${blog.blogName} + ' > ' + ${category}"></title>
+    <link rel="canonical" th:href="${'https://blogitory.com/' + blog.blogUrl + '/posts'}">
+    <meta property="og:url" th:content="${'https://blogitory.com/' + blog.blogUrl + '/posts'}">
+    <meta property="og:title" th:content="${blog.blogName} + ' > ' + ${category}">
+    <meta property="og:description" th:content="${blog.blogName} + ' > ' + ${category}">
+    <meta property="og:image"
+          th:content="${not #strings.isEmpty(blog.blogThumbUrl)} ? ${blog.blogThumbUrl} : '/static/logo/logo-375582.png'">
+    <meta name="description" th:content="${blog.blogName} + ' > ' + ${category}">
+</head>
+<body>
+<div class="container-xl" layout:fragment="main-content">
+    <div class="page-header">
+        <h2 id="page-title" class="page-title"></h2>
+    </div>
+    <div class="page-body mt-0">
+        <div id="recent-posting" class="row row-cards row-deck mt-2">
+            <div id="place-holder-1" class="col-12 col-md-6 place-holder">
+                <div class="card placeholder-glow">
+                    <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                    <div class="card-body">
+                        <div class="placeholder col-9 mb-3"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="place-holder-2" class="col-12 col-md-6 place-holder">
+                <div class="card placeholder-glow">
+                    <div class="ratio ratio-16x9 card-img-top placeholder"></div>
+                    <div class="card-body">
+                        <div class="placeholder col-9 mb-3"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-12"></div>
+                        <div class="placeholder placeholder-xs col-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="d-flex">
+                <div>
+                    <a id="page-previous" class="text-body d-none" href="#" tabindex="-1" aria-disabled="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>
+                        이전
+                    </a>
+                </div>
+                <div class="ms-md-auto float-end">
+                    <a id="page-next" class="text-body d-none" href="#">
+                        다음
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="script">
+    <script src="/static/js/my/article-minimal.js"></script>
+    <script th:inline="javascript">
+        let pageable = [[${pageable}]].pageNumber;
+        let blog = [[${blog}]].blogUrl;
+        let category = [[${category}]];
+        let pageTitle = document.getElementById('page-title');
+
+        let url = "/api/" + blog + "/categories/" + category +"?page=" + pageable;
+        const holders = document.querySelectorAll('.place-holder');
+        let pagePrevious = document.getElementById("page-previous");
+        let pageNext = document.getElementById("page-next");
+        let path = location.pathname;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            axios.get(url)
+                .then(response => {
+                    let recentPosting = document.getElementById("recent-posting");
+                    pageTitle.textContent = category + " (" + response.data.total + ")";
+
+                    let articles = response.data.body;
+
+                    for (let i = 0; i < holders.length; i++) {
+                        holders[i].classList.add("d-none");
+                    }
+
+                    for (let article of articles) {
+                        let articleDiv = getPostsComponentForBlog(article);
+                        recentPosting.appendChild(articleDiv);
+                    }
+
+                    if (response.data.hasNext) {
+                        pageNext.classList.remove("d-none");
+                        pageNext.href = path + "?page=" + (pageable + 1);
+                    }
+
+                    if (response.data.hasPrevious) {
+                        pagePrevious.classList.remove("d-none");
+                        pagePrevious.href = path + "?page=" + (pageable - 1);
+                    }
+                });
+        });
+    </script>
+</th:block>
+</body>
+</html>

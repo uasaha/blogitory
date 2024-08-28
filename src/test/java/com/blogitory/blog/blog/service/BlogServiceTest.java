@@ -24,6 +24,7 @@ import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.blog.exception.BlogLimitException;
 import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.blog.service.impl.BlogServiceImpl;
+import com.blogitory.blog.category.dto.GetCategoryInSettingsResponseDto;
 import com.blogitory.blog.category.dto.GetCategoryResponseDto;
 import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
@@ -33,6 +34,7 @@ import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.security.exception.AuthorizationException;
+import com.blogitory.blog.tag.repository.TagRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -52,6 +54,7 @@ class BlogServiceTest {
   BlogRepository blogRepository;
   MemberRepository memberRepository;
   CategoryRepository categoryRepository;
+  TagRepository tagRepository;
   PasswordEncoder passwordEncoder;
   BlogService blogService;
 
@@ -64,9 +67,10 @@ class BlogServiceTest {
     blogRepository = mock(BlogRepository.class);
     memberRepository = mock(MemberRepository.class);
     categoryRepository = mock(CategoryRepository.class);
+    tagRepository = mock(TagRepository.class);
     passwordEncoder = mock(PasswordEncoder.class);
 
-    blogService = new BlogServiceImpl(memberRepository, blogRepository, categoryRepository, passwordEncoder);
+    blogService = new BlogServiceImpl(memberRepository, blogRepository, categoryRepository, tagRepository, passwordEncoder);
   }
 
   /**
@@ -299,7 +303,7 @@ class BlogServiceTest {
   @Test
   @DisplayName("블로그 url로 블로그 조회")
   void getBlogByUrl() {
-    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname", false);
+    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname", false, 0L);
 
     GetBlogResponseDto responseDto = new GetBlogResponseDto(
             "blogThumbUrl",
@@ -309,8 +313,9 @@ class BlogServiceTest {
             "name",
             "username",
             "blogBio",
-            List.of(categoryResponseDto),
-            List.of());
+            0L);
+
+    responseDto.categories(List.of(categoryResponseDto));
 
     when(blogRepository.getBlogByUrl(anyString()))
             .thenReturn(Optional.of(responseDto));
@@ -324,10 +329,6 @@ class BlogServiceTest {
     assertEquals(responseDto.getBlogBio(), actual.getBlogBio());
     assertEquals(responseDto.getName(), actual.getName());
     assertEquals(responseDto.getUsername(), actual.getUsername());
-    assertEquals(responseDto.getCategories().getFirst().getCategoryNo(),
-            actual.getCategories().getFirst().getCategoryNo());
-    assertEquals(responseDto.getCategories().getFirst().getCategoryName(),
-            actual.getCategories().getFirst().getCategoryName());
   }
 
   @Test
@@ -336,10 +337,7 @@ class BlogServiceTest {
     GetBlogWithCategoryResponseDto responseDto = new GetBlogWithCategoryResponseDto(
             1L,
             "blogName",
-            List.of(
-                    new GetCategoryResponseDto(
-                            1L,
-                            "cname", false)));
+            List.of(new GetCategoryInSettingsResponseDto(1L, "cname", false)));
 
     when(blogRepository.getBlogWithCategoryList(anyInt()))
             .thenReturn(List.of(responseDto));

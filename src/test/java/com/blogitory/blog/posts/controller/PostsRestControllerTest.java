@@ -186,4 +186,28 @@ class PostsRestControllerTest {
     mvc.perform(get("/api/@username/blog/posts/recent?page=0&size=4"))
             .andExpect(status().isOk());
   }
+
+  @Test
+  @DisplayName("카테고리의 최근 글 조회")
+  void getRecentPostsByCategory() throws Exception {
+    List<GetRecentPostResponseDto> list = List.of();
+
+    Pages<GetRecentPostResponseDto> pages = new Pages<>(list, 0, false, false, 0L);
+    when(postsService.getRecentPostByCategory(any(), anyString(), anyString())).thenReturn(pages);
+
+    mvc.perform(get("/api/@username/blog/categories/recent?page=0&size=4"))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("태그의 최근 글 조회")
+  void getRecentPostsByTag() throws Exception {
+    List<GetRecentPostResponseDto> list = List.of();
+
+    Pages<GetRecentPostResponseDto> pages = new Pages<>(list, 0, false, false, 0L);
+    when(postsService.getRecentPostByCategory(any(), anyString(), anyString())).thenReturn(pages);
+
+    mvc.perform(get("/api/@username/blog/tags/recent?page=0&size=4"))
+            .andExpect(status().isOk());
+  }
 }

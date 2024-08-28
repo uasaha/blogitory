@@ -187,4 +187,45 @@ public class PostsRestController {
 
     return ResponseEntity.ok(postsService.getRecentPostByBlog(pageable, blogKey));
   }
+
+  /**
+   * Get recent posts by category.
+   *
+   * @param username     username
+   * @param blogUrl      blog url
+   * @param categoryName category name
+   * @param pageable     pageable
+   * @return 200
+   */
+  @GetMapping("/@{username}/{blogUrl}/categories/{categoryName}")
+  public ResponseEntity<Pages<GetRecentPostResponseDto>> getRecentPostsByCategory(
+          @PathVariable String username,
+          @PathVariable String blogUrl,
+          @PathVariable String categoryName,
+          @PageableDefault Pageable pageable) {
+    String blogKey = getBlogKey(username, blogUrl);
+
+    return ResponseEntity.ok(postsService.getRecentPostByCategory(pageable, blogKey, categoryName));
+  }
+
+  /**
+   * Get recent posts by tag.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param tagName  tag name
+   * @param pageable pageable
+   * @return 200
+   */
+  @GetMapping("/@{username}/{blogUrl}/tags/{tagName}")
+  public ResponseEntity<Pages<GetRecentPostResponseDto>> getRecentPostsByTag(
+          @PathVariable String username,
+          @PathVariable String blogUrl,
+          @PathVariable String tagName,
+          @PageableDefault Pageable pageable) {
+    String blogKey = getBlogKey(username, blogUrl);
+
+    return ResponseEntity.ok(postsService.getRecentPostByTag(pageable, blogKey, tagName));
+  }
+
 }

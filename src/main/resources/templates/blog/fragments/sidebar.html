@@ -104,7 +104,7 @@
                              <path d="M7 16h10"/>
                          </svg>
                     </span>
-                    <span class="nav-link-title">All</span>
+                    <span class="nav-link-title" th:text="${'All (' + blog.postsCnt + ')'}"></span>
                     </a>
                 </li>
                 <li class="nav-item dropdown">
@@ -138,7 +138,7 @@
                             <div th:each="category : ${blog.categories}" class="dropdown-menu-column">
                                 <a class="dropdown-item"
                                    th:href="|/${blog.blogUrl}/categories/${category.categoryName}|"
-                                   th:text="${category.categoryName}"></a>
+                                   th:text="${category.categoryName} + ' (' + ${category.postsCnt} + ')'"></a>
                             </div>
                         </div>
                     </div>
@@ -159,8 +159,10 @@
                 <div class="text-secondary">태그</div>
                 <div class="card">
                     <div class="card-body">
-                        <span th:each="tag : ${blog.tags}" class="badge badge-outline ms-auto m-1"
-                              th:text="${tag.tagName}"></span>
+                        <span th:each="tag : ${blog.tags}" class="badge badge-outline ms-auto m-1 cursor-pointer"
+                              th:text="${tag.tagName}" th:tag-name="${tag.tagName}"
+                              th:blog-url="${blog.blogUrl}"
+                              th:onclick="|location.href='/' + this.getAttribute('blog-url') + '/tags/' + this.getAttribute('tag-name')|"></span>
                     </div>
                 </div>
             </div>

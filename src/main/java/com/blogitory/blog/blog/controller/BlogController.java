@@ -29,6 +29,9 @@ public class BlogController {
   private final BlogService blogService;
   private final PostsService postsService;
 
+  private static final String BLOG_ATTR = "blog";
+  private static final String PAGEABLE_ATTR = "pageable";
+
   /**
    * Go to blog page.
    *
@@ -45,7 +48,7 @@ public class BlogController {
     GetBlogResponseDto blogResponse = blogService.getBlogByUrl(blogKey);
     List<GetPopularPostResponseDto> postResponses = postsService.getPopularPostsByBlog(blogKey);
 
-    model.addAttribute("blog", blogResponse);
+    model.addAttribute(BLOG_ATTR, blogResponse);
     model.addAttribute("popularPosts", postResponses);
 
     return "blog/main/index";
@@ -69,9 +72,63 @@ public class BlogController {
 
     GetBlogResponseDto blogResponse = blogService.getBlogByUrl(blogKey);
 
-    model.addAttribute("blog", blogResponse);
-    model.addAttribute("pageable", pageable);
+    model.addAttribute(BLOG_ATTR, blogResponse);
+    model.addAttribute(PAGEABLE_ATTR, pageable);
 
     return "blog/main/all-posts";
+  }
+
+  /**
+   * Category post page.
+   *
+   * @param username     username
+   * @param blogUrl      blog url
+   * @param categoryName category name
+   * @param pageable     pageable
+   * @param model        model
+   * @return category page
+   */
+  @GetMapping("/@{username}/{blogUrl}/categories/{categoryName}")
+  public String categoryPosts(@PathVariable("username") String username,
+                              @PathVariable("blogUrl") String blogUrl,
+                              @PathVariable("categoryName") String categoryName,
+                              @PageableDefault Pageable pageable,
+                              Model model) {
+    String blogKey = getBlogKey(username, blogUrl);
+
+    GetBlogResponseDto blogResponse = blogService.getBlogByUrl(blogKey);
+
+    model.addAttribute(BLOG_ATTR, blogResponse);
+    model.addAttribute("category", categoryName);
+    model.addAttribute(PAGEABLE_ATTR, pageable);
+
+    return "blog/main/category-posts";
+  }
+
+  /**
+   * Tag post page.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param tagName  tag name
+   * @param pageable pageable
+   * @param model    model
+   * @return category page
+   */
+  @GetMapping("/@{username}/{blogUrl}/tags/{tagName}")
+  public String tagPosts(@PathVariable("username") String username,
+                         @PathVariable("blogUrl") String blogUrl,
+                         @PathVariable("tagName") String tagName,
+                         @PageableDefault Pageable pageable,
+                         Model model) {
+    String blogKey = getBlogKey(username, blogUrl);
+
+    GetBlogResponseDto blogResponse = blogService.getBlogByUrl(blogKey);
+
+    model.addAttribute(BLOG_ATTR, blogResponse);
+    model.addAttribute("tag", tagName);
+    model.addAttribute(PAGEABLE_ATTR, pageable);
+
+    return "blog/main/tag-posts";
   }
 }

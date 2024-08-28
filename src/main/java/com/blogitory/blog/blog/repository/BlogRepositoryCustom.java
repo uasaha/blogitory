@@ -33,7 +33,19 @@ public interface BlogRepositoryCustom {
    */
   List<GetBlogInHeaderResponseDto> getBlogListInHeaderByUsername(String username);
 
+  /**
+   * Get blog info.
+   *
+   * @param url blog url
+   * @return blog info
+   */
   Optional<GetBlogResponseDto> getBlogByUrl(String url);
 
+  /**
+   * Get blog by member with category list.
+   *
+   * @param memberNo member no
+   * @return blog list
+   */
   List<GetBlogWithCategoryResponseDto> getBlogWithCategoryList(Integer memberNo);
 }

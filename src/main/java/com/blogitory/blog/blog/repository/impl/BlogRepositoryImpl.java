@@ -8,15 +8,14 @@ import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.QBlog;
 import com.blogitory.blog.blog.repository.BlogRepositoryCustom;
 import com.blogitory.blog.category.dto.GetCategoryInSettingsResponseDto;
-import com.blogitory.blog.category.dto.GetCategoryResponseDto;
 import com.blogitory.blog.category.entity.QCategory;
 import com.blogitory.blog.image.entity.QImage;
 import com.blogitory.blog.member.entity.QMember;
-import com.blogitory.blog.poststag.entity.QPostsTag;
-import com.blogitory.blog.tag.dto.GetTagResponseDto;
-import com.blogitory.blog.tag.entity.QTag;
+import com.blogitory.blog.posts.entity.QPosts;
 import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -100,45 +99,38 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
     QBlog blog = QBlog.blog;
     QMember member = QMember.member;
     QImage image = QImage.image;
+    QPosts posts = QPosts.posts;
     QCategory category = QCategory.category;
-    QTag tag = QTag.tag;
-    QPostsTag postsTag = QPostsTag.postsTag;
 
-    List<GetBlogResponseDto> response = queryFactory.from(blog)
-            .select(blog)
+    return Optional.ofNullable(queryFactory
+            .from(blog)
+            .select(Projections.constructor(
+                    GetBlogResponseDto.class,
+                    image.url,
+                    image.originName,
+                    blog.urlName,
+                    blog.name,
+                    member.name,
+                    member.username,
+                    blog.bio,
+                    ExpressionUtils.as(
+                            JPAExpressions.select(posts.count())
+                                    .from(posts)
+                                    .innerJoin(category)
+                                    .on(category.categoryNo.eq(posts.category.categoryNo))
+                                    .innerJoin(blog)
+                                    .on(blog.blogNo.eq(category.blog.blogNo))
+                                    .where(blog.urlName.eq(url)
+                                            .and(blog.deleted.isFalse())
+                                            .and(category.deleted.isFalse())
+                                            .and(posts.deleted.isFalse())),
+                            "postsCnt")
+                    ))
             .innerJoin(blog.member, member)
             .leftJoin(image).on(image.blog.blogNo.eq(blog.blogNo))
-            .leftJoin(category).on(blog.blogNo.eq(category.blog.blogNo))
-            .leftJoin(postsTag).on(postsTag.blog.blogNo.eq(blog.blogNo))
-            .leftJoin(tag).on(postsTag.tag.tagNo.eq(tag.tagNo))
             .where(blog.urlName.eq(url))
             .where(blog.deleted.eq(false))
-            .transform(
-                    GroupBy.groupBy(blog.blogNo)
-                            .list(
-                                    Projections.constructor(
-                                            GetBlogResponseDto.class,
-                                            image.url,
-                                            image.originName,
-                                            blog.urlName,
-                                            blog.name,
-                                            member.name,
-                                            member.username,
-                                            blog.bio,
-                                            GroupBy.list(
-                                                    Projections.constructor(
-                                                            GetCategoryResponseDto.class,
-                                                            category.categoryNo,
-                                                            category.name,
-                                                            category.deleted
-                                                    )),
-                                            GroupBy.list(
-                                                    Projections.constructor(
-                                                            GetTagResponseDto.class,
-                                                            tag.name))
-                                    )));
-
-    return response.isEmpty() ? Optional.empty() : Optional.of(response.getFirst());
+            .fetchOne());
   }
 
   /**
@@ -163,7 +155,7 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
                                     blog.blogNo,
                                     blog.name,
                                     GroupBy.list(Projections.constructor(
-                                            GetCategoryResponseDto.class,
+                                            GetCategoryInSettingsResponseDto.class,
                                             category.categoryNo,
                                             category.name,
                                             category.deleted

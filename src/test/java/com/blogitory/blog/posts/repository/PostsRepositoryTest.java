@@ -23,6 +23,12 @@ import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
+import com.blogitory.blog.poststag.entity.PostsTag;
+import com.blogitory.blog.poststag.entity.PostsTagDummy;
+import com.blogitory.blog.poststag.repository.PostsTagRepository;
+import com.blogitory.blog.tag.entity.Tag;
+import com.blogitory.blog.tag.entity.TagDummy;
+import com.blogitory.blog.tag.repository.TagRepository;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
@@ -59,6 +65,12 @@ class PostsRepositoryTest {
   BlogRepository blogRepository;
 
   @Autowired
+  TagRepository tagRepository;
+
+  @Autowired
+  PostsTagRepository postsTagRepository;
+
+  @Autowired
   EntityManager entityManager;
 
   /**
@@ -73,6 +85,10 @@ class PostsRepositoryTest {
     entityManager.createNativeQuery("ALTER TABLE `member` ALTER COLUMN `member_no` RESTART")
             .executeUpdate();
     entityManager.createNativeQuery("ALTER TABLE `blog` ALTER COLUMN `blog_no` RESTART")
+            .executeUpdate();
+    entityManager.createNativeQuery("ALTER TABLE `tag` ALTER COLUMN `tag_no` RESTART")
+            .executeUpdate();
+    entityManager.createNativeQuery("ALTER TABLE `posts_tag` ALTER COLUMN `posts_tag_no` RESTART")
             .executeUpdate();
   }
 
@@ -250,6 +266,58 @@ class PostsRepositoryTest {
     assertFalse(responseList.isEmpty());
 
     GetPopularPostResponseDto actual = responseList.getFirst();
+
+    assertEquals(posts.getSubject(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("카테고리 글 조회")
+  void getRecentPostsByCategory() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<GetRecentPostResponseDto> page = postsRepository
+            .getRecentPostByCategory(pageable, blog.getUrlName(), category.getName());
+
+    assertEquals(1L, page.getTotalElements());
+
+    GetRecentPostResponseDto actual = page.getContent().getFirst();
+
+    assertEquals(posts.getSubject(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("태그 글 조회")
+  void getRecentPostsByTag() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Tag tag = TagDummy.dummy();
+    tag = tagRepository.save(tag);
+    PostsTag postsTag = PostsTagDummy.dummy(tag, posts, blog);
+    postsTag = postsTagRepository.save(postsTag);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<GetRecentPostResponseDto> page = postsRepository
+            .getRecentPostsByTag(pageable, blog.getUrlName(), tag.getName());
+
+    assertEquals(1L, page.getTotalElements());
+
+    GetRecentPostResponseDto actual = page.getContent().getFirst();
 
     assertEquals(posts.getSubject(), actual.getTitle());
   }

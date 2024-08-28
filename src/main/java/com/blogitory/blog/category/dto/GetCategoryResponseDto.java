@@ -18,4 +18,5 @@ public class GetCategoryResponseDto {
   private Long categoryNo;
   private String categoryName;
   private boolean deleted;
+  private long postsCnt;
 }

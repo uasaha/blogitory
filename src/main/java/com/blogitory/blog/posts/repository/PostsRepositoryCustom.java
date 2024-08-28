@@ -65,6 +65,11 @@ public interface PostsRepositoryCustom {
   Page<GetRecentPostResponseDto> getRecentPostByBlog(
           Pageable pageable, String blogUrl);
 
+  long getPostsCountByBlog(String blogUrl);
+
+  Page<GetRecentPostResponseDto> getRecentPostByCategory(
+          Pageable pageable, String blogUrl, String categoryName);
+
   /**
    * Get popular posts by blog.
    *
@@ -72,4 +77,16 @@ public interface PostsRepositoryCustom {
    * @return posts list
    */
   List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl);
+
+  /**
+   * Get recent posts by tag.
+   *
+   * @param pageable pageable
+   * @param blogUrl  blog url
+   * @param tagName  tag name
+   * @return posts
+   */
+  Page<GetRecentPostResponseDto> getRecentPostsByTag(Pageable pageable,
+                                                     String blogUrl,
+                                                     String tagName);
 }

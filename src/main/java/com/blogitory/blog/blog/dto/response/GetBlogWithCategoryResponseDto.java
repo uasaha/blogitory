@@ -1,6 +1,6 @@
 package com.blogitory.blog.blog.dto.response;
 
-import com.blogitory.blog.category.dto.GetCategoryResponseDto;
+import com.blogitory.blog.category.dto.GetCategoryInSettingsResponseDto;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import lombok.Getter;
 public class GetBlogWithCategoryResponseDto {
   private Long blogNo;
   private String blogName;
-  private List<GetCategoryResponseDto> categories;
+  private List<GetCategoryInSettingsResponseDto> categories;
 
   public void distinct() {
     categories = this.categories.stream().distinct()

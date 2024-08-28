@@ -51,7 +51,7 @@ class BlogControllerTest {
   @DisplayName("블로그 페이지")
   void blog() throws Exception {
     List<GetCategoryResponseDto> categories =
-            List.of(new GetCategoryResponseDto(1L, "category", false));
+            List.of(new GetCategoryResponseDto(1L, "category", false, 0L));
     List<GetTagResponseDto> tags = List.of(new GetTagResponseDto("tag"));
 
     GetBlogResponseDto responseDto = new GetBlogResponseDto(
@@ -62,8 +62,10 @@ class BlogControllerTest {
             "test",
             "test",
             "test",
-            categories,
-            tags);
+            0L);
+
+    responseDto.categories(categories);
+    responseDto.tags(tags);
 
     when(blogService.getBlogByUrl(any())).thenReturn(responseDto);
 
@@ -75,7 +77,7 @@ class BlogControllerTest {
   @DisplayName("전체 게시물 페이지")
   void blogPosts() throws Exception {
     List<GetCategoryResponseDto> categories =
-            List.of(new GetCategoryResponseDto(1L, "category", false));
+            List.of(new GetCategoryResponseDto(1L, "category", false, 0L));
     List<GetTagResponseDto> tags = List.of(new GetTagResponseDto("tag"));
 
     GetBlogResponseDto responseDto = new GetBlogResponseDto(
@@ -86,12 +88,66 @@ class BlogControllerTest {
             "test",
             "test",
             "test",
-            categories,
-            tags);
+            0L);
+
+    responseDto.categories(categories);
+    responseDto.tags(tags);
 
     when(blogService.getBlogByUrl(any())).thenReturn(responseDto);
 
     mockMvc.perform(get("/@test/test/posts?page=0"))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("카테고리 게시물 페이지")
+  void categoryPosts() throws Exception {
+    List<GetCategoryResponseDto> categories =
+            List.of(new GetCategoryResponseDto(1L, "category", false, 0L));
+    List<GetTagResponseDto> tags = List.of(new GetTagResponseDto("tag"));
+
+    GetBlogResponseDto responseDto = new GetBlogResponseDto(
+            "thumbUrl",
+            "thumbOriginName",
+            "@test/test",
+            "test",
+            "test",
+            "test",
+            "test",
+            0L);
+
+    responseDto.categories(categories);
+    responseDto.tags(tags);
+
+    when(blogService.getBlogByUrl(any())).thenReturn(responseDto);
+
+    mockMvc.perform(get("/@test/test/categories/" + categories.getFirst().getCategoryName()))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("태그 게시물 조회")
+  void tagPosts() throws Exception {
+    List<GetCategoryResponseDto> categories =
+            List.of(new GetCategoryResponseDto(1L, "category", false, 0L));
+    List<GetTagResponseDto> tags = List.of(new GetTagResponseDto("tag"));
+
+    GetBlogResponseDto responseDto = new GetBlogResponseDto(
+            "thumbUrl",
+            "thumbOriginName",
+            "@test/test",
+            "test",
+            "test",
+            "test",
+            "test",
+            0L);
+
+    responseDto.categories(categories);
+    responseDto.tags(tags);
+
+    when(blogService.getBlogByUrl(any())).thenReturn(responseDto);
+
+    mockMvc.perform(get("/@test/test/tags/" + tags.getFirst().getTagName()))
             .andExpect(status().isOk());
   }
 }

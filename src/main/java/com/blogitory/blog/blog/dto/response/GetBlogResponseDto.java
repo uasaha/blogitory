@@ -2,9 +2,8 @@ package com.blogitory.blog.blog.dto.response;
 
 import com.blogitory.blog.category.dto.GetCategoryResponseDto;
 import com.blogitory.blog.tag.dto.GetTagResponseDto;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -14,25 +13,42 @@ import lombok.Getter;
  * @Date 2024-07-31
  * @since 1.0
  **/
-@AllArgsConstructor
 @Getter
 public class GetBlogResponseDto {
-  private String blogThumbUrl;
-  private String blogThumbOriginName;
-  private String blogUrl;
-  private String blogName;
-  private String name;
-  private String username;
-  private String blogBio;
-  private List<GetCategoryResponseDto> categories;
-  private List<GetTagResponseDto> tags;
+  private final String blogThumbUrl;
+  private final String blogThumbOriginName;
+  private final String blogUrl;
+  private final String blogName;
+  private final String name;
+  private final String username;
+  private final String blogBio;
+  private final long postsCnt;
+  private List<GetCategoryResponseDto> categories = new ArrayList<>();
+  private List<GetTagResponseDto> tags = new ArrayList<>();
 
-  /**
-   * distinct category, tag.
-   */
-  public void distinct() {
-    categories = categories.stream().filter(c -> !c.isDeleted()).distinct().toList();
-    tags = tags.stream().filter(t -> Objects.nonNull(t.getTagName()))
-            .distinct().toList();
+  public GetBlogResponseDto(String blogThumbUrl,
+                            String blogThumbOriginName,
+                            String blogUrl,
+                            String blogName,
+                            String name,
+                            String username,
+                            String blogBio,
+                            long postsCnt) {
+    this.blogThumbUrl = blogThumbUrl;
+    this.blogThumbOriginName = blogThumbOriginName;
+    this.blogUrl = blogUrl;
+    this.blogName = blogName;
+    this.name = name;
+    this.username = username;
+    this.blogBio = blogBio;
+    this.postsCnt = postsCnt;
+  }
+
+  public void categories(List<GetCategoryResponseDto> categories) {
+    this.categories = categories.stream().distinct().toList();
+  }
+
+  public void tags(List<GetTagResponseDto> tags) {
+    this.tags = tags;
   }
 }

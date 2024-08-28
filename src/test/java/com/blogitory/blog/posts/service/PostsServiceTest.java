@@ -26,6 +26,7 @@ import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
@@ -683,5 +684,67 @@ class PostsServiceTest {
 
     assertEquals(resultDto.getTitle(), response.getTitle());
     assertEquals(resultDto.getSummary(), response.getSummary());
+  }
+
+  @Test
+  @DisplayName("카테고리 최근 글 조회")
+  void getRecentPostByCategory() {
+    GetRecentPostResponseDto response = new GetRecentPostResponseDto(
+            "blogUrl", "blogName", "username",
+            "blogPfp", "postUrl", "title",
+            "summary", "thumb", LocalDateTime.now(),
+            0L, 0L);
+    List<GetRecentPostResponseDto> list = List.of(response);
+    Pageable pageable = PageRequest.of(0, 4);
+
+    Page<GetRecentPostResponseDto> page = new PageImpl<>(list, pageable, 1L);
+
+    when(postsRepository.getRecentPostByCategory(any(), anyString(), anyString())).thenReturn(page);
+
+    List<GetRecentPostResponseDto> result = postsService.getRecentPostByCategory(pageable, "blogUrl", "category").body();
+    GetRecentPostResponseDto resultDto = result.getFirst();
+
+    assertEquals(resultDto.getTitle(), response.getTitle());
+    assertEquals(resultDto.getSummary(), response.getSummary());
+  }
+
+  @Test
+  @DisplayName("태그 최근 글 조회")
+  void getRecentPostByTag() {
+    GetRecentPostResponseDto response = new GetRecentPostResponseDto(
+            "blogUrl", "blogName", "username",
+            "blogPfp", "postUrl", "title",
+            "summary", "thumb", LocalDateTime.now(),
+            0L, 0L);
+    List<GetRecentPostResponseDto> list = List.of(response);
+    Pageable pageable = PageRequest.of(0, 4);
+
+    Page<GetRecentPostResponseDto> page = new PageImpl<>(list, pageable, 1L);
+
+    when(postsRepository.getRecentPostsByTag(any(), anyString(), anyString())).thenReturn(page);
+
+    List<GetRecentPostResponseDto> result = postsService.getRecentPostByTag(pageable, "blogUrl", "tag").body();
+    GetRecentPostResponseDto resultDto = result.getFirst();
+
+    assertEquals(resultDto.getTitle(), response.getTitle());
+    assertEquals(resultDto.getSummary(), response.getSummary());
+  }
+
+  @Test
+  @DisplayName("인기 글 조회")
+  void getPopularPostsByBlog() {
+    GetPopularPostResponseDto response = new GetPopularPostResponseDto(
+            "thumb", "title", "summary", 0L, 0L);
+
+    when(postsRepository.getPopularPostsByBlog(anyString())).thenReturn(List.of(response));
+
+    List<GetPopularPostResponseDto> list = postsService.getPopularPostsByBlog("blogUrl");
+
+    assertFalse(list.isEmpty());
+
+    GetPopularPostResponseDto result = list.getFirst();
+
+    assertEquals(result.getTitle(), response.getTitle());
+    assertEquals(result.getSummary(), response.getSummary());
   }
 }

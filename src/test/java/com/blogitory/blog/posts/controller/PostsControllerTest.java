@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
 import com.blogitory.blog.blog.dto.response.GetBlogWithCategoryResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.category.dto.GetCategoryInSettingsResponseDto;
 import com.blogitory.blog.category.dto.GetCategoryResponseDto;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.follow.service.FollowService;
@@ -82,7 +83,7 @@ class PostsControllerTest {
             List.of("tag"));
 
     List<GetBlogWithCategoryResponseDto> blogs = List.of(new GetBlogWithCategoryResponseDto(tpDto.getBlogNo(), "blogName", List.of(
-            new GetCategoryResponseDto(1L, "name", false))));
+            new GetCategoryInSettingsResponseDto(1L, "name", false))));
 
     when(postsService.loadTempPosts(any(), any())).thenReturn(tpDto);
     when(blogService.getBlogListWithCategory(anyInt())).thenReturn(blogs);
@@ -127,7 +128,7 @@ class PostsControllerTest {
   @Test
   @DisplayName("게시글 조회")
   void postsPage() throws Exception {
-    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname", false);
+    GetCategoryResponseDto categoryResponseDto = new GetCategoryResponseDto(1L, "cname", false, 0L);
 
     GetBlogResponseDto blogResponse = new GetBlogResponseDto(
             "blogThumbUrl",
@@ -137,8 +138,10 @@ class PostsControllerTest {
             "name",
             "username",
             "blogBio",
-            List.of(categoryResponseDto),
-            List.of());
+            0L);
+
+    blogResponse.categories(List.of(categoryResponseDto));
+    blogResponse.tags(List.of());
 
     GetPostResponseDto postResponse = new GetPostResponseDto(
             "username",

@@ -201,7 +201,7 @@ class BlogRepositoryTest {
     posts = postsRepository.save(posts);
 
     PostsTag postsTag = PostsTagDummy.dummy(tag, posts, blog);
-    postsTag = postsTagRepository.save(postsTag);
+    postsTagRepository.save(postsTag);
 
     Optional<GetBlogResponseDto> optionalResponseDto =
             blogRepository.getBlogByUrl(blog.getUrlName());
@@ -217,8 +217,6 @@ class BlogRepositoryTest {
     assertEquals(member.getName(), responseDto.getName());
     assertEquals(member.getUsername(), responseDto.getUsername());
     assertEquals(blog.getBio(), responseDto.getBlogBio());
-    assertEquals(category.getName(), responseDto.getCategories().getFirst().getCategoryName());
-    assertEquals(tag.getName(), responseDto.getTags().getFirst().getTagName());
   }
 
   @Test

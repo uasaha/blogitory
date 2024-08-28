@@ -274,6 +274,9 @@ public class PostsServiceImpl implements PostsService {
     }
 
     posts.delete();
+
+    List<PostsTag> postsTags = postsTagRepository.findByPostsNo(posts.getPostsNo());
+    postsTagRepository.deleteAll(postsTags);
   }
 
   /**
@@ -317,6 +320,43 @@ public class PostsServiceImpl implements PostsService {
             result.getTotalElements());
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public Pages<GetRecentPostResponseDto> getRecentPostByCategory(Pageable pageable,
+                                                                 String blogUrl,
+                                                                 String categoryName) {
+    Page<GetRecentPostResponseDto> result =
+            postsRepository.getRecentPostByCategory(pageable, blogUrl, categoryName);
+
+    return new Pages<>(result.getContent(),
+            pageable.getPageNumber(),
+            result.hasPrevious(),
+            result.hasNext(),
+            result.getTotalElements());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public Pages<GetRecentPostResponseDto> getRecentPostByTag(Pageable pageable,
+                                                                 String blogUrl,
+                                                                 String tagName) {
+    Page<GetRecentPostResponseDto> result =
+            postsRepository.getRecentPostsByTag(pageable, blogUrl, tagName);
+
+    return new Pages<>(result.getContent(),
+            pageable.getPageNumber(),
+            result.hasPrevious(),
+            result.hasNext(),
+            result.getTotalElements());
+  }
+
+  @Transactional(readOnly = true)
   @Override
   public List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl) {
     return postsRepository.getPopularPostsByBlog(blogUrl);

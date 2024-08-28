@@ -42,7 +42,7 @@ public class CategoryRestController {
   @PostMapping
   public ResponseEntity<CreateCategoryResponseDto> createCategory(
           @Valid @RequestParam
-          @Size(min = 1, max = 30) @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9-]+$")
+          @Size(min = 1, max = 30) @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9-\\s]+$")
           String name,
           @RequestParam String blogUrl) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();

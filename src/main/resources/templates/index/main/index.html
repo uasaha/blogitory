@@ -73,7 +73,6 @@
         const io = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    console.log("call");
                     axios.get("/api/posts/recent?page=" + page)
                         .then((response) => {
                             let articles = response.data.body;
