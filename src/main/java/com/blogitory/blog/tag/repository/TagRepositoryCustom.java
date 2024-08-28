@@ -21,4 +21,12 @@ public interface TagRepositoryCustom {
    * @return tag
    */
   List<GetTagResponseDto> getTagListByPost(String postUrl);
+
+  /**
+   * Get tags by blog.
+   *
+   * @param blogUrl blog url
+   * @return tags
+   */
+  List<GetTagResponseDto> getTagsByBlog(String blogUrl);
 }
