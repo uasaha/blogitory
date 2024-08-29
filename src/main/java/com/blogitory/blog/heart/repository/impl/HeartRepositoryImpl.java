@@ -16,7 +16,8 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * @Date 2024-08-29
  * @since 1.0
  **/
-public class HeartRepositoryImpl extends QuerydslRepositorySupport implements HeartRepositoryCustom {
+public class HeartRepositoryImpl extends QuerydslRepositorySupport
+        implements HeartRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
 
