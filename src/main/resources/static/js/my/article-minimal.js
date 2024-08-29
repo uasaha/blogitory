@@ -301,7 +301,6 @@ function getPostsComponentForBlog(article) {
 function getListStylePostsComponent(article) {
     let postDiv = document.createElement('div');
     postDiv.className = "col-12";
-    postDiv.style = "min-height: 9em;"
 
     let postCardDiv = document.createElement('div');
     postCardDiv.className = "card cursor-pointer zoom cursor-pointer";
@@ -315,7 +314,7 @@ function getListStylePostsComponent(article) {
 
     if (article.thumb) {
         let postThumbCol = document.createElement('div');
-        postThumbCol.className = "col-3";
+        postThumbCol.className = "col-4";
 
         let postThumbDiv = document.createElement('div');
         postThumbDiv.className = "ratio ratio-4x3 card-img-start";
@@ -352,6 +351,7 @@ function getListStylePostsComponent(article) {
     postSummaryDiv.className = "col-12";
 
     let postSummary = document.createElement('span');
+    postSummary.className = "text-over-summary-1";
     postSummary.innerText = article.summary;
     postSummaryDiv.appendChild(postSummary);
 

@@ -16,6 +16,15 @@
     overflow: hidden;
 }
 
+.text-over-summary-1 {
+    display: -webkit-box;
+    word-wrap: break-word;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .text-over-summary-8 {
     display: -webkit-box;
     word-wrap: break-word;
