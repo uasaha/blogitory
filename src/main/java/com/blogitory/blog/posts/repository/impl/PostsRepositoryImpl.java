@@ -220,6 +220,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
             .from(posts)
             .select(Projections.constructor(
                     GetPopularPostResponseDto.class,
+                    posts.url,
                     posts.thumbnail,
                     posts.subject,
                     posts.summary,
@@ -248,6 +249,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
             .from(posts)
             .select(Projections.constructor(
                     GetPopularPostResponseDto.class,
+                    posts.url,
                     posts.thumbnail,
                     posts.subject,
                     posts.summary,

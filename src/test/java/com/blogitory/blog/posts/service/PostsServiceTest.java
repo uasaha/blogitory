@@ -734,7 +734,7 @@ class PostsServiceTest {
   @DisplayName("인기 글 조회")
   void getPopularPostsByBlog() {
     GetPopularPostResponseDto response = new GetPopularPostResponseDto(
-            "thumb", "title", "summary", 0L, 0L);
+            "url", "thumb", "title", "summary", 0L, 0L);
 
     when(postsRepository.getPopularPostsByBlog(anyString())).thenReturn(List.of(response));
 

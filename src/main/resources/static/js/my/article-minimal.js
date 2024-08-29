@@ -368,6 +368,46 @@ function getListStylePostsComponent(article) {
     return postDiv;
 }
 
+function getGridStylePostsComponent(article) {
+    let postDiv = document.createElement('div');
+    postDiv.className = "col-3";
+
+    let postCardDiv = document.createElement('div');
+    postCardDiv.className = "card cursor-pointer zoom cursor-pointer";
+
+    postCardDiv.addEventListener("click", () => {
+        location.href = "/" + article.postUrl;
+    })
+
+    let postThumbDiv = document.createElement('div');
+    postThumbDiv.className = "ratio ratio-1x1";
+
+    if (article.thumb) {
+        let postThumbImg = document.createElement('img');
+        postThumbImg.src = article.thumb;
+        postThumbImg.alt = "thumb";
+        postThumbImg.style.objectFit = "cover";
+
+        postThumbDiv.appendChild(postThumbImg);
+    } else {
+        let postTitleDiv = document.createElement('div');
+        postTitleDiv.className = "d-flex justify-content-center align-items-center";
+
+        let postTitle = document.createElement('span');
+        postTitle.className = "font-weight-bold text-truncate";
+        postTitle.style = "font-size: 1.5em;";
+        postTitle.innerText = article.title;
+        postTitleDiv.appendChild(postTitle);
+
+        postThumbDiv.appendChild(postTitleDiv);
+    }
+
+    postCardDiv.appendChild(postThumbDiv);
+    postDiv.appendChild(postCardDiv);
+
+    return postDiv;
+}
+
 function setCookie(name, value, days) {
     let expires = "";
     if (days) {
@@ -398,8 +438,14 @@ function getPostsByStyleForBlog(article) {
 
     style = getCookie('view-style');
 
+    document.getElementById("view-" + style + "-btn").classList.add("text-primary");
+
     if (style === 'album') {
         return getPostsComponentForBlog(article);
+    }
+
+    if (style === 'grid') {
+        return getGridStylePostsComponent(article);
     }
 
     return getListStylePostsComponent(article);

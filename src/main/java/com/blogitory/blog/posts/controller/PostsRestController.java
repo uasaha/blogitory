@@ -182,7 +182,7 @@ public class PostsRestController {
   public ResponseEntity<Pages<GetRecentPostResponseDto>> getRecentPostsByBlog(
           @PathVariable String username,
           @PathVariable String blogUrl,
-          @PageableDefault Pageable pageable) {
+          @PageableDefault(size = 12) Pageable pageable) {
     String blogKey = getBlogKey(username, blogUrl);
 
     return ResponseEntity.ok(postsService.getRecentPostByBlog(pageable, blogKey));
@@ -202,7 +202,7 @@ public class PostsRestController {
           @PathVariable String username,
           @PathVariable String blogUrl,
           @PathVariable String categoryName,
-          @PageableDefault Pageable pageable) {
+          @PageableDefault(size = 12) Pageable pageable) {
     String blogKey = getBlogKey(username, blogUrl);
 
     return ResponseEntity.ok(postsService.getRecentPostByCategory(pageable, blogKey, categoryName));
@@ -222,7 +222,7 @@ public class PostsRestController {
           @PathVariable String username,
           @PathVariable String blogUrl,
           @PathVariable String tagName,
-          @PageableDefault Pageable pageable) {
+          @PageableDefault(size = 12) Pageable pageable) {
     String blogKey = getBlogKey(username, blogUrl);
 
     return ResponseEntity.ok(postsService.getRecentPostByTag(pageable, blogKey, tagName));

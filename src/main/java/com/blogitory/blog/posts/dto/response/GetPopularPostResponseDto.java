@@ -15,6 +15,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class GetPopularPostResponseDto {
+  private String url;
   private String thumb;
   private String title;
   private String summary;

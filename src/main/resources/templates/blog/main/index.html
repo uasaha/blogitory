@@ -31,7 +31,7 @@
                                          th:src="${popularPost.thumb}"
                                          style="object-fit: cover">
                                     <div class="carousel-caption-background"></div>
-                                    <div class="carousel-caption">
+                                    <div class="carousel-caption cursor-pointer" th:post-url="${popularPost.url}" th:onclick="|window.location.href='/' + this.getAttribute('post-url')|">
                                         <h3 th:text="${popularPost.title}" style="font-weight: bold; font-size: 15px; color: white; margin-top: 15em"></h3>
                                         <p th:text="${popularPost.summary}" style="color: white"></p>
                                     </div>
