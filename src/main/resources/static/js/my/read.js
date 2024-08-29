@@ -736,11 +736,15 @@ function heart() {
     let path = window.location.pathname;
     let noHeart = document.getElementById("heart-icon-a");
     let fillHeart = document.getElementById("heart-icon-b");
+    let heartCnt = document.getElementById("heart-cnt");
 
     axios.post("/api" + path + "/heart")
         .then(() => {
             noHeart.classList.add("d-none");
             fillHeart.classList.remove("d-none");
+
+            let nowCnt = Number(heartCnt.innerText);
+            heartCnt.innerText = nowCnt + 1;
         })
         .catch(() => {
             openFailedAlerts("잠시 후 다시 시도해주세요.");
@@ -753,11 +757,15 @@ function cancelHeart() {
     let path = window.location.pathname;
     let noHeart = document.getElementById("heart-icon-a");
     let fillHeart = document.getElementById("heart-icon-b");
+    let heartCnt = document.getElementById("heart-cnt");
 
     axios.delete("/api" + path + "/heart")
         .then(() => {
             noHeart.classList.remove("d-none");
             fillHeart.classList.add("d-none");
+
+            let nowCnt = Number(heartCnt.innerText);
+            heartCnt.innerText = nowCnt - 1;
         })
         .catch(() => {
             openFailedAlerts("잠시 후 다시 시도해주세요.");
