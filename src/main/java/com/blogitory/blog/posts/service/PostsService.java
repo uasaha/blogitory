@@ -129,7 +129,7 @@ public interface PostsService {
    * @param pageable pageable
    * @param blogUrl blog url
    * @param categoryName category name
-   * @return
+   * @return recent post
    */
   Pages<GetRecentPostResponseDto> getRecentPostByCategory(Pageable pageable,
                                                           String blogUrl,
@@ -141,7 +141,7 @@ public interface PostsService {
    * @param pageable pageable
    * @param blogUrl blog url
    * @param tagName tag name
-   * @return
+   * @return recent post
    */
   Pages<GetRecentPostResponseDto> getRecentPostByTag(Pageable pageable,
                                                      String blogUrl,
