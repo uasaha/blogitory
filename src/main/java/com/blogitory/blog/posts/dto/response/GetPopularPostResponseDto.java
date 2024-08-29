@@ -1,6 +1,7 @@
 package com.blogitory.blog.posts.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class GetPopularPostResponseDto {
   private String thumb;
   private String title;

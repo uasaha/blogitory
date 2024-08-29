@@ -50,9 +50,8 @@ public class BlogRepositoryImpl extends QuerydslRepositorySupport implements Blo
             .innerJoin(blog.member, member)
             .leftJoin(image).on(image.blog.blogNo.eq(blog.blogNo))
             .leftJoin(category).on(blog.blogNo.eq(category.blog.blogNo))
-            .where(blog.member.memberNo.eq(memberNo)
-                    .and(member.blocked.isFalse())
-                    .and(member.left.isFalse()))
+            .where(member.blocked.isFalse().and(member.left.isFalse()))
+            .where(blog.member.memberNo.eq(memberNo))
             .where(blog.deleted.isFalse())
             .orderBy(blog.blogNo.asc())
             .transform(

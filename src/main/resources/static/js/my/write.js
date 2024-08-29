@@ -7,6 +7,29 @@ const tagRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9]+$/;
 const titleRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9!@#$%^&*()_+=~₩\s]+$/;
 const urlRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+$/;
 
+// const youtubeEl = document.createElement('span');
+// youtubeEl.style = 'cursor: pointer;'
+//
+// const icon = document.createElement('img');
+// icon.setAttribute('src', '/static/icons/youtube_social_icon_red.png');
+// icon.setAttribute('width', '32');
+// youtubeEl.appendChild(icon);
+//
+// const container = document.createElement('div');
+// const description = document.createElement('p');
+// description.textContent = "Youtube 영상 주소를 입력하세요.";
+//
+// const urlInput = document.createElement('input');
+// urlInput.style.width = '100%';
+//
+// const youtubeBtn = document.createElement('button');
+// youtubeBtn.className = 'btn btn-outline-secondary float-end mt-2 mb-2';
+// youtubeBtn.textContent = "입력";
+//
+// container.appendChild(description);
+// container.appendChild(urlInput);
+// container.appendChild(youtubeBtn);
+
 const tagify = new Tagify(tagInput, {
     pattern: tagRegex,
 });
@@ -20,6 +43,54 @@ const editor = new Editor({
     initialEditType: 'wysiwyg',
     plugins: [codeSyntaxHighlight, colorSyntax],
     language: "ko-KR",
+    toolbarItems: [
+        ['heading', 'bold', 'italic', 'strike'],
+        ['hr', 'quote'],
+        ['ul', 'ol', 'task', 'indent', 'outdent'],
+        ['table', 'image', 'link',
+            // {
+            //     name: 'Youtube',
+            //     tooltip: 'Youtube',
+            //     el: youtubeEl,
+            //     popup: {
+            //         body: container,
+            //         style: { width: 'auto' },
+            //     }
+            // }
+        ],
+        ['code', 'codeblock'],
+        ['scrollSync'],
+    ],
+    // customHTMLSanitizer: () => {
+    //     htmlBlock: {
+    //         function iframe(node) {
+    //             return [
+    //                 {
+    //                     type: 'openTag',
+    //                     tagName: 'iframe',
+    //                     outerNewLine: true,
+    //                     attributes: node.attrs,
+    //                 },
+    //                 { type: 'html', content: node.childrenHTML || '' },
+    //                 { type: 'closeTag', tagName: 'iframe', outerNewLine: true },
+    //             ];
+    //         }
+    //         function div(node) {
+    //             return [
+    //                 { type: 'openTag', tagName: 'div', outerNewLine: true, attributes: node.attrs },
+    //                 { type: 'html', content: node.childrenHTML || '' },
+    //                 { type: 'closeTag', tagName: 'div', outerNewLine: true },
+    //             ];
+    //         }
+    //     }
+    //     funhtmlInline: {
+    //         function big(node, { entering }) {
+    //             return entering
+    //                 ? { type: 'openTag', tagName: 'big', attributes: node.attrs }
+    //                 : { type: 'closeTag', tagName: 'big' };
+    //         }
+    //     }
+    // }
 });
 
 editor.addHook("addImageBlobHook", function (blob, callback) {
@@ -45,6 +116,16 @@ document.addEventListener("DOMContentLoaded", () => {
         editor.setMarkdown(posts.details);
     }
 });
+
+// youtubeBtn.addEventListener('click', () => {
+//     if((/https:\/\/youtu.be\/.{11,}/).test(urlInput.value)
+//         || (/https:\/\/www.youtube.com\/watch\?v=.{11,}/).test(urlInput.value)) {
+//
+//         let str = '<div><iframe width="560" height="315" src="https://www.youtube.com/embed/' + urlInput.value.slice(-11) + '" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>';
+//
+//         editor.insertText(str);
+//     }
+// });
 
 function tempSave() {
     let tp = new URL(window.location.href).searchParams.get("tp");
@@ -180,7 +261,7 @@ function saveTempPosts(el) {
     el.disabled = true;
 
     this.tempSave();
-    
+
     window.history.back();
 }
 

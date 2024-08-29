@@ -21,6 +21,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -214,7 +216,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
     NumberPath<Long> heartCnt = Expressions.numberPath(Long.class, "heartCnt");
     NumberPath<Long> commentCnt = Expressions.numberPath(Long.class, "commentCnt");
 
-    return queryFactory
+    List<GetPopularPostResponseDto> heartList = queryFactory
             .from(posts)
             .select(Projections.constructor(
                     GetPopularPostResponseDto.class,
@@ -238,9 +240,47 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
             .where(posts.deleted.isFalse()
                     .and(posts.thumbnail.isNotEmpty())
                     .and(posts.open.isTrue()))
-            .orderBy(heartCnt.desc(), commentCnt.desc())
+            .orderBy(heartCnt.desc())
             .limit(5)
             .fetch();
+
+    List<GetPopularPostResponseDto> commentList = queryFactory
+            .from(posts)
+            .select(Projections.constructor(
+                    GetPopularPostResponseDto.class,
+                    posts.thumbnail,
+                    posts.subject,
+                    posts.summary,
+                    ExpressionUtils.as(
+                            JPAExpressions.select(heart.count())
+                                    .from(heart)
+                                    .where(heart.posts.postsNo.eq(posts.postsNo))
+                                    .where(heart.deleted.isFalse()), "heartCnt"),
+                    ExpressionUtils.as(
+                            JPAExpressions.select(comment.count())
+                                    .from(comment)
+                                    .where(comment.posts.postsNo.eq(posts.postsNo))
+                                    .where(comment.deleted.isFalse()), "commentCnt")
+            ))
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
+            .where(blog.urlName.eq(blogUrl))
+            .where(posts.deleted.isFalse()
+                    .and(posts.thumbnail.isNotEmpty())
+                    .and(posts.open.isTrue()))
+            .orderBy(commentCnt.desc())
+            .limit(5)
+            .fetch();
+
+    List<GetPopularPostResponseDto> total = new ArrayList<>();
+    total.addAll(heartList);
+    total.addAll(commentList);
+
+    return total.stream()
+            .sorted(Comparator.comparingLong(r -> r.getCommentCnt() + r.getHeartCnt() * 2))
+            .distinct()
+            .limit(5)
+            .toList();
   }
 
   /**

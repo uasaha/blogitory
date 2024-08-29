@@ -49,6 +49,6 @@ public class GetBlogResponseDto {
   }
 
   public void tags(List<GetTagResponseDto> tags) {
-    this.tags = tags;
+    this.tags = tags.stream().distinct().toList();
   }
 }

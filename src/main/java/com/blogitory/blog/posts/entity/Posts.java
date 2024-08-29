@@ -80,6 +80,7 @@ public class Posts extends BaseCreatedAtEntity {
     this.views = 0;
     this.thumbnail = thumbnail;
     this.detail = detail;
+    this.open = true;
   }
 
   public void modify(String title, String summary, String content, String thumb) {

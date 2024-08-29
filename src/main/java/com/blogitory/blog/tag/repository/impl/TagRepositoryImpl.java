@@ -60,20 +60,19 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
     QCategory category = QCategory.category;
 
     return queryFactory
-            .from(tag)
+            .from(blog)
             .select(Projections.constructor(
                     GetTagResponseDto.class,
                     tag.name))
-            .innerJoin(postsTag).on(postsTag.tag.tagNo.eq(tag.tagNo))
-            .innerJoin(posts).on(posts.postsNo.eq(postsTag.posts.postsNo))
-            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
-            .innerJoin(blog).on(blog.blogNo.eq(category.categoryNo))
-            .where(blog.urlName.eq(blogUrl)
-                    .and(blog.deleted.isFalse())
-                    .and(posts.deleted.isFalse())
-                    .and(posts.open.isTrue())
-                    .and(category.deleted.isFalse())
-                    .and(tag.deleted.isFalse()))
+            .innerJoin(category).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(posts).on(posts.category.categoryNo.eq(category.categoryNo))
+            .leftJoin(postsTag).on(postsTag.posts.postsNo.eq(posts.postsNo))
+            .leftJoin(tag).on(tag.tagNo.eq(postsTag.tag.tagNo))
+            .where(blog.urlName.eq(blogUrl))
+            .where(blog.deleted.isFalse())
+            .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+            .where(category.deleted.isFalse())
+            .where(tag.deleted.isFalse())
             .fetch();
   }
 }

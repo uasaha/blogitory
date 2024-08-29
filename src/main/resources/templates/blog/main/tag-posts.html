@@ -17,7 +17,31 @@
 <body>
 <div class="container-xl" layout:fragment="main-content">
     <div class="page-header">
-        <h2 id="page-title" class="page-title"></h2>
+        <div class="col-12">
+            <div class="float-start">
+                <h2 id="page-title" class="page-title"></h2>
+            </div>
+            <div class="ms-md-auto float-end">
+                <svg id="viewAlbumBtn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="icon icon-tabler icons-tabler-outline icon-tabler-layout-grid cursor-pointer">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                    <path d="M14 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                    <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                    <path d="M14 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                </svg>
+                <svg id="viewListBtn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="icon icon-tabler icons-tabler-outline icon-tabler-layout-list cursor-pointer">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/>
+                    <path d="M4 14m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/>
+                </svg>
+            </div>
+        </div>
     </div>
     <div class="page-body mt-0">
         <div id="recent-posting" class="row row-cards row-deck mt-2">
@@ -48,14 +72,24 @@
             <div class="d-flex">
                 <div>
                     <a id="page-previous" class="text-body d-none" href="#" tabindex="-1" aria-disabled="true">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                             stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M15 6l-6 6l6 6"/>
+                        </svg>
                         이전
                     </a>
                 </div>
                 <div class="ms-md-auto float-end">
                     <a id="page-next" class="text-body d-none" href="#">
                         다음
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                             stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 6l6 6l-6 6"/>
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -70,12 +104,14 @@
         let blog = [[${blog}]].blogUrl;
         let tag = [[${tag}]];
 
-        let url = "/api/" + blog + "/tags/" + tag +"?page=" + pageable;
+        let url = "/api/" + blog + "/tags/" + tag + "?page=" + pageable;
         const holders = document.querySelectorAll('.place-holder');
         let pagePrevious = document.getElementById("page-previous");
         let pageNext = document.getElementById("page-next");
         let path = location.pathname;
         let pageTitle = document.getElementById('page-title');
+        let viewAlbumBtn = document.getElementById("viewAlbumBtn");
+        let viewListBtn = document.getElementById("viewListBtn");
 
         document.addEventListener('DOMContentLoaded', function () {
             axios.get(url)
@@ -91,7 +127,7 @@
                     }
 
                     for (let article of articles) {
-                        let articleDiv = getPostsComponentForBlog(article);
+                        let articleDiv = getPostsByStyleForBlog(article);
                         recentPosting.appendChild(articleDiv);
                     }
 
@@ -104,6 +140,32 @@
                         pagePrevious.classList.remove("d-none");
                         pagePrevious.href = path + "?page=" + (pageable - 1);
                     }
+
+                    viewAlbumBtn.addEventListener("click", () => {
+                        if (getCookie("view-style") !== "album") {
+                            setCookie('view-style', 'album', 365);
+
+                            recentPosting.innerHTML = "";
+
+                            for (let article of articles) {
+                                let articleDiv = getPostsByStyleForBlog(article);
+                                recentPosting.appendChild(articleDiv);
+                            }
+                        }
+                    });
+
+                    viewListBtn.addEventListener("click", () => {
+                        if (getCookie("view-style") !== "list") {
+                            setCookie('view-style', 'list', 365);
+
+                            recentPosting.innerHTML = "";
+
+                            for (let article of articles) {
+                                let articleDiv = getPostsByStyleForBlog(article);
+                                recentPosting.appendChild(articleDiv);
+                            }
+                        }
+                    });
                 });
         });
     </script>

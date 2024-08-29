@@ -76,9 +76,6 @@ function getThumbnailComponent(article) {
     let img = document.createElement('img');
     img.src = article.thumb;
     img.style.objectFit = "cover";
-    img.addEventListener('error', () => {
-        imageDiv.classList.add('d-none');
-    });
 
     imageDiv.appendChild(img);
 
@@ -227,6 +224,17 @@ function getPostBodyComponent(article) {
     return postBodyDiv;
 }
 
+function getPostBodyNoWriterComponent(article) {
+    let postBodyDiv = document.createElement('div');
+    postBodyDiv.className = "card-body";
+
+    postBodyDiv.appendChild(getTitleComponent(article));
+    postBodyDiv.appendChild(getSummaryComponent(article));
+    postBodyDiv.appendChild(getFooterComponent(article));
+
+    return postBodyDiv;
+}
+
 function getPostComponent(article) {
     let postDiv = document.createElement('div');
     postDiv.className = "col-12 col-md-6 col-lg-4 col-xl-3 mt-3";
@@ -237,7 +245,10 @@ function getPostComponent(article) {
         location.href = "/" + article.postUrl;
     });
 
-    postCardDiv.appendChild(getThumbnailComponent(article));
+    if (article.thumb) {
+        postCardDiv.appendChild(getThumbnailComponent(article));
+    }
+
     postCardDiv.appendChild(getPostBodyComponent(article));
 
     postDiv.appendChild(postCardDiv);
@@ -255,7 +266,10 @@ function getPostComponentForProfile(article) {
         location.href = "/" + article.postUrl;
     });
 
-    postCardDiv.appendChild(getThumbnailComponent(article));
+    if (article.thumb) {
+        postCardDiv.appendChild(getThumbnailComponent(article));
+    }
+
     postCardDiv.appendChild(getPostBodyComponent(article));
 
     postDiv.appendChild(postCardDiv);
@@ -273,10 +287,121 @@ function getPostsComponentForBlog(article) {
         location.href = "/" + article.postUrl;
     })
 
-    postCardDiv.appendChild(getThumbnailComponent(article));
-    postCardDiv.appendChild(getPostBodyComponent(article));
+    if (article.thumb) {
+        postCardDiv.appendChild(getThumbnailComponent(article));
+    }
+
+    postCardDiv.appendChild(getPostBodyNoWriterComponent(article));
 
     postDiv.appendChild(postCardDiv);
 
     return postDiv;
 }
+
+function getListStylePostsComponent(article) {
+    let postDiv = document.createElement('div');
+    postDiv.className = "col-12";
+    postDiv.style = "min-height: 9em;"
+
+    let postCardDiv = document.createElement('div');
+    postCardDiv.className = "card cursor-pointer zoom cursor-pointer";
+
+    postCardDiv.addEventListener("click", () => {
+        location.href = "/" + article.postUrl;
+    })
+
+    let postBodyDiv = document.createElement('div');
+    postBodyDiv.className = "row g-0 align-items-center";
+
+    if (article.thumb) {
+        let postThumbCol = document.createElement('div');
+        postThumbCol.className = "col-3";
+
+        let postThumbDiv = document.createElement('div');
+        postThumbDiv.className = "ratio ratio-16x9 card-img-start";
+
+        let postThumbImg = document.createElement('img');
+        postThumbImg.src = article.thumb;
+        postThumbImg.alt = "thumb";
+        postThumbImg.style.objectFit = "cover";
+
+        postThumbImg.addEventListener('error', () => {
+            postThumbCol.classList.add("d-none");
+        });
+
+        postThumbDiv.appendChild(postThumbImg);
+        postThumbCol.appendChild(postThumbDiv);
+        postBodyDiv.appendChild(postThumbCol);
+    }
+
+    let postInfoDiv = document.createElement('div');
+    postInfoDiv.className = "col";
+
+    let postInfoBodyDiv = document.createElement('div');
+    postInfoBodyDiv.className = "card-body";
+
+    let postTitleDiv = document.createElement('div');
+    postTitleDiv.className = "col-12";
+
+    let postTitle = document.createElement('span');
+    postTitle.className = "card-title";
+    postTitle.innerText = article.title;
+    postTitleDiv.appendChild(postTitle);
+
+    let postSummaryDiv = document.createElement('div');
+    postSummaryDiv.className = "col-12";
+
+    let postSummary = document.createElement('span');
+    postSummary.innerText = article.summary;
+    postSummaryDiv.appendChild(postSummary);
+
+    postInfoBodyDiv.appendChild(postTitleDiv);
+    postSummaryDiv.appendChild(getFooterComponent(article));
+    postInfoBodyDiv.appendChild(postSummaryDiv);
+
+    postInfoDiv.appendChild(postInfoBodyDiv);
+    postBodyDiv.appendChild(postInfoDiv)
+
+    postCardDiv.appendChild(postBodyDiv);
+    postDiv.appendChild(postCardDiv);
+
+    return postDiv;
+}
+
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function getPostsByStyleForBlog(article) {
+    let style = getCookie('view-style');
+
+    if (!style) {
+        setCookie('view-style', 'album', 365);
+    }
+
+    style = getCookie('view-style');
+
+    if (style === 'album') {
+        return getPostsComponentForBlog(article);
+    }
+
+    return getListStylePostsComponent(article);
+}
+
