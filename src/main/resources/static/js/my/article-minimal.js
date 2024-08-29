@@ -71,7 +71,7 @@ function getFormattedNumber(num) {
 
 function getThumbnailComponent(article) {
     let imageDiv = document.createElement('div');
-    imageDiv.className = "ratio ratio-16x9 card-img-top cursor-pointer";
+    imageDiv.className = "ratio ratio-4x3 card-img-top cursor-pointer";
 
     let img = document.createElement('img');
     img.src = article.thumb;
@@ -318,7 +318,7 @@ function getListStylePostsComponent(article) {
         postThumbCol.className = "col-3";
 
         let postThumbDiv = document.createElement('div');
-        postThumbDiv.className = "ratio ratio-16x9 card-img-start";
+        postThumbDiv.className = "ratio ratio-4x3 card-img-start";
 
         let postThumbImg = document.createElement('img');
         postThumbImg.src = article.thumb;
