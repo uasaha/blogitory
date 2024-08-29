@@ -10,7 +10,6 @@ import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Posts service.
@@ -124,12 +123,26 @@ public interface PostsService {
    */
   Pages<GetRecentPostResponseDto> getRecentPostByBlog(Pageable pageable, String blogUrl);
 
-  @Transactional(readOnly = true)
+  /**
+   * Get recent posts by category.
+   *
+   * @param pageable pageable
+   * @param blogUrl blog url
+   * @param categoryName category name
+   * @return
+   */
   Pages<GetRecentPostResponseDto> getRecentPostByCategory(Pageable pageable,
                                                           String blogUrl,
                                                           String categoryName);
 
-  @Transactional(readOnly = true)
+  /**
+   * Get recent post by tag.
+   *
+   * @param pageable pageable
+   * @param blogUrl blog url
+   * @param tagName tag name
+   * @return
+   */
   Pages<GetRecentPostResponseDto> getRecentPostByTag(Pageable pageable,
                                                      String blogUrl,
                                                      String tagName);

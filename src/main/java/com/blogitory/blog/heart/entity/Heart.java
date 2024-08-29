@@ -61,4 +61,25 @@ public class Heart extends BaseCreatedAtEntity {
     @Column(name = "posts_no")
     private Long postsNo;
   }
+
+  /**
+   * Constructor.
+   *
+   * @param member member
+   * @param posts  post
+   */
+  public Heart(Member member, Posts posts) {
+    this.pk = new Pk(member.getMemberNo(), posts.getPostsNo());
+    this.member = member;
+    this.posts = posts;
+    this.deleted = false;
+  }
+
+  public void delete() {
+    this.deleted = true;
+  }
+
+  public void cancelDelete() {
+    this.deleted = false;
+  }
 }

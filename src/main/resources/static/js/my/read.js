@@ -670,8 +670,34 @@ function hrefModifyPage() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    let commentWriteForm = document.getElementById(COMMENT_WRITE);
+    let path = window.location.pathname;
+    let noHeart = document.getElementById("heart-icon-a");
+    let fillHeart = document.getElementById("heart-icon-b");
+    let heartCnt = document.getElementById("heart-cnt");
+    let commentCnt = document.getElementById("comment-cnt");
 
+    axios.get("/api" + path + "/heart")
+        .then((res) => {
+            if (res.data === true) {
+                fillHeart.classList.remove("d-none");
+            } else {
+                noHeart.classList.remove("d-none");
+            }
+        })
+        .catch((error) => {
+        });
+
+    axios.get("/api" + path + "/comments/count")
+        .then((res) => {
+            commentCnt.innerText = res.data;
+        });
+
+    axios.get("/api" + path + "/hearts/count")
+        .then((res) => {
+            heartCnt.innerText = res.data;
+        })
+
+    let commentWriteForm = document.getElementById(COMMENT_WRITE);
     getCommentsByRest(0, commentWriteForm);
 });
 
@@ -703,5 +729,39 @@ function unFollow(username) {
         })
         .catch(() => {
             openFailedAlerts("실패하였습니다.");
+        });
+}
+
+function heart() {
+    let path = window.location.pathname;
+    let noHeart = document.getElementById("heart-icon-a");
+    let fillHeart = document.getElementById("heart-icon-b");
+
+    axios.post("/api" + path + "/heart")
+        .then(() => {
+            noHeart.classList.add("d-none");
+            fillHeart.classList.remove("d-none");
+        })
+        .catch(() => {
+            openFailedAlerts("잠시 후 다시 시도해주세요.");
+            noHeart.classList.remove("d-none");
+            fillHeart.classList.add("d-none");
+        });
+}
+
+function cancelHeart() {
+    let path = window.location.pathname;
+    let noHeart = document.getElementById("heart-icon-a");
+    let fillHeart = document.getElementById("heart-icon-b");
+
+    axios.delete("/api" + path + "/heart")
+        .then(() => {
+            noHeart.classList.remove("d-none");
+            fillHeart.classList.add("d-none");
+        })
+        .catch(() => {
+            openFailedAlerts("잠시 후 다시 시도해주세요.");
+            noHeart.classList.add("d-none");
+            fillHeart.classList.remove("d-none");
         });
 }

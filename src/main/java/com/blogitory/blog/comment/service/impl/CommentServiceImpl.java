@@ -67,6 +67,7 @@ public class CommentServiceImpl implements CommentService {
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public Pages<GetCommentResponseDto> getComments(String postUrl, Pageable pageable) {
     Page<GetCommentResponseDto> page = commentRepository.getComments(postUrl, pageable);
@@ -94,6 +95,7 @@ public class CommentServiceImpl implements CommentService {
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public Long getCommentCountByPost(String postUrl) {
     return commentRepository.getCommentCountByPost(postUrl);
@@ -102,6 +104,7 @@ public class CommentServiceImpl implements CommentService {
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public Pages<GetChildCommentResponseDto> getChildComments(String postUrl,
                                                        Long parentNo,
@@ -168,6 +171,7 @@ public class CommentServiceImpl implements CommentService {
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public List<GetLatestCommentListResponseDto> getRecentComments(String username, String blogUrl) {
     return commentRepository.getRecentCommentsByBlog(username, blogUrl);

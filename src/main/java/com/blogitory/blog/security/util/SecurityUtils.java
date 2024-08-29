@@ -1,6 +1,5 @@
 package com.blogitory.blog.security.util;
 
-import com.blogitory.blog.security.users.UserDetailsImpl;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -15,6 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
  **/
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SecurityUtils {
+
+  private static final String ANONYMOUS = "anonymousUser";
+
   /**
    * Get user no from security context.
    *
@@ -34,8 +36,18 @@ public class SecurityUtils {
             .stream().toList();
   }
 
+  /**
+   * Check is authenticated.
+   *
+   * @return boolean
+   */
   public static boolean isAuthenticated() {
-    return SecurityContextHolder.getContext().getAuthentication()
-            .getDetails() instanceof UserDetailsImpl;
+    String name = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    if (name == null) {
+      return false;
+    }
+
+    return !name.equals(ANONYMOUS);
   }
 }

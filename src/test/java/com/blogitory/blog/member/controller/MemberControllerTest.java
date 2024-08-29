@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.dto.response.GetBlogInProfileResponseDto;
@@ -36,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -75,6 +77,7 @@ class MemberControllerTest {
             .andExpect(status().is3xxRedirection());
   }
 
+  @WithMockUser("1")
   @Test
   @DisplayName("프로필 페이지")
   void profile() throws Exception {
@@ -99,7 +102,8 @@ class MemberControllerTest {
 
     mvc.perform(get("/@" + profileDto.getUsername()).with(csrf())
                     .flashAttrs(attrs))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(model().attributeExists("isFollowed"));
   }
 
   @Test

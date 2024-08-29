@@ -313,8 +313,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                             .where(heart.deleted.isFalse()),
                     JPAExpressions.select(comment.count())
                             .from(comment)
-                            .where(comment.posts.postsNo.eq(posts.postsNo))
-                            .where(comment.deleted.isFalse())))
+                            .where(comment.posts.postsNo.eq(posts.postsNo))))
             .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
             .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
             .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
@@ -380,8 +379,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                             .where(heart.deleted.isFalse()),
                     JPAExpressions.select(comment.count())
                             .from(comment)
-                            .where(comment.posts.postsNo.eq(posts.postsNo))
-                            .where(comment.deleted.isFalse())))
+                            .where(comment.posts.postsNo.eq(posts.postsNo))))
             .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
             .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
             .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))

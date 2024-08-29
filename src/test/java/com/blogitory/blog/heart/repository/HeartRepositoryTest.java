@@ -2,6 +2,7 @@ package com.blogitory.blog.heart.repository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.entity.BlogDummy;
@@ -20,6 +21,7 @@ import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import com.blogitory.blog.posts.repository.PostsRepository;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -126,5 +128,55 @@ class HeartRepositoryTest {
             () -> assertEquals(heart.isDeleted(), actual.isDeleted()),
             () -> assertEquals(heart.getPk(), actual.getPk())
     );
+  }
+
+  @Test
+  @DisplayName("회원번호, 게시물로 좋아요 조회")
+  void findByMemberNoAndPostsUrl() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Heart heart = HeartDummy.dummy(member, posts);
+    Heart expect = heartRepository.save(heart);
+
+    Optional<Heart> actual = heartRepository.findByMemberNoAndPostsUrl(member.getMemberNo(), posts.getUrl());
+    assertTrue(actual.isPresent());
+
+    assertEquals(expect.getMember().getMemberNo(), actual.get().getMember().getMemberNo());
+    assertEquals(expect.getPosts().getPostsNo(), actual.get().getPosts().getPostsNo());
+    assertEquals(expect.getPk().getMemberNo(), actual.get().getPk().getMemberNo());
+    assertEquals(expect.getPosts().getPostsNo(), actual.get().getPosts().getPostsNo());
+  }
+
+  @Test
+  @DisplayName("게시물 좋아요 카운트 조회")
+  void getHeartCountsByPost() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Heart heart = HeartDummy.dummy(member, posts);
+    heartRepository.save(heart);
+
+    Long result = heartRepository.getHeartCountsByPost(posts.getUrl());
+
+    assertEquals(1L, result);
   }
 }
