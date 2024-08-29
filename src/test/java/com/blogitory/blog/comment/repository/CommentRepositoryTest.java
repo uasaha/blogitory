@@ -226,4 +226,23 @@ class CommentRepositoryTest {
 
     assertEquals(comment.getContents(), result.getContent());
   }
+
+  @Test
+  @DisplayName("댓글 카운트 조회")
+  void getCommentCountByPost() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Comment comment = CommentDummy.dummy(member, posts);
+    commentRepository.save(comment);
+
+    Long cnt = commentRepository.getCommentCountByPost(posts.getUrl());
+
+    assertEquals(1L, cnt);
+  }
 }

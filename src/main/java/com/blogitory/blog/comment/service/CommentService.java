@@ -36,6 +36,14 @@ public interface CommentService {
   Pages<GetCommentResponseDto> getComments(String postUrl, Pageable pageable);
 
   /**
+   * Get count of comments by posts.
+   *
+   * @param postUrl post url
+   * @return count
+   */
+  Long getCommentCountByPost(String postUrl);
+
+  /**
    * Get Comment by post.
    *
    * @param postUrl  post url
@@ -68,7 +76,7 @@ public interface CommentService {
    * Get recent comments.
    *
    * @param username blog owner
-   * @param blogUrl blog url
+   * @param blogUrl  blog url
    * @return comments
    */
   List<GetLatestCommentListResponseDto> getRecentComments(String username, String blogUrl);

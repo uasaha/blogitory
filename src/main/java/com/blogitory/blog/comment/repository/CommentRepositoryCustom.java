@@ -27,6 +27,14 @@ public interface CommentRepositoryCustom {
   Page<GetCommentResponseDto> getComments(String postsUrl, Pageable pageable);
 
   /**
+   * Get comments count.
+   *
+   * @param postUrl post url
+   * @return count
+   */
+  Long getCommentCountByPost(String postUrl);
+
+  /**
    * Get Comments by posts.
    *
    * @param postsUrl post url
@@ -42,7 +50,7 @@ public interface CommentRepositoryCustom {
    * Get recent comments. (limit 4)
    *
    * @param username blog owner
-   * @param blogUrl post url
+   * @param blogUrl  post url
    * @return comments
    */
   List<GetLatestCommentListResponseDto> getRecentCommentsByBlog(String username, String blogUrl);

@@ -87,6 +87,23 @@ public class CommentRepositoryImpl
    * {@inheritDoc}
    */
   @Override
+  public Long getCommentCountByPost(String postUrl) {
+    QComment comment = QComment.comment;
+    QPosts posts = QPosts.posts;
+
+    return queryFactory
+            .from(comment)
+            .select(comment.count())
+            .innerJoin(posts).on(posts.postsNo.eq(comment.posts.postsNo))
+            .where(posts.url.eq(postUrl))
+            .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+            .fetchFirst();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public Page<GetChildCommentResponseDto> getChildCommentsByParent(String postsUrl,
                                                                    Long commentNo,
                                                                    Pageable pageable) {

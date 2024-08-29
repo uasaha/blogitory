@@ -95,6 +95,14 @@ public class CommentServiceImpl implements CommentService {
    * {@inheritDoc}
    */
   @Override
+  public Long getCommentCountByPost(String postUrl) {
+    return commentRepository.getCommentCountByPost(postUrl);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public Pages<GetChildCommentResponseDto> getChildComments(String postUrl,
                                                        Long parentNo,
                                                        Pageable pageable) {

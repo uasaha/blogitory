@@ -1,6 +1,7 @@
 package com.blogitory.blog.comment.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,6 +18,7 @@ import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.comment.dto.request.CreateCommentRequestDto;
 import com.blogitory.blog.comment.dto.response.GetChildCommentResponseDto;
 import com.blogitory.blog.comment.dto.response.GetCommentResponseDto;
+import com.blogitory.blog.comment.dto.response.GetLatestCommentListResponseDto;
 import com.blogitory.blog.comment.entity.Comment;
 import com.blogitory.blog.comment.entity.CommentDummy;
 import com.blogitory.blog.comment.repository.CommentRepository;
@@ -274,5 +276,37 @@ class CommentServiceImplTest {
 
     assertThrows(AuthorizationException.class, () ->
             commentService.deleteComment(1, 1L));
+  }
+
+  @Test
+  @DisplayName("댓글 카운트 조회")
+  void getCommentCountByPost() {
+    when(commentRepository.getCommentCountByPost(any())).thenReturn(3L);
+
+    Long cnt = commentService.getCommentCountByPost("postUrl");
+
+    assertEquals(3L, cnt);
+  }
+
+  @Test
+  @DisplayName("최근 댓글 조회")
+  void getRecentComments() {
+    GetLatestCommentListResponseDto response = new GetLatestCommentListResponseDto(
+                    "name", "username",
+                    "userpfp", "postUrl",
+                    "content", LocalDateTime.now());
+
+    when(commentRepository.getRecentCommentsByBlog(anyString(), anyString()))
+            .thenReturn(List.of(response));
+
+    List<GetLatestCommentListResponseDto> resultList =
+            commentService.getRecentComments("username", "blogUrl");
+
+    assertFalse(resultList.isEmpty());
+
+    GetLatestCommentListResponseDto result = resultList.getFirst();
+    assertEquals(response.getName(), result.getName());
+    assertEquals(response.getUsername(), result.getUsername());
+    assertEquals(response.getContent(), result.getContent());
   }
 }

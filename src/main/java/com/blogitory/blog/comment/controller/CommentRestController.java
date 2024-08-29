@@ -64,6 +64,23 @@ public class CommentRestController {
   }
 
   /**
+   * Get count of comment by post.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param postsUrl posts url
+   * @return 200
+   */
+  @GetMapping("/@{username}/{blogUrl}/{postsUrl}/comments/count")
+  public ResponseEntity<Long> countComments(@PathVariable("username") String username,
+                                            @PathVariable("blogUrl") String blogUrl,
+                                            @PathVariable("postsUrl") String postsUrl) {
+    String postsKey = getPostsKey(username, blogUrl, postsUrl);
+
+    return ResponseEntity.ok(commentService.getCommentCountByPost(postsKey));
+  }
+
+  /**
    * Get Child comments.
    *
    * @param username  username

@@ -154,4 +154,14 @@ class CommentRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.[0].name").value("name"));
   }
+
+  @Test
+  @DisplayName("댓글 수 조회")
+  void countComments() throws Exception {
+    when(commentService.getCommentCountByPost(anyString())).thenReturn(0L);
+
+    mockMvc.perform(
+            get("/api/@username/blogUrl/postsUrl/comments/count"))
+            .andExpect(status().isOk());
+  }
 }
