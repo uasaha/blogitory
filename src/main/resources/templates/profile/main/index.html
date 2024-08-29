@@ -137,11 +137,11 @@
                 <div id="profile-button" sec:authorize="isAuthenticated()" class="row justify-content-center mt-1">
                     <button id="follow-btn" th:if="${profile.username} != ${members.username} and ${not isFollowed}"
                             th:username="${profile.username}" type="button" class="btn"
-                            th:onclick="follow( this.getAttribute('username') )">팔로우
+                            th:onclick="follow( this.getAttribute('username') )">Follow
                     </button>
                     <button id="unfollow-btn" th:if="${profile.username} != ${members.username} and ${isFollowed}"
                             th:username="${profile.username}" type="button" class="btn"
-                            th:onclick="unFollow( this.getAttribute('username') )">언팔로우
+                            th:onclick="unFollow( this.getAttribute('username') )">Unfollow
                     </button>
                     <button th:if="${profile.username} == ${members.username}" type="button" class="btn"
                             onclick="disappearProfiles()">프로필 수정
@@ -276,11 +276,11 @@
                          style="margin-top: 5px">
                         <button id="follow-btn" th:if="${profile.username} != ${members.username} and ${not isFollowed}"
                                 th:username="${profile.username}" type="button" class="btn"
-                                th:onclick="follow( this.getAttribute('username') )">팔로우
+                                th:onclick="follow( this.getAttribute('username') )">Follow
                         </button>
                         <button id="unfollow-btn" th:if="${profile.username} != ${members.username} and ${isFollowed}"
                                 th:username="${profile.username}" type="button" class="btn"
-                                th:onclick="unFollow( this.getAttribute('username') )">언팔로우
+                                th:onclick="unFollow( this.getAttribute('username') )">Unfollow
                         </button>
                         <button th:if="${profile.username} == ${members.username}" type="button" class="btn"
                                 onclick="disappearProfilesMobile()">프로필 수정

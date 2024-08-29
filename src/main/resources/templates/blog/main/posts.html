@@ -95,8 +95,8 @@
                             </svg>
                         </div>
                         <div sec:authorize="isAuthenticated()" th:if="${posts.username} != ${members.username}" class="col-2 ms-auto d-flex align-items-center justify-content-end">
-                            <button id="follow-btn" th:if="${not isFollowed}" th:username="${posts.username}" type="button" class="btn" th:onclick="follow( this.getAttribute('username') )">팔로우</button>
-                            <button id="unfollow-btn" th:if="${isFollowed}" th:username="${posts.username}" type="button" class="btn" th:onclick="unFollow( this.getAttribute('username') )">언팔로우</button>
+                            <button id="follow-btn" th:if="${not isFollowed}" th:username="${posts.username}" type="button" class="btn" th:onclick="follow( this.getAttribute('username') )">Follow</button>
+                            <button id="unfollow-btn" th:if="${isFollowed}" th:username="${posts.username}" type="button" class="btn" th:onclick="unFollow( this.getAttribute('username') )">Unfollow</button>
                         </div>
                         <div sec:authorize="isAuthenticated()" th:if="${posts.username} == ${members.username}" class="col-2 ms-auto d-flex align-items-center justify-content-end">
                             <button class="btn me-2" onclick="hrefModifyPage()">수정</button>

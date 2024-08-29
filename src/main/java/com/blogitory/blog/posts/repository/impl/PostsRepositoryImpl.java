@@ -49,6 +49,8 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
   QPostsTag postsTag = QPostsTag.postsTag;
   QTag tag = QTag.tag;
 
+  private static final String HEART_CNT = "heartCnt";
+  private static final String COMMENT_CNT = "commentCnt";
 
   /**
    * Constructor.
@@ -213,8 +215,8 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
    */
   @Override
   public List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl) {
-    NumberPath<Long> heartCnt = Expressions.numberPath(Long.class, "heartCnt");
-    NumberPath<Long> commentCnt = Expressions.numberPath(Long.class, "commentCnt");
+    NumberPath<Long> heartCnt = Expressions.numberPath(Long.class, HEART_CNT);
+    NumberPath<Long> commentCnt = Expressions.numberPath(Long.class, COMMENT_CNT);
 
     List<GetPopularPostResponseDto> heartList = queryFactory
             .from(posts)
@@ -228,12 +230,12 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                             JPAExpressions.select(heart.count())
                                     .from(heart)
                                     .where(heart.posts.postsNo.eq(posts.postsNo))
-                                    .where(heart.deleted.isFalse()), "heartCnt"),
+                                    .where(heart.deleted.isFalse()), HEART_CNT),
                     ExpressionUtils.as(
                             JPAExpressions.select(comment.count())
                                     .from(comment)
                                     .where(comment.posts.postsNo.eq(posts.postsNo))
-                                    .where(comment.deleted.isFalse()), "commentCnt")
+                                    .where(comment.deleted.isFalse()), COMMENT_CNT)
             ))
             .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
             .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
@@ -257,12 +259,12 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                             JPAExpressions.select(heart.count())
                                     .from(heart)
                                     .where(heart.posts.postsNo.eq(posts.postsNo))
-                                    .where(heart.deleted.isFalse()), "heartCnt"),
+                                    .where(heart.deleted.isFalse()), HEART_CNT),
                     ExpressionUtils.as(
                             JPAExpressions.select(comment.count())
                                     .from(comment)
                                     .where(comment.posts.postsNo.eq(posts.postsNo))
-                                    .where(comment.deleted.isFalse()), "commentCnt")
+                                    .where(comment.deleted.isFalse()), COMMENT_CNT)
             ))
             .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
             .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
