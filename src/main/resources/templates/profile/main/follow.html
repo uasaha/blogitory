@@ -168,11 +168,11 @@
                                         <div class="d-flex">
                                             <div class="col-12">
                                                 <div class="float-start mt-1" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <img class="avatar avatar-sm rounded-circle" th:src="${follower.thumb}" alt="pfp"/>
+                                                    <img class="avatar avatar-sm rounded-circle cursor-pointer" th:src="${follower.thumb}" alt="pfp"/>
                                                 </div>
                                                 <div class="float-start ms-3" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <div th:text="${follower.name}">Mate</div>
-                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${follower.username}"></div>
+                                                    <div class="cursor-pointer" th:text="${follower.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary cursor-pointer" th:text="'@' + ${follower.username}"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -183,13 +183,13 @@
                                         <div class="d-flex">
                                             <div class="col-12">
                                                 <div class="float-start mt-1" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <img class="avatar avatar-sm rounded-circle" th:src="${following.thumb}" alt="pjp"/>
+                                                    <img class="avatar avatar-sm rounded-circle cursor-pointer" th:src="${following.thumb}" alt="pjp"/>
                                                 </div>
                                                 <div class="float-start ms-3" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <div th:text="${following.name}">Mate</div>
-                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${following.username}"></div>
+                                                    <div class="cursor-pointer" th:text="${following.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary cursor-pointer" th:text="'@' + ${following.username}"></div>
                                                 </div>
-                                                <div class="float-end mt-1">
+                                                <div class="float-end mt-1" th:if="${followInfo.isMine()}">
                                                     <button type="button" class="btn" th:username="${following.username}" style="height: 25px" th:onclick="unFollow( this.getAttribute('username') )">UnFollow</button>
                                                 </div>
                                             </div>
@@ -372,11 +372,11 @@
                                         <div class="d-flex">
                                             <div class="col-12">
                                                 <div class="float-start mt-1" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <img class="avatar avatar-sm rounded-circle" th:src="${follower.thumb}" alt="pfp"/>
+                                                    <img class="avatar avatar-sm rounded-circle cursor-pointer" th:src="${follower.thumb}" alt="pfp"/>
                                                 </div>
                                                 <div class="float-start ms-3" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <div th:text="${follower.name}">Mate</div>
-                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${follower.username}"></div>
+                                                    <div class="cursor-pointer" th:text="${follower.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary cursor-pointer" th:text="'@' + ${follower.username}"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -387,13 +387,13 @@
                                         <div class="d-flex">
                                             <div class="col-12">
                                                 <div class="float-start mt-1" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <img class="avatar avatar-sm rounded-circle" th:src="${following.thumb}" alt="pjp"/>
+                                                    <img class="avatar avatar-sm rounded-circle cursor-pointer" th:src="${following.thumb}" alt="pjp"/>
                                                 </div>
                                                 <div class="float-start ms-3" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
-                                                    <div th:text="${following.name}">Mate</div>
-                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${following.username}"></div>
+                                                    <div class="cursor-pointer" th:text="${following.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary cursor-pointer" th:text="'@' + ${following.username}"></div>
                                                 </div>
-                                                <div class="float-end mt-1">
+                                                <div class="float-end mt-1" th:if="${followInfo.isMine()}">
                                                     <button type="button" class="btn" th:username="${following.username}" style="height: 25px" th:onclick="unFollow( this.getAttribute('username') )">UnFollow</button>
                                                 </div>
                                             </div>
