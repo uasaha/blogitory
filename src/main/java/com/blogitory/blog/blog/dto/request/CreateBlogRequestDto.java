@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateBlogRequestDto {
   @Size(min = 1, max = 20)
-  @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+$")
+  @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9\\s_-]+$")
   private String name;
 
   @Size(min = 1, max = 100)

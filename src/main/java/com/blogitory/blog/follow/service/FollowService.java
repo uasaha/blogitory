@@ -1,5 +1,7 @@
 package com.blogitory.blog.follow.service;
 
+import com.blogitory.blog.follow.dto.response.GetAllFollowResponseDto;
+
 /**
  * Follow service.
  *
@@ -25,5 +27,21 @@ public interface FollowService {
    */
   void unFollow(Integer memberNo, String username);
 
+  /**
+   * Get is followed.
+   *
+   * @param followFrom       from member no
+   * @param followToUsername to member username
+   * @return is followed
+   */
   boolean isFollowed(Integer followFrom, String followToUsername);
+
+  /**
+   * Get all follow infos.
+   *
+   * @param memberNo current member no
+   * @param username find username
+   * @return follow infos
+   */
+  GetAllFollowResponseDto getAllFollowInfo(Integer memberNo, String username);
 }

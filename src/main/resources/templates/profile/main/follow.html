@@ -6,10 +6,10 @@
       layout:decorate="~{profile/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${profile.username  + ' (' + profile.name + ')'}"></title>
+    <title th:text="${profile.username}  + ' (' + ${profile.name} + ') - Blogitory'"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/@' + profile.username}">
     <meta property="og:url" th:content="${'https://blogitory.com/@' + profile.username}">
-    <meta property="og:title" th:content="${profile.username  + '(' + profile.name + ')'}">
+    <meta property="og:title" th:content="${profile.username}  + ' (' + ${profile.name} + ') - Blogitory'">
     <meta property="og:description" th:content="${profile.bio}">
     <meta property="og:image" th:content="${#strings.isEmpty(profile.profileThumb)} ? '/static/icons/person.svg' : ${profile.profileThumb}">
     <meta name="description" th:content="${profile.bio}">
@@ -18,7 +18,7 @@
 <div class="container-lg" layout:fragment="main-content">
     <div class="page-body">
         <div class="row row-deck row-cards">
-            <div class="profile col-lg-3 d-none d-lg-block">
+            <div class="profile col-md-3 d-none d-md-block">
                 <div class="row">
                     <div style="width:100%; vertical-align: middle; aspect-ratio: 1/1">
                         <img id="profile-pfp" class="avatar avatar-md rounded-circle"
@@ -148,46 +148,62 @@
                     </button>
                 </div>
             </div>
-            <div class="contents col-lg-9 d-none d-lg-block">
-                <div class="row">
-                    <span class="mb-3" style="font-size: 17px; font-weight: bold">Blogs</span>
-                    <div class="col-4" th:each="blog : ${profile.blogs}">
-                        <div class="card" style="height: 120px">
-                            <div class="card-body">
-                                <a class="text-body" th:href="${blog.getBlogUrl()}"><h5 class="card-title"
-                                                                                        th:text="${blog.blogName}"></h5>
-                                </a>
-                                <div class="card-text text-over-summary-3" th:text="${blog.blogBio}"></div>
+            <div class="contents col-md-9 d-none d-md-block">
+                <div class="row justify-content-center">
+                    <div class="card" style="max-width: 600px;">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                                <li class="nav-item">
+                                    <a href="#follower-tab" class="nav-link active" data-bs-toggle="tab" th:text="${profile.followerCnt} + ' 팔로워'"></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#followee-tab" class="nav-link" data-bs-toggle="tab" th:text="${profile.followeeCnt} + ' 팔로잉'"></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active show" id="follower-tab">
+                                    <div th:each="follower : ${followInfo.followers}" class="row mb-3">
+                                        <div class="d-flex">
+                                            <div class="col-12">
+                                                <div class="float-start mt-1" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <img class="avatar avatar-sm rounded-circle" th:src="${follower.thumb}" alt="pfp"/>
+                                                </div>
+                                                <div class="float-start ms-3" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <div th:text="${follower.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${follower.username}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="followee-tab">
+                                    <div th:each="following : ${followInfo.followings}" class="row mb-3">
+                                        <div class="d-flex">
+                                            <div class="col-12">
+                                                <div class="float-start mt-1" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <img class="avatar avatar-sm rounded-circle" th:src="${following.thumb}" alt="pjp"/>
+                                                </div>
+                                                <div class="float-start ms-3" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <div th:text="${following.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${following.username}"></div>
+                                                </div>
+                                                <div class="float-end mt-1">
+                                                    <button type="button" class="btn" th:username="${following.username}" style="height: 25px" th:onclick="unFollow( this.getAttribute('username') )">UnFollow</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-1" sec:authorize="isAuthenticated()"
-                         th:if="${profile.blogs.size()} < 3 and ${profile.username} == ${members.username}"
-                         style="width: 70px;">
-                        <div class="card cursor-pointer" style="height: 120px" onclick="location.href='/settings/blog'">
-                            <div class="card-body">
-                                <h5 class="card-title" style="margin-top: 1.5em">+</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" style="margin-top: 2em">
-                    <span style="font-size: 17px; font-weight: bold">Activities</span>
-                    <div class="col-12">
-                        <div class="card mt-3">
-                            <div class="card-body" style="overflow-y: scroll;">
-                                <div id="heatmap-chart" style="width: 900px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="recent-posting" class="row row-deck row-cards" style="margin-top: 2em">
-                    <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
 
                 </div>
             </div>
 
-            <div class="profile col-12 d-lg-none">
+            <div class="profile col-12 d-md-none">
                 <div class="col">
                     <div class="row d-flex">
                         <div class="col-4" style="width: 110px; height: 110px; vertical-align: middle;">
@@ -336,43 +352,58 @@
 
                 </div>
             </div>
-            <div class="contents d-lg-none" style="margin-top: 2em;">
-                <div class="row justify-content-center">
-                    <span style="font-size: 17px; font-weight: bold">Blogs</span>
-                    <div class="col-12 mt-3" th:each="blog : ${profile.blogs}">
-                        <div class="card">
-                            <div class="card-body">
-                                <a class="text-body" th:href="${blog.getBlogUrl()}"><h5 class="card-title"
-                                                                                        th:text="${blog.blogName}"></h5>
-                                </a>
-                                <div class="card-text blog-bio-overflow" th:text="${blog.blogBio}"></div>
+            <div class="contents d-md-none" style="margin-top: 2em;">
+                <div class="row">
+                    <div class="card" style="max-width: 600px;">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                                <li class="nav-item">
+                                    <a href="#follower-tab-mobile" class="nav-link active" data-bs-toggle="tab" th:text="${profile.followerCnt} + ' 팔로워'"></a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#followee-tab-mobile" class="nav-link" data-bs-toggle="tab" th:text="${profile.followeeCnt} + ' 팔로잉'"></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane active show" id="follower-tab-mobile">
+                                    <div th:each="follower : ${followInfo.followers}" class="row mb-3">
+                                        <div class="d-flex">
+                                            <div class="col-12">
+                                                <div class="float-start mt-1" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <img class="avatar avatar-sm rounded-circle" th:src="${follower.thumb}" alt="pfp"/>
+                                                </div>
+                                                <div class="float-start ms-3" th:user-url="'@' + ${follower.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <div th:text="${follower.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${follower.username}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="followee-tab-mobile">
+                                    <div th:each="following : ${followInfo.followings}" class="row mb-3">
+                                        <div class="d-flex">
+                                            <div class="col-12">
+                                                <div class="float-start mt-1" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <img class="avatar avatar-sm rounded-circle" th:src="${following.thumb}" alt="pjp"/>
+                                                </div>
+                                                <div class="float-start ms-3" th:user-url="'@' + ${following.username}" th:onclick="|location.href='/' + this.getAttribute('user-url')|">
+                                                    <div th:text="${following.name}">Mate</div>
+                                                    <div class="mt-1 small text-secondary" th:text="'@' + ${following.username}"></div>
+                                                </div>
+                                                <div class="float-end mt-1">
+                                                    <button type="button" class="btn" th:username="${following.username}" style="height: 25px" th:onclick="unFollow( this.getAttribute('username') )">UnFollow</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 mt-1" sec:authorize="isAuthenticated()"
-                         th:if="${profile.blogs.size()} < 3 and ${profile.username} == ${members.username}">
-                        <div class="card cursor-pointer" style="height: 50px;" onclick="location.href='/settings/blog'">
-                            <div class="card-body">
-                                <h5 class="card-title">+</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <span style="font-size: 17px; font-weight: bold">Activities</span>
-                    <div class="col-12 mt-3">
-                        <div class="card mt-3">
-                            <div class="card-body" style="overflow-y: scroll">
-                                <div id="heatmap-chart-mobile" style="width: 950px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <span style="font-size: 17px; font-weight: bold">Recent Posting</span>
-                    <div id="recent-posting-mobile" class="">
 
-                    </div>
                 </div>
             </div>
         </div>
@@ -380,245 +411,8 @@
 </div>
 <th:block layout:fragment="script">
     <script src="/static/js/my/profile.js" defer></script>
-    <script src="/static/js/my/article-minimal.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            let path = window.location.pathname;
 
-            axios.get("/api" + path + "/posts/recent")
-                .then((response) => {
-                    let postingArea = document.getElementById("recent-posting");
-                    let postingAreaMobile = document.getElementById("recent-posting-mobile");
-
-                    let articles = response.data;
-
-                    for (let article of articles) {
-                        let articleDiv = getPostComponentForProfile(article);
-                        let articleMobile = getPostComponentForProfile(article);
-                        articleMobile.classList.add("mb-3");
-                        postingArea.appendChild(articleDiv);
-                        postingAreaMobile.appendChild(articleMobile);
-                    }
-                });
-        });
-
-        document.addEventListener("DOMContentLoaded", () => {
-            //demo code start.
-            function getRandomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-
-            let monData = [];
-            let tueData = [];
-            let wedData = [];
-            let thuData = [];
-            let friData = [];
-            let satData = [];
-            let sunData = [];
-
-            let daysInYear = 366;
-            let now = new Date();
-
-            let currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-
-            if (currentDate.getDay() === 1) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -1);
-                daysInYear = daysInYear + 1;
-            }
-            if (currentDate.getDay() === 2) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -2);
-                daysInYear = daysInYear + 2;
-            }
-            if (currentDate.getDay() === 3) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -3);
-                daysInYear = daysInYear + 3;
-            }
-            if (currentDate.getDay() === 4) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -4);
-                daysInYear = daysInYear + 4;
-            }
-            if (currentDate.getDay() === 5) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -5);
-                daysInYear = daysInYear + 5;
-            }
-            if (currentDate.getDay() === 6) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -6);
-                daysInYear = daysInYear + 6;
-            }
-
-            let allDayData = [];
-
-            for (let i = 0; i <= daysInYear; i++) {
-                allDayData.push(
-                    {
-                        name: currentDate.getDay(),
-                        date: currentDate.yyyymmdd(),
-                        value: getRandomInt(0, 5)
-                    }
-                )
-
-                currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
-            }
-
-            for (let i = 0; i <= daysInYear; i++) {
-                if (allDayData[i].name === 0) {
-                    sunData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 1) {
-                    monData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 2) {
-                    tueData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 3) {
-                    wedData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 4) {
-                    thuData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 5) {
-                    friData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 6) {
-                    satData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-            }
-
-            let data = [
-                {
-                    name: 'Sat',
-                    data: satData
-                },
-                {
-                    name: 'Fri',
-                    data: friData
-                },
-                {
-                    name: 'Thu',
-                    data: thuData
-                },
-                {
-                    name: 'Wed',
-                    data: wedData
-                },
-                {
-                    name: 'Tue',
-                    data: tueData
-                },
-                {
-                    name: 'Mon',
-                    data: monData
-                },
-                {
-                    name: 'Sun',
-                    data: sunData
-                },
-            ];
-
-            let options = {
-                chart: {
-                    height: 175,
-                    type: 'heatmap',
-                    toolbar: {
-                        show: false,
-                    },
-                },
-                plotOptions: {
-                    heatmap: {
-                        radius: 0,
-                        distributed: true,
-                        colorScale: {
-                            ranges: [{
-                                from: 0,
-                                to: 0,
-                                name: '0',
-                                color: '#BDBDBD'
-                            }, {
-                                from: 1,
-                                to: 1,
-                                name: '1',
-                                color: '#8fb0c6'
-                            }, {
-                                from: 2,
-                                to: 2,
-                                name: '2',
-                                color: '#4F7FB4'
-                            }, {
-                                from: 3,
-                                to: 3,
-                                name: '3',
-                                color: '#335582'
-                            }, {
-                                from: 4,
-                                to: 4,
-                                name: '4',
-                                color: '#11264f'
-                            }, {
-                                from: 5,
-                                to: 5,
-                                name: '5++',
-                                color: '#0C1152'
-                            },
-                            ],
-                            inverse: true,
-                        }
-                    }
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                stroke: {
-                    show: false,
-                },
-                series: data,
-                xaxis: {
-                    type: "datetime",
-                    labels: {
-                        format: 'MM/dd'
-                    },
-                    axisBorder: { show: false },
-                    tickAmount: 12,
-                    tickPlacement: 'between',
-                    axisTicks: { show: true },
-                },
-                tooltip: {
-                    intersect: false,
-                    x: {
-                        show: true,
-                        format: "yyyy/MM/dd"
-                    },
-                },
-                grid: {
-                    show: false,
-                },
-            };
-
-            let chart = new ApexCharts(document.querySelector("#heatmap-chart"), options)
-            let chartMobile = new ApexCharts(document.querySelector("#heatmap-chart-mobile"), options);
-            chart.render();
-            chartMobile.render();
-        });
     </script>
 </th:block>
 </body>

@@ -2,10 +2,12 @@ package com.blogitory.blog.follow.repository;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.blogitory.blog.commons.config.JpaConfig;
 import com.blogitory.blog.commons.config.QuerydslConfig;
+import com.blogitory.blog.follow.dto.response.GetFollowResponseDto;
 import com.blogitory.blog.follow.entity.Follow;
 import com.blogitory.blog.follow.entity.FollowDummy;
 import com.blogitory.blog.member.entity.Member;
@@ -273,5 +275,49 @@ class FollowRepositoryTest {
 
     Follow resultEntity = result.get();
     assertEquals(resultEntity.getFollowTo().getMemberNo(), followTo.getMemberNo());
+  }
+
+  @Test
+  @DisplayName("팔로워 전체 조회")
+  void getAllFollowerByToUsername() {
+    Member followTo = MemberDummy.dummy();
+    memberRepository.save(followTo);
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+    memberRepository.save(followFrom);
+    Follow follow = FollowDummy.dummy(followTo, followFrom);
+    followRepository.save(follow);
+
+    List<GetFollowResponseDto> resultList = followRepository.getAllFollowerByToUsername(followTo.getUsername());
+
+    assertFalse(resultList.isEmpty());
+
+    GetFollowResponseDto result = resultList.getFirst();
+
+    assertEquals(followFrom.getUsername(), result.getUsername());
+    assertEquals(followFrom.getName(), result.getName());
+  }
+
+  @Test
+  @DisplayName("팔로워 전체 조회")
+  void getAllFollowingByFromUsername() {
+    Member followTo = MemberDummy.dummy();
+    memberRepository.save(followTo);
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+    memberRepository.save(followFrom);
+    Follow follow = FollowDummy.dummy(followTo, followFrom);
+    followRepository.save(follow);
+
+    List<GetFollowResponseDto> resultList = followRepository.getAllFollowingByFromUsername(followFrom.getUsername());
+
+    assertFalse(resultList.isEmpty());
+
+    GetFollowResponseDto result = resultList.getFirst();
+
+    assertEquals(followTo.getUsername(), result.getUsername());
+    assertEquals(followTo.getName(), result.getName());
   }
 }

@@ -69,6 +69,31 @@ public class MemberController {
   }
 
   /**
+   * Followers page.
+   *
+   * @param username username
+   * @param model    model
+   * @return Followers view
+   */
+  @GetMapping("/@{username}/follows")
+  public String follows(@PathVariable String username, Model model) {
+    GetMemberProfileResponseDto profile = memberService.getProfileByUsername(username);
+
+    model.addAttribute("profile", profile);
+
+    Integer memberNo = null;
+
+    if (SecurityUtils.isAuthenticated()) {
+      memberNo = SecurityUtils.getCurrentUserNo();
+      model.addAttribute("isFollowed", followService.isFollowed(memberNo, username));
+    }
+
+    model.addAttribute("followInfo", followService.getAllFollowInfo(memberNo, username));
+
+    return "profile/main/follow";
+  }
+
+  /**
    * Go to modify password page.
    *
    * @param model      model

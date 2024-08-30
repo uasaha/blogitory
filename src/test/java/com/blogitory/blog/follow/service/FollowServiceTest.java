@@ -1,5 +1,7 @@
 package com.blogitory.blog.follow.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -9,6 +11,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.blogitory.blog.follow.dto.response.GetAllFollowResponseDto;
+import com.blogitory.blog.follow.dto.response.GetFollowResponseDto;
 import com.blogitory.blog.follow.entity.Follow;
 import com.blogitory.blog.follow.entity.FollowDummy;
 import com.blogitory.blog.follow.repository.FollowRepository;
@@ -16,6 +20,7 @@ import com.blogitory.blog.follow.service.impl.FollowServiceImpl;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,5 +99,67 @@ class FollowServiceTest {
     boolean isFollowed = followService.isFollowed(followFrom.getMemberNo(), followTo.getUsername());
 
     assertTrue(isFollowed);
+  }
+
+  @Test
+  @DisplayName("팔로우 전체 조회")
+  void getAllFollowInfo() {
+    Member followTo = MemberDummy.dummy();
+
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+
+    GetFollowResponseDto followResponseDto =
+            new GetFollowResponseDto(followTo.getProfileThumb(),
+                    followTo.getUsername(), followTo.getName());
+
+    GetFollowResponseDto followingResponseDto =
+            new GetFollowResponseDto(followFrom.getProfileThumb(),
+                    followFrom.getUsername(), followFrom.getName());
+
+    when(followRepository.getAllFollowerByToUsername(anyString()))
+            .thenReturn(List.of(followingResponseDto));
+    when(followRepository.getAllFollowingByFromUsername(anyString()))
+            .thenReturn(List.of(followResponseDto));
+    when(memberRepository.findById(anyInt())).thenReturn(Optional.of(followTo));
+
+    GetAllFollowResponseDto responseDto =
+            followService.getAllFollowInfo(followTo.getMemberNo(), followTo.getUsername());
+
+    assertTrue(responseDto.isMine());
+    assertEquals(followResponseDto.getUsername(), responseDto.getFollowings().getFirst().getUsername());
+    assertEquals(followingResponseDto.getUsername(), responseDto.getFollowers().getFirst().getUsername());
+  }
+
+  @Test
+  @DisplayName("팔로우 전체 조회 - member null")
+  void getAllFollowInfoMemberIsNull() {
+    Member followTo = MemberDummy.dummy();
+
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+
+    GetFollowResponseDto followResponseDto =
+            new GetFollowResponseDto(followTo.getProfileThumb(),
+                    followTo.getUsername(), followTo.getName());
+
+    GetFollowResponseDto followingResponseDto =
+            new GetFollowResponseDto(followFrom.getProfileThumb(),
+                    followFrom.getUsername(), followFrom.getName());
+
+    when(followRepository.getAllFollowerByToUsername(anyString()))
+            .thenReturn(List.of(followingResponseDto));
+    when(followRepository.getAllFollowingByFromUsername(anyString()))
+            .thenReturn(List.of(followResponseDto));
+    when(memberRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+    GetAllFollowResponseDto responseDto =
+            followService.getAllFollowInfo(followTo.getMemberNo(), followTo.getUsername());
+
+    assertFalse(responseDto.isMine());
+    assertEquals(followResponseDto.getUsername(), responseDto.getFollowings().getFirst().getUsername());
+    assertEquals(followingResponseDto.getUsername(), responseDto.getFollowers().getFirst().getUsername());
   }
 }

@@ -18,6 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.blogitory.blog.blog.dto.response.GetBlogInProfileResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.config.TestSecurityConfig;
+import com.blogitory.blog.follow.dto.response.GetAllFollowResponseDto;
+import com.blogitory.blog.follow.dto.response.GetFollowResponseDto;
 import com.blogitory.blog.follow.service.FollowService;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
@@ -38,6 +40,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -146,5 +149,51 @@ class MemberControllerTest {
                     .param("pwd", "@Test12345"))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("Blogitory")));
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("팔로워 전체 조회")
+  void follows() throws Exception {
+    Member followTo = MemberDummy.dummy();
+
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+
+    GetFollowResponseDto followResponseDto =
+            new GetFollowResponseDto(followTo.getProfileThumb(),
+                    followTo.getUsername(), followTo.getName());
+
+    GetFollowResponseDto followingResponseDto =
+            new GetFollowResponseDto(followFrom.getProfileThumb(),
+                    followFrom.getUsername(), followFrom.getName());
+
+    GetMemberProfileResponseDto profileDto =
+            new GetMemberProfileResponseDto(
+                    "username",
+                    "name",
+                    "bio",
+                    "profileThumb",
+                    "introEmail",
+                    List.of(new GetMemberProfileLinkResponseDto(1L, "link")),
+                    List.of(new GetBlogInProfileResponseDto("url", "blog", "bio")),
+                    1L,
+                    1L);
+
+    GetAllFollowResponseDto allFollowResponseDto = new GetAllFollowResponseDto(false, List.of(followResponseDto), List.of(followingResponseDto));
+
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+
+    when(memberService.getProfileByUsername(anyString()))
+            .thenReturn(profileDto);
+    when(followService.isFollowed(anyInt(), anyString())).thenReturn(true);
+    when(followService.getAllFollowInfo(anyInt(), anyString())).thenReturn(allFollowResponseDto);
+
+    mvc.perform(get("/@username/follows")
+            .flashAttrs(attrs))
+            .andExpect(status().isOk());
   }
 }
