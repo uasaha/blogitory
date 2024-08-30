@@ -356,8 +356,8 @@ function getListStylePostsComponent(article) {
     postSummaryDiv.appendChild(postSummary);
 
     postInfoBodyDiv.appendChild(postTitleDiv);
-    postSummaryDiv.appendChild(getFooterComponent(article));
     postInfoBodyDiv.appendChild(postSummaryDiv);
+    postInfoBodyDiv.appendChild(getFooterComponent(article));
 
     postInfoDiv.appendChild(postInfoBodyDiv);
     postBodyDiv.appendChild(postInfoDiv)
