@@ -773,3 +773,15 @@ function cancelHeart() {
             fillHeart.classList.remove("d-none");
         });
 }
+
+function closePosts() {
+    let path = window.location.pathname;
+
+    axios.delete("/api" + path + "/visible")
+        .then(() => {
+            location.reload();
+        })
+        .catch(() => {
+            openFailedAlerts("잠시 후 다시 시도해주세요.");
+        });
+}

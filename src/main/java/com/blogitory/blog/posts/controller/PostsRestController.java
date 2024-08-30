@@ -228,4 +228,45 @@ public class PostsRestController {
     return ResponseEntity.ok(postsService.getRecentPostByTag(pageable, blogKey, tagName));
   }
 
+  /**
+   * Close posts.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param postUrl  post url
+   * @return 200
+   */
+  @RoleUser
+  @DeleteMapping("/@{username}/{blogUrl}/{postUrl}/visible")
+  ResponseEntity<Void> closePosts(@PathVariable String username,
+                                  @PathVariable String blogUrl,
+                                  @PathVariable String postUrl) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+    String postKey = getPostsKey(username, blogUrl, postUrl);
+
+    postsService.closePosts(memberNo, postKey);
+
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Open posts.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param postUrl  post url
+   * @return 200
+   */
+  @RoleUser
+  @PostMapping("/@{username}/{blogUrl}/{postUrl}/visible")
+  ResponseEntity<Void> openPosts(@PathVariable String username,
+                                 @PathVariable String blogUrl,
+                                 @PathVariable String postUrl) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+    String postKey = getPostsKey(username, blogUrl, postUrl);
+
+    postsService.openPosts(memberNo, postKey);
+
+    return ResponseEntity.ok().build();
+  }
 }

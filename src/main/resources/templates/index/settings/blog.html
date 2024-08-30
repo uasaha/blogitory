@@ -26,6 +26,8 @@
                                class="list-group-item list-group-item-action d-flex align-items-center">알림</a>
                             <a href="/settings/blog"
                                class="list-group-item list-group-item-action d-flex align-items-center active">블로그</a>
+                            <a href="/settings/posts"
+                               class="list-group-item list-group-item-action d-flex align-items-center">게시물</a>
                         </div>
                     </div>
                 </div>
@@ -86,7 +88,7 @@
                             <div class="col-auto">
                                 <div class="input-group">
                                     <span id="urlPrefix" class="input-group-text d-none"
-                                          th:text="'@' + ${members.username} + '/'"></span>
+                                          th:text="'https://blogitory.com/@' + ${members.username} + '/'"></span>
                                     <input type="text" class="form-control" id="blogUrl" readonly>
                                 </div>
                             </div>

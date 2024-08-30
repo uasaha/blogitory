@@ -6,6 +6,7 @@ import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import java.util.List;
@@ -126,8 +127,8 @@ public interface PostsService {
   /**
    * Get recent posts by category.
    *
-   * @param pageable pageable
-   * @param blogUrl blog url
+   * @param pageable     pageable
+   * @param blogUrl      blog url
    * @param categoryName category name
    * @return recent post
    */
@@ -139,8 +140,8 @@ public interface PostsService {
    * Get recent post by tag.
    *
    * @param pageable pageable
-   * @param blogUrl blog url
-   * @param tagName tag name
+   * @param blogUrl  blog url
+   * @param tagName  tag name
    * @return recent post
    */
   Pages<GetRecentPostResponseDto> getRecentPostByTag(Pageable pageable,
@@ -154,4 +155,29 @@ public interface PostsService {
    * @return posts list
    */
   List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl);
+
+  /**
+   * Close posts.
+   *
+   * @param memberNo member no
+   * @param postKey  post key
+   */
+  void closePosts(Integer memberNo, String postKey);
+
+  /**
+   * Get posts by member no for Settings.
+   *
+   * @param pageable pageable
+   * @param memberNo member no
+   * @return posts
+   */
+  Pages<GetPostManageResponseDto> getPostsByMemberNo(Pageable pageable, Integer memberNo);
+
+  /**
+   * Open posts.
+   *
+   * @param memberNo member no
+   * @param postKey  post key
+   */
+  void openPosts(Integer memberNo, String postKey);
 }

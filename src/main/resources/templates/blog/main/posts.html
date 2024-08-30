@@ -152,6 +152,7 @@
                                 <div sec:authorize="isAuthenticated()" th:if="${posts.username} == ${members.username}"
                                      class="float-end ms-2">
                                     <button class="btn me-2" onclick="hrefModifyPage()" style="height: 30px">수정</button>
+                                    <button class="btn me-2" onclick="closePosts()" style="height: 30px">비공개</button>
                                     <button class="btn btn-outline-danger" data-bs-toggle="modal"
                                             data-bs-target="#postsDeleteModal" style="height: 30px">삭제
                                     </button>
@@ -239,6 +240,34 @@
 
         const elem = [[${posts.detail}]];
         viewer.setMarkdown(elem);
+
+        let themeStorageKey = "tablerTheme";
+        let defaultTheme = "light";
+        let selectedTheme = localStorage.getItem(themeStorageKey);
+        let editorEl = document.getElementsByClassName("toastui-editor-defaultUI")[0];
+        let viewerEls = document.querySelectorAll("#viewer");
+        let viewerEl = viewerEls[0];
+
+        if (selectedTheme === "light") {
+            if (editorEl) {
+                if (editorEl.classList.contains("toastui-editor-dark")) {
+                    editorEl.classList.remove("toastui-editor-dark");
+                }
+            }
+
+            if (viewerEl) {
+                viewerEl.className="";
+            }
+
+        } else if (selectedTheme === "dark") {
+            if (editorEl) {
+                editorEl.classList.add("toastui-editor-dark");
+            }
+
+            if (viewerEl) {
+                viewerEl.className="toastui-editor-dark";
+            }
+        }
 
         let posts = [[${posts}]];
         let loginMember = [[ ${members} ]];

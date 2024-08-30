@@ -66,6 +66,16 @@ public class Posts extends BaseCreatedAtEntity {
   @Column(name = "posts_deleted")
   private boolean deleted;
 
+  /**
+   * Constructor for create.
+   *
+   * @param category  category
+   * @param url       url
+   * @param subject   subject
+   * @param summary   summary
+   * @param thumbnail thumbnail
+   * @param detail    detail
+   */
   @Builder
   public Posts(Category category,
                String url,
@@ -83,6 +93,14 @@ public class Posts extends BaseCreatedAtEntity {
     this.open = true;
   }
 
+  /**
+   * Modify posts.
+   *
+   * @param title title
+   * @param summary summary
+   * @param content content
+   * @param thumb thumb
+   */
   public void modify(String title, String summary, String content, String thumb) {
     this.subject = title;
     this.summary = summary;
@@ -91,7 +109,24 @@ public class Posts extends BaseCreatedAtEntity {
     this.updatedAt = LocalDateTime.now();
   }
 
+  /**
+   * Delete posts.
+   */
   public void delete() {
     this.deleted = true;
+  }
+
+  /**
+   * Close posts.
+   */
+  public void close() {
+    this.open = false;
+  }
+
+  /**
+   * Open posts.
+   */
+  public void open() {
+    this.open = true;
   }
 }

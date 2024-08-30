@@ -2,6 +2,7 @@ package com.blogitory.blog.posts.repository;
 
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import java.util.List;
@@ -65,8 +66,22 @@ public interface PostsRepositoryCustom {
   Page<GetRecentPostResponseDto> getRecentPostByBlog(
           Pageable pageable, String blogUrl);
 
+  /**
+   * Get posts count by blog.
+   *
+   * @param blogUrl blog url
+   * @return count
+   */
   long getPostsCountByBlog(String blogUrl);
 
+  /**
+   * Get recent posts by category.
+   *
+   * @param pageable     pageable
+   * @param blogUrl      blog url
+   * @param categoryName category name
+   * @return recent posts
+   */
   Page<GetRecentPostResponseDto> getRecentPostByCategory(
           Pageable pageable, String blogUrl, String categoryName);
 
@@ -89,4 +104,13 @@ public interface PostsRepositoryCustom {
   Page<GetRecentPostResponseDto> getRecentPostsByTag(Pageable pageable,
                                                      String blogUrl,
                                                      String tagName);
+
+  /**
+   * Get posts by member no for settings.
+   *
+   * @param pageable pageable
+   * @param memberNo member no
+   * @return posts
+   */
+  Page<GetPostManageResponseDto> getPostsByMemberNo(Pageable pageable, Integer memberNo);
 }

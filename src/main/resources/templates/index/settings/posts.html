@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogitory - 설정</title>
+    <meta property="og:url" content="https://blogitory.com/settings">
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+</head>
+<body>
+<div class="container-xl" layout:fragment="main-content">
+    <div class="page-body">
+        <div class="card">
+            <div class="row g-0">
+                <div class="col-12 col-md-3 border-end">
+                    <div class="card-body">
+                        <div class="list-group list-group-transparent">
+                            <a href="/settings"
+                               class="list-group-item list-group-item-action d-flex align-items-center">계정</a>
+                            <a href="/settings/notification"
+                               class="list-group-item list-group-item-action d-flex align-items-center">알림</a>
+                            <a href="/settings/blog"
+                               class="list-group-item list-group-item-action d-flex align-items-center">블로그</a>
+                            <a href="/settings/posts"
+                               class="list-group-item list-group-item-action d-flex align-items-center active">게시물</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-9 d-flex flex-column">
+                    <div class="card-body">
+                        <div th:each="post : ${posts.body()}" class="row mb-3">
+                            <div class="d-flex">
+                                <div class="col-12 card-footer">
+                                    <div class="float-start mt-1">
+                                        <img class="avatar avatar-sm" th:if="${not #strings.isEmpty(post.postThumb)}" th:src="${post.postThumb}" alt="pfp"/>
+                                    </div>
+                                    <div class="float-start ms-3">
+                                        <div th:text="${post.blogName} + ' > ' + ${post.categoryName}"></div>
+                                    </div>
+                                    <div class="float-start ms-3">
+                                        <div th:post-url="${post.postUrl}" th:onclick="|location.href='/' + this.getAttribute('post-url')|" class="cursor-pointer" th:text="${post.postTitle}"></div>
+                                        <div class="text-danger" th:if="${!post.isOpen}">(비공개)</div>
+                                    </div>
+                                    <div class="float-end ms-2">
+                                        <button class="btn me-2" th:post-url="${post.postUrl}" onclick="hrefModifyPage(this.getAttribute('post-url'))" style="height: 30px">수정</button>
+                                        <button class="btn me-2" th:if="${post.isOpen}" th:post-url="${post.postUrl}" onclick="closePosts(this.getAttribute('post-url'))" style="height: 30px">비공개</button>
+                                        <button class="btn me-2" th:if="${!post.isOpen}" th:post-url="${post.postUrl}" onclick="openPosts(this.getAttribute('post-url'))" style="height: 30px">공개</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="blogQuitModal" tabindex="-1">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-status bg-danger"></div>
+                <div class="modal-body text-center py-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M12 9v2m0 4v.01"/>
+                        <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"/>
+                    </svg>
+                    <h3>블로그 폐쇄</h3>
+                    <div class="text-secondary">모든 활동이 함께 삭제되며 복구가 불가능합니다.</div>
+                    <div class="w-100 mt-2">
+                        <div class="col">
+                            <div>하단에 비밀번호를 입력해주세요.</div>
+                            <input class="form-control" id="left-pwd" type="password"/>
+                        </div>
+                    </div>
+                    <div class="w-100 mt-2">
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn w-100" data-bs-dismiss="modal">취소</button>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-danger w-100" data-bs-dismiss="modal" onclick="deleteBlog()">폐쇄
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        let blogs = [[${blogs}]];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (blogs === null) {
+                blogNew();
+            } else {
+                blogSwap();
+            }
+        });
+
+        function hrefModifyPage(url) {
+            let path = "/" + url + "/mod";
+
+            location.href = path;
+        }
+
+        function closePosts(url) {
+            let path = '/' + url;
+
+            axios.delete("/api" + path + "/visible")
+                .then(() => {
+                    location.reload();
+                })
+                .catch(() => {
+                    openFailedAlerts("잠시 후 다시 시도해주세요.");
+                });
+        }
+
+        function openPosts(url) {
+            let path = '/' + url;
+
+            axios.post("/api" + path + "/visible")
+                .then(() => {
+                    location.reload();
+                })
+                .catch(() => {
+                    openFailedAlerts("잠시 후 다시 시도해주세요.");
+                });
+        }
+    </script>
+    <script src="/static/js/my/settings.js" defer></script>
+</th:block>
+</body>
+</html>

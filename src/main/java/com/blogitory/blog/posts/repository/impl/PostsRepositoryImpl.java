@@ -7,6 +7,7 @@ import com.blogitory.blog.heart.entity.QHeart;
 import com.blogitory.blog.member.entity.QMember;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
@@ -171,6 +172,9 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
     return new PageImpl<>(postsList, pageable, total);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public long getPostsCountByBlog(String blogUrl) {
     return from(posts)
@@ -187,6 +191,9 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
             .fetchCount();
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Page<GetRecentPostResponseDto> getRecentPostByCategory(
           Pageable pageable, String blogUrl, String categoryName) {
@@ -347,6 +354,49 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                     .and(category.deleted.isFalse())
                     .and(posts.deleted.isFalse())
                     .and(posts.open.isTrue()))
+            .fetchCount();
+
+    return new PageImpl<>(postList, pageable, total);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Page<GetPostManageResponseDto> getPostsByMemberNo(Pageable pageable, Integer memberNo) {
+    List<GetPostManageResponseDto> postList = queryFactory
+            .from(posts)
+            .select(Projections.constructor(
+                    GetPostManageResponseDto.class,
+                    blog.name,
+                    category.name,
+                    posts.url,
+                    posts.subject,
+                    posts.thumbnail,
+                    posts.createdAt,
+                    posts.open))
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
+            .innerJoin(member).on(member.memberNo.eq(blog.member.memberNo))
+            .where(member.memberNo.eq(memberNo))
+            .where(member.blocked.isFalse().and(member.left.isFalse()))
+            .where(blog.deleted.isFalse())
+            .where(category.deleted.isFalse())
+            .where(posts.deleted.isFalse())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+    long total = from(posts)
+            .select(posts.postsNo)
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
+            .innerJoin(member).on(member.memberNo.eq(blog.member.memberNo))
+            .where(member.memberNo.eq(memberNo))
+            .where(member.blocked.isFalse().and(member.left.isFalse()))
+            .where(blog.deleted.isFalse())
+            .where(category.deleted.isFalse())
+            .where(posts.deleted.isFalse())
             .fetchCount();
 
     return new PageImpl<>(postList, pageable, total);

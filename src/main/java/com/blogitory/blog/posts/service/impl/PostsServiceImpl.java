@@ -5,6 +5,7 @@ import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.commons.utils.PostsUtils;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
@@ -12,6 +13,7 @@ import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
@@ -168,11 +170,15 @@ public class PostsServiceImpl implements PostsService {
       url = url + added;
     }
 
+    String summary = saveDto.getSummary().isEmpty()
+            ? PostsUtils.extractSummary(saveDto.getDetails()).replace("\n", " ")
+            : saveDto.getSummary();
+
     Posts posts = Posts.builder()
             .category(category)
             .url(url)
             .subject(saveDto.getTitle())
-            .summary(saveDto.getSummary())
+            .summary(summary)
             .thumbnail(saveDto.getThumbnailUrl())
             .detail(saveDto.getDetails())
             .build();
@@ -356,10 +362,64 @@ public class PostsServiceImpl implements PostsService {
             result.getTotalElements());
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Transactional(readOnly = true)
   @Override
   public List<GetPopularPostResponseDto> getPopularPostsByBlog(String blogUrl) {
     return postsRepository.getPopularPostsByBlog(blogUrl);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void closePosts(Integer memberNo, String postKey) {
+    Posts posts = postsRepository.findByUrl(postKey)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+
+    Category category = posts.getCategory();
+    Blog blog = category.getBlog();
+
+    if (!blog.getMember().getMemberNo().equals(memberNo)) {
+      throw new AuthorizationException();
+    }
+
+    posts.close();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public Pages<GetPostManageResponseDto> getPostsByMemberNo(Pageable pageable, Integer memberNo) {
+    Page<GetPostManageResponseDto> page = postsRepository.getPostsByMemberNo(pageable, memberNo);
+
+    return new Pages<>(page.getContent(),
+            pageable.getPageNumber(),
+            page.hasPrevious(),
+            page.hasNext(),
+            page.getTotalElements());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void openPosts(Integer memberNo, String postKey) {
+    Posts posts = postsRepository.findByUrl(postKey)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+
+    Category category = posts.getCategory();
+    Blog blog = category.getBlog();
+
+    if (!blog.getMember().getMemberNo().equals(memberNo)) {
+      throw new AuthorizationException();
+    }
+
+    posts.open();
   }
 
   /**

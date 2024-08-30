@@ -26,6 +26,34 @@ const editor = new Editor({
     language: "ko-KR",
 });
 
+let themeStorageKey = "tablerTheme";
+let defaultTheme = "light";
+let selectedTheme = localStorage.getItem(themeStorageKey);
+let editorEl = document.getElementsByClassName("toastui-editor-defaultUI")[0];
+let viewerEls = document.querySelectorAll("#viewer");
+let viewerEl = viewerEls[0];
+
+if (selectedTheme === "light") {
+    if (editorEl) {
+        if (editorEl.classList.contains("toastui-editor-dark")) {
+            editorEl.classList.remove("toastui-editor-dark");
+        }
+    }
+
+    if (viewerEl) {
+        viewerEl.className="";
+    }
+
+} else if (selectedTheme === "dark") {
+    if (editorEl) {
+        editorEl.classList.add("toastui-editor-dark");
+    }
+
+    if (viewerEl) {
+        viewerEl.className="toastui-editor-dark";
+    }
+}
+
 editor.addHook("addImageBlobHook", function (blob, callback) {
     let formData = new FormData();
     formData.append('file', blob);

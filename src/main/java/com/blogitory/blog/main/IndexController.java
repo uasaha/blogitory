@@ -5,10 +5,13 @@ import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.annotaion.RoleAnonymous;
 import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.member.service.MemberService;
+import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class IndexController {
   private final BlogService blogService;
   private final MemberService memberService;
+  private final PostsService postsService;
 
   /**
    * Go to main page.
@@ -47,11 +51,21 @@ public class IndexController {
     return "index/main/signup";
   }
 
+  /**
+   * Go to shuffle page.
+   *
+   * @return shuffle page
+   */
   @GetMapping("/shuffle")
   public String shufflePage() {
     return "index/main/shuffle";
   }
 
+  /**
+   * Go to feed page.
+   *
+   * @return feed page
+   */
   @RoleUser
   @GetMapping("/feed")
   public String feedPage() {
@@ -88,7 +102,7 @@ public class IndexController {
    */
   @RoleUser
   @GetMapping("/settings")
-  public String settingsPage(Model model) {
+  public String settings(Model model) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     model.addAttribute("memberProfile", memberService.getSettingsProfile(memberNo));
@@ -103,11 +117,28 @@ public class IndexController {
    */
   @RoleUser
   @GetMapping("/settings/notification")
-  public String notificationPage(Model model) {
+  public String notificationSettings(Model model) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     model.addAttribute("alerts", memberService.getSettingsAlert(memberNo));
     return "index/settings/notice";
+  }
+
+  /**
+   * Go to posts settings page.
+   *
+   * @param pageable pageable
+   * @param model    model
+   * @return settings page
+   */
+  @RoleUser
+  @GetMapping("/settings/posts")
+  public String postSettings(@PageableDefault(size = 20) Pageable pageable, Model model) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+
+    model.addAttribute("posts", postsService.getPostsByMemberNo(pageable, memberNo));
+
+    return "index/settings/posts";
   }
 }
 

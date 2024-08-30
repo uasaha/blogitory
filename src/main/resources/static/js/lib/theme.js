@@ -27,10 +27,6 @@ function setTheme(theme) {
 	let themeStorageKey = "tablerTheme";
 	let defaultTheme = "light";
 	let selectedTheme = theme;
-	const editorEl = document.getElementsByClassName("toastui-editor-defaultUI")[0];
-	const viewerEls = document.querySelectorAll("#viewer");
-	const viewerEl = viewerEls[0];
-	const viewerMobileEl = viewerEls[1];
 
 	if (localStorage.getItem(themeStorageKey) == null) {
 		localStorage.setItem(themeStorageKey, defaultTheme);
@@ -39,27 +35,8 @@ function setTheme(theme) {
 
 	if (selectedTheme === "light") {
 		localStorage.setItem(themeStorageKey, "light");
-
-		if (editorEl) {
-			if (editorEl.classList.contains("toastui-editor-dark")) {
-				editorEl.classList.remove("toastui-editor-dark");
-			}
-		}
-
-		if (viewerEl) {
-			viewerEl.className="";
-		}
-
 	} else if (selectedTheme === "dark") {
 		localStorage.setItem(themeStorageKey, "dark");
-
-		if (editorEl) {
-			editorEl.classList.add("toastui-editor-dark");
-		}
-
-		if (viewerEl) {
-			viewerEl.className="toastui-editor-dark";
-		}
 	}
 
 	if (selectedTheme === 'dark') {
@@ -67,6 +44,4 @@ function setTheme(theme) {
 	} else {
 		document.body.removeAttribute("data-bs-theme");
 	}
-
-
 }
