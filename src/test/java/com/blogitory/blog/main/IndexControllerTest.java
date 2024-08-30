@@ -16,6 +16,7 @@ import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
 import com.blogitory.blog.member.dto.response.GetMemberAlertInSettingsResponseDto;
 import com.blogitory.blog.member.dto.response.GetMemberProfileInSettingsResponseDto;
 import com.blogitory.blog.member.service.MemberService;
+import com.blogitory.blog.posts.service.PostsService;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +53,9 @@ class IndexControllerTest {
 
   @MockBean
   private BlogService blogService;
+
+  @MockBean
+  private PostsService postsService;
 
   /**
    * Sets up.
