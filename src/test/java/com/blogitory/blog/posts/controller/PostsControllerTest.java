@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +38,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * 설명 작성 필!
+ * Posts controller test.
  *
  * @author woonseok
  * @Date 2024-08-08
@@ -197,5 +198,20 @@ class PostsControllerTest {
     mvc.perform(get("/@username/blog/post/mod")
                     .flashAttrs(attrs))
             .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("좋아요 표시한 게시물 페이지")
+  void hearts() throws Exception {
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+    attrs.put("noBlog", false);
+
+    mvc.perform(get("/hearts")
+                    .flashAttrs(attrs))
+            .andExpect(status().isOk())
+            .andExpect(model().attributeExists("pageable"));
   }
 }

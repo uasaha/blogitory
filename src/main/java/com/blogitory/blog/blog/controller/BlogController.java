@@ -30,7 +30,7 @@ public class BlogController {
   private final PostsService postsService;
 
   private static final String BLOG_ATTR = "blog";
-  private static final String PAGEABLE_ATTR = "pageable";
+  public static final String PAGEABLE_ATTR = "pageable";
 
   /**
    * Go to blog page.

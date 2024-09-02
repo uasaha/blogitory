@@ -28,6 +28,7 @@ import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
@@ -746,5 +747,117 @@ class PostsServiceTest {
 
     assertEquals(result.getTitle(), response.getTitle());
     assertEquals(result.getSummary(), response.getSummary());
+  }
+
+  @Test
+  @DisplayName("게시물 비공개")
+  void closePosts() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+
+    postsService.closePosts(member.getMemberNo(), posts.getUrl());
+
+    assertFalse(posts.isOpen());
+  }
+
+  @Test
+  @DisplayName("게시물 비공개 실패")
+  void closePostsFailed() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+
+    String url = posts.getUrl();
+
+    assertThrows(AuthorizationException.class,
+            () -> postsService.closePosts(3, url));
+  }
+
+  @Test
+  @DisplayName("게시물 공개")
+  void openPosts() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+
+    postsService.openPosts(member.getMemberNo(), posts.getUrl());
+
+    assertTrue(posts.isOpen());
+  }
+
+  @Test
+  @DisplayName("게시물 공개 실패")
+  void openPostsFailed() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+
+    String url = posts.getUrl();
+
+    assertThrows(AuthorizationException.class,
+            () -> postsService.openPosts(3, url));
+  }
+
+  @Test
+  @DisplayName("작성한 전체 게시글 조회")
+  void getPostsByMemberNo() {
+    GetPostManageResponseDto responseDto =
+            new GetPostManageResponseDto("blog",
+                    "categpru",
+                    "post",
+                    "title",
+                    "thumb",
+                    LocalDateTime.now(),
+                    true);
+    Pageable pageable = PageRequest.of(0, 4);
+
+    when(postsRepository.getPostsByMemberNo(any(), anyInt()))
+            .thenReturn(new PageImpl<>(List.of(responseDto), pageable, 1L));
+
+    Pages<GetPostManageResponseDto> result = postsService.getPostsByMemberNo(pageable, 1);
+
+    assertEquals(1L, result.total());
+
+    GetPostManageResponseDto actual = result.body().getFirst();
+
+    assertEquals(responseDto.getPostTitle(), actual.getPostTitle());
+  }
+
+  @Test
+  @DisplayName("좋아요 표시한 게시글 조회")
+  void getPostsByHearts() {
+    GetRecentPostResponseDto response = new GetRecentPostResponseDto(
+            "blogUrl", "blogName", "username",
+            "blogPfp", "postUrl", "title",
+            "summary", "thumb", LocalDateTime.now(),
+            0L, 0L);
+    List<GetRecentPostResponseDto> list = List.of(response);
+    Pageable pageable = PageRequest.of(0, 4);
+
+    Page<GetRecentPostResponseDto> page = new PageImpl<>(list, pageable, 1L);
+
+    when(postsRepository.getPostsByHearts(anyInt(), any()))
+            .thenReturn(page);
+
+    Pages<GetRecentPostResponseDto> result = postsService.getPostsByHearts(1, pageable);
+
+    assertEquals(1L, page.getTotalElements());
+
+    GetRecentPostResponseDto actual = result.body().getFirst();
+
+    assertEquals(response.getTitle(), actual.getTitle());
   }
 }

@@ -6,16 +6,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.blogitory.blog.blog.dto.response.GetBlogInSettingsResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
 import com.blogitory.blog.member.dto.response.GetMemberAlertInSettingsResponseDto;
 import com.blogitory.blog.member.dto.response.GetMemberProfileInSettingsResponseDto;
 import com.blogitory.blog.member.service.MemberService;
+import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -217,5 +220,33 @@ class IndexControllerTest {
                     .flashAttrs(attrs))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("name")));
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("게시물 설정")
+  void notificationSettingsPage() throws Exception {
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+
+    GetPostManageResponseDto responseDto =
+            new GetPostManageResponseDto("blog",
+                    "category",
+                    "postUrl",
+                    "postTitle",
+                    "postThumb",
+                    LocalDateTime.now(),
+                    true);
+
+    when(postsService.getPostsByMemberNo(any(), anyInt()))
+            .thenReturn(new Pages<>(List.of(responseDto), 0, true, true, 1L));
+
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+    attrs.put("noBlog", false);
+
+    mvc.perform(MockMvcRequestBuilders.get("/settings/posts")
+            .flashAttrs(attrs))
+            .andExpect(status().isOk())
+            .andExpect(model().attributeExists("posts"));
   }
 }

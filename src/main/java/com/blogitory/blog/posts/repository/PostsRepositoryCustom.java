@@ -113,4 +113,13 @@ public interface PostsRepositoryCustom {
    * @return posts
    */
   Page<GetPostManageResponseDto> getPostsByMemberNo(Pageable pageable, Integer memberNo);
+
+  /**
+   * Get hearts posts.
+   *
+   * @param memberNo member no
+   * @param pageable pageable
+   * @return posts
+   */
+  Page<GetRecentPostResponseDto> getPostsByHearts(Integer memberNo, Pageable pageable);
 }

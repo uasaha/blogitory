@@ -298,9 +298,10 @@ function getPostsComponentForBlog(article) {
     return postDiv;
 }
 
-function getListStylePostsComponent(article) {
+function getListStylePostsComponentForBlog(article) {
     let postDiv = document.createElement('div');
     postDiv.className = "col-12";
+    postDiv.style = "min-height: 9rem";
 
     let postCardDiv = document.createElement('div');
     postCardDiv.className = "card cursor-pointer zoom cursor-pointer";
@@ -310,7 +311,7 @@ function getListStylePostsComponent(article) {
     })
 
     let postBodyDiv = document.createElement('div');
-    postBodyDiv.className = "row g-0 align-items-center";
+    postBodyDiv.className = "row g-0";
 
     if (article.thumb) {
         let postThumbCol = document.createElement('div');
@@ -355,6 +356,82 @@ function getListStylePostsComponent(article) {
     postSummary.innerText = article.summary;
     postSummaryDiv.appendChild(postSummary);
 
+    postInfoBodyDiv.appendChild(postTitleDiv);
+    postInfoBodyDiv.appendChild(postSummaryDiv);
+    postInfoBodyDiv.appendChild(getFooterComponent(article));
+
+    postInfoDiv.appendChild(postInfoBodyDiv);
+    postBodyDiv.appendChild(postInfoDiv)
+
+    postCardDiv.appendChild(postBodyDiv);
+    postDiv.appendChild(postCardDiv);
+
+    return postDiv;
+}
+
+function getListStylePostsComponent(article) {
+    let postDiv = document.createElement('div');
+    postDiv.className = "col-12";
+    postDiv.style = "min-height: 11rem";
+
+    let postCardDiv = document.createElement('div');
+    postCardDiv.className = "card cursor-pointer zoom cursor-pointer";
+
+    postCardDiv.addEventListener("click", () => {
+        location.href = "/" + article.postUrl;
+    })
+
+    let postBodyDiv = document.createElement('div');
+    postBodyDiv.className = "row g-0";
+
+    if (article.thumb) {
+        let postThumbCol = document.createElement('div');
+        postThumbCol.className = "col-4";
+
+        let postThumbDiv = document.createElement('div');
+        postThumbDiv.className = "ratio ratio-4x3 card-img-start";
+
+        let postThumbImg = document.createElement('img');
+        postThumbImg.src = article.thumb;
+        postThumbImg.alt = "thumb";
+        postThumbImg.style.objectFit = "cover";
+
+        postThumbImg.addEventListener('error', () => {
+            postThumbCol.classList.add("d-none");
+        });
+
+        postThumbDiv.appendChild(postThumbImg);
+        postThumbCol.appendChild(postThumbDiv);
+        postBodyDiv.appendChild(postThumbCol);
+    }
+
+    let postInfoDiv = document.createElement('div');
+    postInfoDiv.className = "col";
+
+    let postInfoBodyDiv = document.createElement('div');
+    postInfoBodyDiv.className = "card-body";
+
+
+    let postTitleDiv = document.createElement('div');
+    postTitleDiv.className = "col-12";
+
+    let postTitle = document.createElement('span');
+    postTitle.className = "card-title";
+    postTitle.innerText = article.title;
+    postTitleDiv.appendChild(postTitle);
+
+    let postSummaryDiv = document.createElement('div');
+    postSummaryDiv.className = "col-12";
+
+    let postSummary = document.createElement('span');
+    postSummary.className = "text-over-summary-1";
+    postSummary.innerText = article.summary;
+    postSummaryDiv.appendChild(postSummary);
+
+    let writerDiv = getWriterComponent(article);
+    writerDiv.classList.add("mb-3");
+
+    postInfoBodyDiv.appendChild(writerDiv);
     postInfoBodyDiv.appendChild(postTitleDiv);
     postInfoBodyDiv.appendChild(postSummaryDiv);
     postInfoBodyDiv.appendChild(getFooterComponent(article));
@@ -442,6 +519,28 @@ function getPostsByStyleForBlog(article) {
 
     if (style === 'album') {
         return getPostsComponentForBlog(article);
+    }
+
+    if (style === 'grid') {
+        return getGridStylePostsComponent(article);
+    }
+
+    return getListStylePostsComponentForBlog(article);
+}
+
+function getPostsByStyle(article) {
+    let style = getCookie('view-style');
+
+    if (!style) {
+        setCookie('view-style', 'album', 365);
+    }
+
+    style = getCookie('view-style');
+
+    document.getElementById("view-" + style + "-btn").classList.add("text-primary");
+
+    if (style === 'album') {
+        return getPostComponent(article);
     }
 
     if (style === 'grid') {

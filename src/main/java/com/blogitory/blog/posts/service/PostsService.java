@@ -180,4 +180,13 @@ public interface PostsService {
    * @param postKey  post key
    */
   void openPosts(Integer memberNo, String postKey);
+
+  /**
+   * Get posts by hearts.
+   *
+   * @param memberNo member no
+   * @param pageable pageable
+   * @return posts
+   */
+  Pages<GetRecentPostResponseDto> getPostsByHearts(Integer memberNo, Pageable pageable);
 }

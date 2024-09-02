@@ -269,4 +269,19 @@ public class PostsRestController {
 
     return ResponseEntity.ok().build();
   }
+
+  /**
+   * Get hearts posts.
+   *
+   * @param pageable pageable
+   * @return posts
+   */
+  @RoleUser
+  @GetMapping("/hearts")
+  ResponseEntity<Pages<GetRecentPostResponseDto>> getHeartsPosts(
+          @PageableDefault(size = 12) Pageable pageable) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+
+    return ResponseEntity.ok(postsService.getPostsByHearts(memberNo, pageable));
+  }
 }

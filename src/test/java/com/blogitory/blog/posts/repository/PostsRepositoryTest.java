@@ -14,11 +14,15 @@ import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.config.JpaConfig;
 import com.blogitory.blog.commons.config.QuerydslConfig;
+import com.blogitory.blog.heart.entity.Heart;
+import com.blogitory.blog.heart.entity.HeartDummy;
+import com.blogitory.blog.heart.repository.HeartRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
@@ -69,6 +73,9 @@ class PostsRepositoryTest {
 
   @Autowired
   PostsTagRepository postsTagRepository;
+
+  @Autowired
+  HeartRepository heartRepository;
 
   @Autowired
   EntityManager entityManager;
@@ -314,6 +321,52 @@ class PostsRepositoryTest {
 
     Page<GetRecentPostResponseDto> page = postsRepository
             .getRecentPostsByTag(pageable, blog.getUrlName(), tag.getName());
+
+    assertEquals(1L, page.getTotalElements());
+
+    GetRecentPostResponseDto actual = page.getContent().getFirst();
+
+    assertEquals(posts.getSubject(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("회원이 작성한 전체 글 조회")
+  void getPostsByMemberNo() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<GetPostManageResponseDto> page = postsRepository.getPostsByMemberNo(pageable, member.getMemberNo());
+
+    assertEquals(1L, page.getTotalElements());
+
+    GetPostManageResponseDto actual = page.getContent().getFirst();
+
+    assertEquals(posts.getSubject(), actual.getPostTitle());
+  }
+
+  @Test
+  @DisplayName("좋아요 표시한 글 조회")
+  void getPostsByHearts() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Heart heart = HeartDummy.dummy(member, posts);
+    heartRepository.save(heart);
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<GetRecentPostResponseDto> page = postsRepository.getPostsByHearts(member.getMemberNo(), pageable);
 
     assertEquals(1L, page.getTotalElements());
 

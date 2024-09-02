@@ -423,6 +423,21 @@ public class PostsServiceImpl implements PostsService {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Pages<GetRecentPostResponseDto> getPostsByHearts(Integer memberNo, Pageable pageable) {
+    Page<GetRecentPostResponseDto> result =
+            postsRepository.getPostsByHearts(memberNo, pageable);
+
+    return new Pages<>(result.getContent(),
+            pageable.getPageNumber(),
+            result.hasPrevious(),
+            result.hasNext(),
+            result.getTotalElements());
+  }
+
+  /**
    * Connect tag to blog.
    *
    * @param blog  blog

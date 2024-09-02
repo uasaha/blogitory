@@ -303,40 +303,40 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                                                             String tagName) {
     List<GetRecentPostResponseDto> postList =
             from(posts)
-            .select(Projections.constructor(
-                    GetRecentPostResponseDto.class,
-                    blog.urlName,
-                    blog.name,
-                    member.username,
-                    blog.background,
-                    posts.url,
-                    posts.subject,
-                    posts.summary,
-                    posts.thumbnail,
-                    posts.createdAt,
-                    JPAExpressions.select(heart.count())
-                            .from(heart)
-                            .where(heart.posts.postsNo.eq(posts.postsNo))
-                            .where(heart.deleted.isFalse()),
-                    JPAExpressions.select(comment.count())
-                            .from(comment)
-                            .where(comment.posts.postsNo.eq(posts.postsNo))))
-            .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
-            .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
-            .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
-            .leftJoin(postsTag).on(postsTag.posts.postsNo.eq(posts.postsNo))
-            .leftJoin(tag).on(tag.tagNo.eq(postsTag.tag.tagNo))
-            .where(member.left.isFalse()
-                    .and(blog.deleted.isFalse())
-                    .and(category.deleted.isFalse())
-                    .and(posts.deleted.isFalse())
-                    .and(posts.open.isTrue())
-                    .and(member.blocked.isFalse())
-                    .and(tag.name.eq(tagName)))
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .orderBy(posts.createdAt.desc())
-            .fetch();
+                    .select(Projections.constructor(
+                            GetRecentPostResponseDto.class,
+                            blog.urlName,
+                            blog.name,
+                            member.username,
+                            blog.background,
+                            posts.url,
+                            posts.subject,
+                            posts.summary,
+                            posts.thumbnail,
+                            posts.createdAt,
+                            JPAExpressions.select(heart.count())
+                                    .from(heart)
+                                    .where(heart.posts.postsNo.eq(posts.postsNo))
+                                    .where(heart.deleted.isFalse()),
+                            JPAExpressions.select(comment.count())
+                                    .from(comment)
+                                    .where(comment.posts.postsNo.eq(posts.postsNo))))
+                    .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
+                    .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
+                    .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
+                    .leftJoin(postsTag).on(postsTag.posts.postsNo.eq(posts.postsNo))
+                    .leftJoin(tag).on(tag.tagNo.eq(postsTag.tag.tagNo))
+                    .where(member.left.isFalse()
+                            .and(blog.deleted.isFalse())
+                            .and(category.deleted.isFalse())
+                            .and(posts.deleted.isFalse())
+                            .and(posts.open.isTrue())
+                            .and(member.blocked.isFalse())
+                            .and(tag.name.eq(tagName)))
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(posts.createdAt.desc())
+                    .fetch();
 
     long total = from(posts)
             .select(posts.postsNo)
@@ -397,6 +397,67 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
             .where(blog.deleted.isFalse())
             .where(category.deleted.isFalse())
             .where(posts.deleted.isFalse())
+            .fetchCount();
+
+    return new PageImpl<>(postList, pageable, total);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Page<GetRecentPostResponseDto> getPostsByHearts(Integer memberNo, Pageable pageable) {
+    QMember target = new QMember("target");
+
+    List<GetRecentPostResponseDto> postList =
+            from(heart)
+                    .select(Projections.constructor(
+                            GetRecentPostResponseDto.class,
+                            blog.urlName,
+                            blog.name,
+                            member.username,
+                            blog.background,
+                            posts.url,
+                            posts.subject,
+                            posts.summary,
+                            posts.thumbnail,
+                            posts.createdAt,
+                            JPAExpressions.select(heart.count())
+                                    .from(heart)
+                                    .where(heart.posts.postsNo.eq(posts.postsNo))
+                                    .where(heart.deleted.isFalse()),
+                            JPAExpressions.select(comment.count())
+                                    .from(comment)
+                                    .where(comment.posts.postsNo.eq(posts.postsNo))))
+                    .innerJoin(posts).on(posts.postsNo.eq(heart.posts.postsNo))
+                    .innerJoin(target).on(target.memberNo.eq(heart.member.memberNo))
+                    .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+                    .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
+                    .innerJoin(member).on(member.memberNo.eq(blog.member.memberNo))
+                    .where(heart.deleted.isFalse())
+                    .where(target.memberNo.eq(memberNo))
+                    .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+                    .where(category.deleted.isFalse())
+                    .where(blog.deleted.isFalse())
+                    .where(member.blocked.isFalse().and(target.blocked.isFalse()))
+                    .orderBy(heart.createdAt.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+
+    long total = from(heart)
+            .select(heart.posts.postsNo)
+            .innerJoin(posts).on(posts.postsNo.eq(heart.posts.postsNo))
+            .innerJoin(target).on(target.memberNo.eq(heart.member.memberNo))
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .innerJoin(blog).on(blog.blogNo.eq(category.blog.blogNo))
+            .innerJoin(member).on(member.memberNo.eq(blog.member.memberNo))
+            .where(heart.deleted.isFalse())
+            .where(target.memberNo.eq(memberNo))
+            .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+            .where(category.deleted.isFalse())
+            .where(blog.deleted.isFalse())
+            .where(member.blocked.isFalse().and(target.blocked.isFalse()))
             .fetchCount();
 
     return new PageImpl<>(postList, pageable, total);

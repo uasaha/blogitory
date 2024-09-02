@@ -210,4 +210,37 @@ class PostsRestControllerTest {
     mvc.perform(get("/api/@username/blog/tags/recent?page=0&size=4"))
             .andExpect(status().isOk());
   }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("게시글 비공개")
+  void closePosts() throws Exception {
+    doNothing().when(postsService).closePosts(anyInt(), anyString());
+
+    mvc.perform(delete("/api/@username/blog/post/visible"))
+            .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("게시글 공개")
+  void openPosts() throws Exception {
+    doNothing().when(postsService).openPosts(anyInt(), anyString());
+
+    mvc.perform(post("/api/@username/blog/post/visible"))
+            .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("좋아요 게시물 조회")
+  void getHeartsPosts() throws Exception {
+    List<GetRecentPostResponseDto> list = List.of();
+    Pages<GetRecentPostResponseDto> pages = new Pages<>(list, 0, false, false, 0L);
+
+    when(postsService.getPostsByHearts(any(), any())).thenReturn(pages);
+
+    mvc.perform(get("/api/hearts"))
+            .andExpect(status().isOk());
+  }
 }

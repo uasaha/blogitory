@@ -1,5 +1,6 @@
 package com.blogitory.blog.posts.controller;
 
+import static com.blogitory.blog.blog.controller.BlogController.PAGEABLE_ATTR;
 import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
 import static com.blogitory.blog.commons.utils.UrlUtil.getPostsKey;
 
@@ -15,6 +16,9 @@ import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 1.0
  **/
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class PostsController {
   private final BlogService blogService;
@@ -117,5 +122,11 @@ public class PostsController {
     }
 
     return "blog/main/posts";
+  }
+
+  @GetMapping("/hearts")
+  public String hearts(@PageableDefault(size = 12) Pageable pageable, Model model) {
+    model.addAttribute(PAGEABLE_ATTR, pageable);
+    return "index/posts/hearts";
   }
 }
