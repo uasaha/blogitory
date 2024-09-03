@@ -80,7 +80,7 @@
                         <h3 class="card-title mt-4">블로그 이름</h3>
                         <div class="row g-3">
                             <div class="col-auto">
-                                <input type="text" class="form-control" id="blogName">
+                                <input type="text" class="form-control" id="blogName" onkeyup="validateBlogName(this)">
                             </div>
                         </div>
                         <h3 class="card-title mt-4">블로그 URL</h3>
@@ -89,7 +89,7 @@
                                 <div class="input-group">
                                     <span id="urlPrefix" class="input-group-text d-none"
                                           th:text="'https://blogitory.com/@' + ${members.username} + '/'"></span>
-                                    <input type="text" class="form-control" id="blogUrl" readonly>
+                                    <input type="text" class="form-control" id="blogUrl" readonly onkeyup="validateBlogUrl(this)">
                                 </div>
                             </div>
                         </div>

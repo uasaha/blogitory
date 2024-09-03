@@ -1,5 +1,7 @@
 const nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d\s]{2,30}$/;
 const socialLength = 50;
+const blogNameReg = /^[ㄱ-ㅎ가-힣a-zA-Z0-9\s_-]{2,20}$/
+const blogUrlReg = /^[a-zA-Z0-9-]{2,50}$/
 
 function pfpInputClick() {
     document.querySelector("#pfpInput").click();
@@ -446,4 +448,25 @@ function deleteBlog() {
     }).catch(() => {
         openFailedAlerts("블로그 폐쇄에 실패하였습니다.")
     })
+}
+
+function validateBlogName(el) {
+    if (blogNameReg.test(el.value)) {
+        el.classList.remove("is-invalid")
+        el.classList.add("is-valid");
+        return true;
+    }
+    el.classList.remove("is-valid");
+    el.classList.add("is-invalid");
+    return false;
+}
+function validateBlogUrl(el) {
+    if (blogUrlReg.test(el.value)) {
+        el.classList.remove("is-invalid")
+        el.classList.add("is-valid");
+        return true;
+    }
+    el.classList.remove("is-valid");
+    el.classList.add("is-invalid");
+    return false;
 }
