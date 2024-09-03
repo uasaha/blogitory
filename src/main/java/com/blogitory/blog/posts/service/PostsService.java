@@ -200,4 +200,13 @@ public interface PostsService {
    * @return Activity, grouping by day of week
    */
   Map<DayOfWeek, List<GetPostActivityResponseDto>> getPostActivity(String username);
+
+  /**
+   * Search posts.
+   *
+   * @param pageable pageable
+   * @param word     search keyword
+   * @return search result
+   */
+  Pages<GetRecentPostResponseDto> searchPosts(Pageable pageable, String word);
 }

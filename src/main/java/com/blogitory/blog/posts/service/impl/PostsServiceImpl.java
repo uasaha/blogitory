@@ -495,6 +495,20 @@ public class PostsServiceImpl implements PostsService {
             .collect(Collectors.groupingBy(d -> d.getDate().getDayOfWeek()));
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public Pages<GetRecentPostResponseDto> searchPosts(Pageable pageable, String word) {
+    Page<GetRecentPostResponseDto> result = postsRepository.searchPosts(pageable, word);
+
+    return new Pages<>(result.getContent(),
+            pageable.getPageNumber(),
+            result.hasPrevious(),
+            result.hasNext(),
+            result.getTotalElements());
+  }
 
 
   /**

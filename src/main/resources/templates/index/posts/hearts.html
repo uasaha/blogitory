@@ -127,7 +127,6 @@
     <script src="/static/js/my/article-minimal.js"></script>
     <script th:inline="javascript">
         let pageable = [[${pageable}]].pageNumber;
-        console.log(pageable);
 
         let url = "/api/hearts?page=" + pageable;
         const holders = document.querySelectorAll('.place-holder');

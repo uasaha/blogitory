@@ -253,4 +253,14 @@ class PostsRestControllerTest {
     mvc.perform(get("/api/@username/activity"))
             .andExpect(status().isOk());
   }
+
+  @Test
+  @DisplayName("게시글 검색")
+  void search() throws Exception {
+    when(postsService.searchPosts(any(), anyString()))
+            .thenReturn(new Pages<>(List.of(), 0L, false, false, 0L));
+
+    mvc.perform(get("/api/posts/search?q=as"))
+            .andExpect(status().isOk());
+  }
 }

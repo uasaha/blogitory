@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title> - 검색결과</title>
+    <meta property="og:url" content="https://blogitory.com">
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" href="/static/css/lib/toastui-editor.css"/>
+        <link rel="stylesheet" href="/static/css/lib/toastui-editor-dark.css">
+        <link rel="stylesheet"
+              href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"/>
+        <link rel="stylesheet"
+              href="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight.min.css"/>
+        <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.css"/>
+        <link rel="stylesheet" href="/static/css/lib/tagify.css" type="text/css"/>
+        <style>
+            .search-box {
+                position: relative;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 10px 15px;
+                border-radius: 25px;
+                border: 2px solid #ddd;
+                font-size: 16px;
+                outline: none;
+                transition: border-color 0.3s ease;
+            }
+
+            .search-input:focus {
+                border-color: #007BFF;
+            }
+
+            .search-button {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                outline: none;
+            }
+
+            .search-button img {
+                width: 20px;
+                height: 20px;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div class="container-lg" layout:fragment="main-content">
+    <div class="page-header">
+        <div class="col-12">
+            <div class="search-box col-12 col-md-8 ms-auto me-auto">
+                    <input id="search-input" type="text" class="search-input" placeholder="검색어를 입력하세요!" onkeyup="isSearchEnterPress()">
+                    <button id="search-button" class="search-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-search">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
+                            <path d="M21 21l-6 -6"/>
+                        </svg>
+                    </button>
+            </div>
+            <div class="ms-md-auto float-end mt-3">
+                <svg id="view-grid-btn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="icon icon-tabler icons-tabler-outline icon-tabler-grid-dots cursor-pointer">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M5 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M19 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M5 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                    <path d="M19 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>
+                </svg>
+                <svg id="view-album-btn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="icon icon-tabler icons-tabler-outline icon-tabler-layout-grid cursor-pointer">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M4 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                    <path d="M14 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                    <path d="M4 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                    <path d="M14 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z"/>
+                </svg>
+                <svg id="view-list-btn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     class="icon icon-tabler icons-tabler-outline icon-tabler-layout-list cursor-pointer">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/>
+                    <path d="M4 14m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="page-body mt-0">
+        <div class="page-header">
+            <h1 id="search-keyword"></h1>
+        </div>
+        <div id="recent-posting" class="row row-cards row-deck mt-2">
+
+        </div>
+        <div class="row justify-content-center mt-6">
+            <div id="spinner" class="spinner-border ms-auto me-auto"></div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script src="/static/js/my/article-minimal.js"></script>
+    <script th:inline="javascript">
+        let keyword = [[${keyword}]];
+
+        let url = "/api/posts/search?q=" + keyword + "&page=";
+        const holders = document.querySelectorAll('.place-holder');
+        let path = location.pathname;
+        let viewAlbumBtn = document.getElementById("view-album-btn");
+        let viewListBtn = document.getElementById("view-list-btn");
+        let viewGridBtn = document.getElementById("view-grid-btn");
+        let searchBtn = document.getElementById("search-button");
+        let searchInput = document.getElementById("search-input");
+        let searchKeyword = document.getElementById("search-keyword");
+        let spinner = document.getElementById("spinner");
+        let page = 0;
+
+        searchBtn.addEventListener("click", () => {
+            location.href = "/search?q=" + searchInput.value;
+        });
+
+        function isSearchEnterPress() {
+            if (window.event.keyCode == 13) {
+                searchBtn.click();
+            }
+        }
+
+        if (keyword) {
+            searchInput.value = keyword;
+            document.title = keyword + " - Blogitory 검색";
+            searchKeyword.textContent = keyword + "의 검색 결과입니다.";
+
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        axios.get(url + page)
+                            .then(response => {
+                                let recentPosting = document.getElementById("recent-posting");
+
+                                let articles = response.data.body;
+
+                                for (let i = 0; i < holders.length; i++) {
+                                    holders[i].classList.add("d-none");
+                                }
+
+                                for (let article of articles) {
+                                    let articleDiv = getPostsByStyle(article);
+                                    recentPosting.appendChild(articleDiv);
+                                }
+
+                                viewAlbumBtn.addEventListener("click", () => {
+                                    if (getCookie("view-style") !== "album") {
+                                        setCookie('view-style', 'album', 365);
+
+                                        recentPosting.innerHTML = "";
+
+                                        for (let article of articles) {
+                                            let articleDiv = getPostsByStyle(article);
+                                            recentPosting.appendChild(articleDiv);
+                                        }
+                                    }
+
+                                    viewListBtn.classList.remove("text-primary");
+                                    viewGridBtn.classList.remove("text-primary");
+                                });
+
+                                viewListBtn.addEventListener("click", () => {
+                                    if (getCookie("view-style") !== "list") {
+                                        setCookie('view-style', 'list', 365);
+
+                                        recentPosting.innerHTML = "";
+
+                                        for (let article of articles) {
+                                            let articleDiv = getPostsByStyle(article);
+                                            recentPosting.appendChild(articleDiv);
+                                        }
+                                    }
+
+                                    viewAlbumBtn.classList.remove("text-primary");
+                                    viewGridBtn.classList.remove("text-primary");
+                                });
+
+                                viewGridBtn.addEventListener("click", () => {
+                                    if (getCookie("view-style") !== "grid") {
+                                        setCookie('view-style', 'grid', 365);
+
+                                        recentPosting.innerHTML = "";
+
+                                        for (let article of articles) {
+                                            let articleDiv = getPostsByStyle(article);
+                                            recentPosting.appendChild(articleDiv);
+                                        }
+                                    }
+
+                                    viewListBtn.classList.remove("text-primary");
+                                    viewAlbumBtn.classList.remove("text-primary");
+                                });
+
+                                if (!response.data.hasNext) {
+                                    spinner.classList.add("d-none");
+                                    io.unobserve(spinner);
+                                } else {
+                                    page++;
+                                    io.observe(spinner);
+                                }
+                            });
+                    }
+                })
+            }, {threshold: 0.6});
+
+            document.addEventListener('DOMContentLoaded', function () {
+                io.observe(spinner);
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

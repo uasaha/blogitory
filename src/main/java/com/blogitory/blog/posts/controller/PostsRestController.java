@@ -299,4 +299,11 @@ public class PostsRestController {
           @PathVariable String username) {
     return ResponseEntity.ok(postsService.getPostActivity(username));
   }
+
+  @GetMapping("/posts/search")
+  ResponseEntity<Pages<GetRecentPostResponseDto>> search(
+          @PageableDefault(size = 24) Pageable pageable,
+          @RequestParam String q) {
+    return ResponseEntity.ok(postsService.searchPosts(pageable, q));
+  }
 }

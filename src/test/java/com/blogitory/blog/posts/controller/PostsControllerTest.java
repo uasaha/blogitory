@@ -214,4 +214,11 @@ class PostsControllerTest {
             .andExpect(status().isOk())
             .andExpect(model().attributeExists("pageable"));
   }
+
+  @Test
+  @DisplayName("검색 페이지")
+  void searchPage() throws Exception {
+    mvc.perform(get("/search"))
+            .andExpect(status().isOk());
+  }
 }

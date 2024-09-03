@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<div th:fragment="header"  class="sticky-top">
+<div th:fragment="header" class="sticky-top">
     <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
         <div class="container-lg">
             <h1 class="navbar-brand d-none-navbar-horizontal pe-0 pe-md-3">
@@ -12,25 +12,32 @@
                 <div class="d-none d-md-flex">
                     <div sec:authorize="isAuthenticated()" class="nav-item d-none d-md-flex me-2">
                         <button class="btn btn-pill w-100" onclick="toPostsIssuePage()">
-                            <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    class="icon icon-tabler icons-tabler-outline icon-tabler-pencil"
-                            >
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="24"
+                                 height="24"
+                                 viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 class="icon icon-tabler icons-tabler-outline icon-tabler-pencil">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
-                                <path d="M13.5 6.5l4 4" />
+                                <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/>
+                                <path d="M13.5 6.5l4 4"/>
                             </svg>
                             <span>새 글 작성</span>
                         </button>
                     </div>
+                    <a class="nav-link px-0" href="/search">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-search">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/>
+                            <path d="M21 21l-6 -6"/>
+                        </svg>
+                    </a>
                     <a class="nav-link px-0 hide-theme-dark"
                        onclick="setTheme('dark')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
@@ -53,7 +60,8 @@
                         <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1"
                            aria-label="Show notifications">
                             <!-- Download SVG icon from http://tabler-icons.io/i/bell -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                 viewBox="0 0 24 24"
                                  stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                                  stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -139,7 +147,8 @@
                                     <div class="list-group-item">
                                         <div class="row align-items-center">
                                             <div class="col-auto"><span
-                                                    class="status-dot status-dot-animated bg-green d-block"></span></div>
+                                                    class="status-dot status-dot-animated bg-green d-block"></span>
+                                            </div>
                                             <div class="col text-truncate">
                                                 <a href="#" class="text-body d-block">Example 4</a>
                                                 <div class="d-block text-secondary text-truncate mt-n1">
@@ -167,7 +176,8 @@
                 <div sec:authorize="isAuthenticated()" class="nav-item dropdown">
                     <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                        aria-label="Open user menu">
-                        <img class="avatar avatar-sm rounded-circle" th:src="${thumbIsNull} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="pjp"/>
+                        <img class="avatar avatar-sm rounded-circle"
+                             th:src="${thumbIsNull} ? '/static/icons/person.svg' : ${members.getThumb()}" alt="pjp"/>
                         <div class="d-none d-xl-block ps-2">
                             <div th:text="${members.getName()}"></div>
                             <div class="mt-1 small text-secondary" th:text="'@'+${members.getUsername()}"></div>

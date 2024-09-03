@@ -136,4 +136,13 @@ public interface PostsRepositoryCustom {
   List<GetPostActivityResponseDto> getPostActivity(String username,
                                                    LocalDate start,
                                                    LocalDate end);
+
+  /**
+   * Search posts.
+   *
+   * @param pageable pageable
+   * @param words    search keyword
+   * @return posts
+   */
+  Page<GetRecentPostResponseDto> searchPosts(Pageable pageable, String words);
 }

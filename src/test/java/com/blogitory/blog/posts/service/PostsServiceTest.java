@@ -907,4 +907,29 @@ class PostsServiceTest {
     GetPostActivityResponseDto sundays = activities.get(DayOfWeek.SUNDAY).getFirst();
     assertEquals(DayOfWeek.SUNDAY, sundays.getDate().getDayOfWeek());
   }
+
+  @Test
+  @DisplayName("게시글 검색")
+  void searchPosts() {
+    GetRecentPostResponseDto response = new GetRecentPostResponseDto(
+            "blogUrl", "blogName", "username",
+            "blogPfp", "postUrl", "title",
+            "summary", "thumb", LocalDateTime.now(),
+            0L, 0L);
+    Pageable pageable = PageRequest.of(0, 4);
+    String word = "word";
+
+    when(postsRepository.searchPosts(any(), anyString()))
+            .thenReturn(new PageImpl<>(List.of(response)));
+
+    Pages<GetRecentPostResponseDto> result = postsService.searchPosts(pageable, word);
+
+    List<GetRecentPostResponseDto> resultList = result.body();
+
+    assertEquals(1L, resultList.size());
+
+    GetRecentPostResponseDto actual = resultList.getFirst();
+
+    assertEquals(response.getTitle(), actual.getTitle());
+  }
 }

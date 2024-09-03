@@ -23,6 +23,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.DateExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.sql.Date;
@@ -509,6 +510,64 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
     });
 
     return resultDto;
+  }
+
+  @Override
+  public Page<GetRecentPostResponseDto> searchPosts(Pageable pageable, String words) {
+    NumberTemplate<Double> match =
+            Expressions.numberTemplate(Double.class,
+                    "function('match',{0}, {1}, {2})",
+                    posts.subject, posts.detail, "'" + words + "'");
+
+    List<GetRecentPostResponseDto> content = queryFactory
+            .from(posts)
+            .select(Projections.constructor(
+                    GetRecentPostResponseDto.class,
+                    blog.urlName,
+                    blog.name,
+                    member.username,
+                    blog.background,
+                    posts.url,
+                    posts.subject,
+                    posts.summary,
+                    posts.thumbnail,
+                    posts.createdAt,
+                    JPAExpressions.select(heart.count())
+                            .from(heart)
+                            .where(heart.posts.postsNo.eq(posts.postsNo))
+                            .where(heart.deleted.isFalse()),
+                    JPAExpressions.select(comment.count())
+                            .from(comment)
+                            .where(comment.posts.postsNo.eq(posts.postsNo))))
+            .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
+            .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
+            .where(match.gt(0.00))
+            .where(member.left.isFalse()
+                    .and(member.blocked.isFalse())
+                    .and(blog.deleted.isFalse())
+                    .and(category.deleted.isFalse())
+                    .and(posts.deleted.isFalse())
+                    .and(posts.open.isTrue()))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+    long total = from(posts)
+            .select(posts.postsNo.count())
+            .innerJoin(category).on(posts.category.categoryNo.eq(category.categoryNo))
+            .innerJoin(blog).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
+            .where(match.gt(0.00))
+            .where(member.left.isFalse()
+                    .and(member.blocked.isFalse())
+                    .and(blog.deleted.isFalse())
+                    .and(category.deleted.isFalse())
+                    .and(posts.deleted.isFalse())
+                    .and(posts.open.isTrue()))
+            .fetchCount();
+
+    return new PageImpl<>(content, pageable, total);
   }
 
 

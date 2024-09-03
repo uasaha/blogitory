@@ -15,6 +15,7 @@ import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,7 @@ public class PostsController {
   private final PostsService postsService;
   private final FollowService followService;
   private static final String POSTS_ATTR = "posts";
+  private static final String RECENT_KEYWORD = "recent-q";
 
   /**
    * Posts issue page.
@@ -124,9 +126,35 @@ public class PostsController {
     return "blog/main/posts";
   }
 
+  /**
+   * Go to hearts posts page.
+   *
+   * @param pageable pageable
+   * @param model    model
+   * @return hearts posts page
+   */
+  @RoleUser
   @GetMapping("/hearts")
   public String hearts(@PageableDefault(size = 12) Pageable pageable, Model model) {
     model.addAttribute(PAGEABLE_ATTR, pageable);
     return "index/posts/hearts";
+  }
+
+  /**
+   * Go to search page.
+   *
+   * @param keyword keyword
+   * @param model   model
+   * @return search page
+   */
+  @GetMapping("/search")
+  public String searchPage(@RequestParam(name = "q", required = false) String keyword,
+                           Model model) {
+
+    if (!Objects.isNull(keyword)) {
+      model.addAttribute("keyword", keyword);
+    }
+
+    return "index/main/search";
   }
 }
