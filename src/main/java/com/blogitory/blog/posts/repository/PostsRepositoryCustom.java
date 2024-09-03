@@ -1,10 +1,12 @@
 package com.blogitory.blog.posts.repository;
 
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -122,4 +124,16 @@ public interface PostsRepositoryCustom {
    * @return posts
    */
   Page<GetRecentPostResponseDto> getPostsByHearts(Integer memberNo, Pageable pageable);
+
+  /**
+   * Get post activity.
+   *
+   * @param username username
+   * @param start    start date
+   * @param end      end date
+   * @return activities
+   */
+  List<GetPostActivityResponseDto> getPostActivity(String username,
+                                                   LocalDate start,
+                                                   LocalDate end);
 }

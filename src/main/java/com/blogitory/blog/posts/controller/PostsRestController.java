@@ -8,11 +8,14 @@ import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import jakarta.validation.Valid;
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -283,5 +286,17 @@ public class PostsRestController {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     return ResponseEntity.ok(postsService.getPostsByHearts(memberNo, pageable));
+  }
+
+  /**
+   * Get activity for chart.
+   *
+   * @param username username
+   * @return 200
+   */
+  @GetMapping("/@{username}/activity")
+  ResponseEntity<Map<DayOfWeek, List<GetPostActivityResponseDto>>> getActivityPosts(
+          @PathVariable String username) {
+    return ResponseEntity.ok(postsService.getPostActivity(username));
   }
 }

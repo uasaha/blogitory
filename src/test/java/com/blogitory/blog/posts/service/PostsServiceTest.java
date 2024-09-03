@@ -27,6 +27,7 @@ import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
@@ -47,8 +48,11 @@ import com.blogitory.blog.tempposts.entity.TempPosts;
 import com.blogitory.blog.tempposts.repository.TempPostsRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -859,5 +863,48 @@ class PostsServiceTest {
     GetRecentPostResponseDto actual = result.body().getFirst();
 
     assertEquals(response.getTitle(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("최근 활동 조회")
+  void getPostActivity() {
+    LocalDate now = LocalDate.now();
+    GetPostActivityResponseDto responseDto =
+            new GetPostActivityResponseDto(now, 1L);
+
+    when(postsRepository.getPostActivity(anyString(), any(), any()))
+            .thenReturn(List.of(responseDto));
+
+    Map<DayOfWeek, List<GetPostActivityResponseDto>> activities =
+            postsService.getPostActivity("username");
+
+    assertFalse(activities.isEmpty());
+
+    GetPostActivityResponseDto actual = activities.get(now.getDayOfWeek()).getLast();
+    assertEquals(responseDto.getDate(),actual.getDate());
+    assertEquals(responseDto.getCount(), actual.getCount());
+  }
+
+  @Test
+  @DisplayName("최근 활동 조회 - 시작일이 일요일 아닌 경우")
+  void getPostActivityNotSunday() {
+    LocalDate now = LocalDate.now();
+    GetPostActivityResponseDto responseDto =
+            new GetPostActivityResponseDto(now, 1L);
+
+    when(postsRepository.getPostActivity(anyString(), any(), any()))
+            .thenReturn(List.of(responseDto));
+
+    Map<DayOfWeek, List<GetPostActivityResponseDto>> activities =
+            postsService.getPostActivity("username");
+
+    assertFalse(activities.isEmpty());
+
+    GetPostActivityResponseDto actual = activities.get(now.getDayOfWeek()).getLast();
+    assertEquals(responseDto.getDate(),actual.getDate());
+    assertEquals(responseDto.getCount(), actual.getCount());
+
+    GetPostActivityResponseDto sundays = activities.get(DayOfWeek.SUNDAY).getFirst();
+    assertEquals(DayOfWeek.SUNDAY, sundays.getDate().getDayOfWeek());
   }
 }

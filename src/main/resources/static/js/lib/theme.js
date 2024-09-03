@@ -27,6 +27,7 @@ function setTheme(theme) {
 	let themeStorageKey = "tablerTheme";
 	let defaultTheme = "light";
 	let selectedTheme = theme;
+	let charts = document.querySelectorAll('.apexcharts-heatmap-rect');
 
 	if (localStorage.getItem(themeStorageKey) == null) {
 		localStorage.setItem(themeStorageKey, defaultTheme);
@@ -41,7 +42,17 @@ function setTheme(theme) {
 
 	if (selectedTheme === 'dark') {
 		document.body.setAttribute("data-bs-theme", selectedTheme);
+		if (charts && charts.length > 0) {
+			charts.forEach(function (chart) {
+				chart.setAttribute('stroke', '#181717');
+			});
+		}
 	} else {
 		document.body.removeAttribute("data-bs-theme");
+		if (charts && charts.length > 0) {
+			charts.forEach(function (chart) {
+				chart.setAttribute('stroke', '#FFFFFF');
+			});
+		}
 	}
 }

@@ -12,6 +12,7 @@ import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
@@ -31,9 +32,17 @@ import com.blogitory.blog.tempposts.entity.TempPosts;
 import com.blogitory.blog.tempposts.repository.TempPostsRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -425,6 +434,7 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public Pages<GetRecentPostResponseDto> getPostsByHearts(Integer memberNo, Pageable pageable) {
     Page<GetRecentPostResponseDto> result =
@@ -436,6 +446,56 @@ public class PostsServiceImpl implements PostsService {
             result.hasNext(),
             result.getTotalElements());
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public Map<DayOfWeek, List<GetPostActivityResponseDto>> getPostActivity(String username) {
+    int dayOfYear = 365;
+    final int weekDays = 7;
+
+    LocalDate today = LocalDate.now();
+
+    if (today.isLeapYear()) {
+      dayOfYear += 1;
+    }
+
+    LocalDate start = today.minusDays(dayOfYear);
+
+    if (!start.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+      int startDayOfWeek = start.getDayOfWeek().getValue();
+      int minusDayValue = weekDays - startDayOfWeek;
+
+      start = start.minusDays(minusDayValue);
+    }
+
+    List<LocalDate> dates = Stream.iterate(start, date -> date.plusDays(1))
+            .limit(ChronoUnit.DAYS.between(start, today) + 1)
+            .toList();
+
+    List<GetPostActivityResponseDto> activities =
+            postsRepository.getPostActivity(username, start, today);
+
+    List<GetPostActivityResponseDto> result = new ArrayList<>();
+
+    for (LocalDate date : dates) {
+      GetPostActivityResponseDto activity = activities.stream()
+              .filter(a -> a.getDate().equals(date)).findFirst().orElse(null);
+
+      if (Objects.isNull(activity)) {
+        result.add(new GetPostActivityResponseDto(date, 0L));
+      } else {
+        result.add(activity);
+      }
+    }
+
+    return result.stream()
+            .collect(Collectors.groupingBy(d -> d.getDate().getDayOfWeek()));
+  }
+
+
 
   /**
    * Connect tag to blog.

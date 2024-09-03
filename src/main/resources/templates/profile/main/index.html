@@ -171,12 +171,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 2em">
+                <div class="row justify-content-center" style="margin-top: 2em">
                     <span style="font-size: 17px; font-weight: bold">Activities</span>
-                    <div class="col-12">
+                    <div class="col-auto">
                         <div class="card mt-3">
                             <div class="card-body" style="overflow-y: scroll;">
-                                <div id="heatmap-chart" style="width: 900px;"></div>
+                                <div id="heatmap-chart" style="width: 600px;"></div>
                             </div>
                         </div>
                     </div>
@@ -358,12 +358,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-4">
+                <div class="row justify-content-center" style="margin-top: 2em">
                     <span style="font-size: 17px; font-weight: bold">Activities</span>
-                    <div class="col-12 mt-3">
+                    <div class="col-auto">
                         <div class="card mt-3">
-                            <div class="card-body" style="overflow-y: scroll">
-                                <div id="heatmap-chart-mobile" style="width: 950px;"></div>
+                            <div class="card-body" style="overflow-y: scroll;">
+                                <div id="heatmap-chart-mobile" style="width: 600px;"></div>
                             </div>
                         </div>
                     </div>
@@ -403,10 +403,10 @@
         });
 
         document.addEventListener("DOMContentLoaded", () => {
-            //demo code start.
-            function getRandomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
+            let path = window.location.pathname;
+            let cardBody = document.getElementsByClassName("card-body")[0];
+            let style = getComputedStyle(cardBody);
+            let color = style.getPropertyValue('--tblr-card-bg');
 
             let monData = [];
             let tueData = [];
@@ -416,208 +416,134 @@
             let satData = [];
             let sunData = [];
 
-            let daysInYear = 366;
-            let now = new Date();
+            axios.get("/api" + path + "/activity")
+                .then((response) => {
+                    let responseData = response.data;
 
-            let currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                    sunData = responseData.SUNDAY;
+                    monData = responseData.MONDAY;
+                    tueData = responseData.TUESDAY;
+                    wedData = responseData.WEDNESDAY;
+                    thuData = responseData.THURSDAY;
+                    friData = responseData.FRIDAY;
+                    satData = responseData.SATURDAY;
 
-            if (currentDate.getDay() === 1) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -1);
-                daysInYear = daysInYear + 1;
-            }
-            if (currentDate.getDay() === 2) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -2);
-                daysInYear = daysInYear + 2;
-            }
-            if (currentDate.getDay() === 3) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -3);
-                daysInYear = daysInYear + 3;
-            }
-            if (currentDate.getDay() === 4) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -4);
-                daysInYear = daysInYear + 4;
-            }
-            if (currentDate.getDay() === 5) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -5);
-                daysInYear = daysInYear + 5;
-            }
-            if (currentDate.getDay() === 6) {
-                currentDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate() -6);
-                daysInYear = daysInYear + 6;
-            }
+                    let data = [
+                        {
+                            name: 'Sat',
+                            data: satData
+                        },
+                        {
+                            name: 'Fri',
+                            data: friData
+                        },
+                        {
+                            name: 'Thu',
+                            data: thuData
+                        },
+                        {
+                            name: 'Wed',
+                            data: wedData
+                        },
+                        {
+                            name: 'Tue',
+                            data: tueData
+                        },
+                        {
+                            name: 'Mon',
+                            data: monData
+                        },
+                        {
+                            name: 'Sun',
+                            data: sunData
+                        },
+                    ];
 
-            let allDayData = [];
-
-            for (let i = 0; i <= daysInYear; i++) {
-                allDayData.push(
-                    {
-                        name: currentDate.getDay(),
-                        date: currentDate.yyyymmdd(),
-                        value: getRandomInt(0, 5)
-                    }
-                )
-
-                currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
-            }
-
-            for (let i = 0; i <= daysInYear; i++) {
-                if (allDayData[i].name === 0) {
-                    sunData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 1) {
-                    monData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 2) {
-                    tueData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 3) {
-                    wedData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 4) {
-                    thuData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 5) {
-                    friData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-                if (allDayData[i].name === 6) {
-                    satData.push({
-                        x: allDayData[i].date,
-                        y: allDayData[i].value,
-                    })
-                }
-            }
-
-            let data = [
-                {
-                    name: 'Sat',
-                    data: satData
-                },
-                {
-                    name: 'Fri',
-                    data: friData
-                },
-                {
-                    name: 'Thu',
-                    data: thuData
-                },
-                {
-                    name: 'Wed',
-                    data: wedData
-                },
-                {
-                    name: 'Tue',
-                    data: tueData
-                },
-                {
-                    name: 'Mon',
-                    data: monData
-                },
-                {
-                    name: 'Sun',
-                    data: sunData
-                },
-            ];
-
-            let options = {
-                chart: {
-                    height: 175,
-                    type: 'heatmap',
-                    toolbar: {
-                        show: false,
-                    },
-                },
-                plotOptions: {
-                    heatmap: {
-                        radius: 0,
-                        distributed: true,
-                        colorScale: {
-                            ranges: [{
-                                from: 0,
-                                to: 0,
-                                name: '0',
-                                color: '#BDBDBD'
-                            }, {
-                                from: 1,
-                                to: 1,
-                                name: '1',
-                                color: '#8fb0c6'
-                            }, {
-                                from: 2,
-                                to: 2,
-                                name: '2',
-                                color: '#4F7FB4'
-                            }, {
-                                from: 3,
-                                to: 3,
-                                name: '3',
-                                color: '#335582'
-                            }, {
-                                from: 4,
-                                to: 4,
-                                name: '4',
-                                color: '#11264f'
-                            }, {
-                                from: 5,
-                                to: 5,
-                                name: '5++',
-                                color: '#0C1152'
+                    let options = {
+                        chart: {
+                            height: 150,
+                            type: 'heatmap',
+                            toolbar: {
+                                show: false,
                             },
-                            ],
-                            inverse: true,
-                        }
-                    }
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                stroke: {
-                    show: false,
-                },
-                series: data,
-                xaxis: {
-                    type: "datetime",
-                    labels: {
-                        format: 'MM/dd'
-                    },
-                    axisBorder: { show: false },
-                    tickAmount: 12,
-                    tickPlacement: 'between',
-                    axisTicks: { show: true },
-                },
-                tooltip: {
-                    intersect: false,
-                    x: {
-                        show: true,
-                        format: "yyyy/MM/dd"
-                    },
-                },
-                grid: {
-                    show: false,
-                },
-            };
+                        },
+                        plotOptions: {
+                            heatmap: {
+                                colorScale: {
+                                    ranges: [{
+                                        from: 0,
+                                        to: 0,
+                                        name: '0',
+                                        color: '#BDBDBD'
+                                    }, {
+                                        from: 1,
+                                        to: 1,
+                                        name: '1',
+                                        color: '#8fb0c6'
+                                    }, {
+                                        from: 2,
+                                        to: 2,
+                                        name: '2',
+                                        color: '#4F7FB4'
+                                    }, {
+                                        from: 3,
+                                        to: 3,
+                                        name: '3',
+                                        color: '#335582'
+                                    }, {
+                                        from: 4,
+                                        to: 4,
+                                        name: '4',
+                                        color: '#11264f'
+                                    }, {
+                                        from: 5,
+                                        to: 5,
+                                        name: '5++',
+                                        color: '#0C1152'
+                                    },
+                                    ],
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        stroke: {
+                            show: true,
+                            curve: 'straight',
+                            lineCap: 'butt',
+                            colors: [color],
+                            width: 2,
+                            dashArray: 0,
+                        },
+                        series: data,
+                        xaxis: {
+                            type: "datetime",
+                            labels: {
+                                format: 'MM/dd'
+                            },
+                            axisBorder: { show: false },
+                            tickAmount: 12,
+                            tickPlacement: 'between',
+                            axisTicks: { show: true },
+                        },
+                        tooltip: {
+                            intersect: false,
+                            x: {
+                                show: true,
+                                format: "yyyy/MM/dd"
+                            },
+                        },
+                        grid: {
+                            show: false,
+                        },
+                    };
 
-            let chart = new ApexCharts(document.querySelector("#heatmap-chart"), options)
-            let chartMobile = new ApexCharts(document.querySelector("#heatmap-chart-mobile"), options);
-            chart.render();
-            chartMobile.render();
+                    let chart = new ApexCharts(document.querySelector("#heatmap-chart"), options)
+                    let chartMobile = new ApexCharts(document.querySelector("#heatmap-chart-mobile"), options);
+                    chart.render();
+                    chartMobile.render();
+                });
         });
     </script>
 </th:block>

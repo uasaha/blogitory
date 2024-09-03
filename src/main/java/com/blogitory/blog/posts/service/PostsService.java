@@ -5,11 +5,14 @@ import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -189,4 +192,12 @@ public interface PostsService {
    * @return posts
    */
   Pages<GetRecentPostResponseDto> getPostsByHearts(Integer memberNo, Pageable pageable);
+
+  /**
+   * Get Post Activity.
+   *
+   * @param username username
+   * @return Activity, grouping by day of week
+   */
+  Map<DayOfWeek, List<GetPostActivityResponseDto>> getPostActivity(String username);
 }

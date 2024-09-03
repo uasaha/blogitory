@@ -22,6 +22,7 @@ import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -241,6 +242,15 @@ class PostsRestControllerTest {
     when(postsService.getPostsByHearts(any(), any())).thenReturn(pages);
 
     mvc.perform(get("/api/hearts"))
+            .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("최근 활동 조회")
+  void getActivity() throws Exception {
+    when(postsService.getPostActivity(anyString())).thenReturn(Map.of());
+
+    mvc.perform(get("/api/@username/activity"))
             .andExpect(status().isOk());
   }
 }
