@@ -28,6 +28,8 @@ function setTheme(theme) {
 	let defaultTheme = "light";
 	let selectedTheme = theme;
 	let charts = document.querySelectorAll('.apexcharts-heatmap-rect');
+	let editorEls = document.getElementsByClassName(".toastui-editor-defaultUI");
+	let viewerEls = document.querySelectorAll("#viewer");
 
 	if (localStorage.getItem(themeStorageKey) == null) {
 		localStorage.setItem(themeStorageKey, defaultTheme);
@@ -47,12 +49,36 @@ function setTheme(theme) {
 				chart.setAttribute('stroke', '#181717');
 			});
 		}
+
+		if (editorEls && editorEls.length > 0) {
+			editorEls.forEach(function (editorEl) {
+				editorEl.classList.add("toastui-editor-dark");
+			})
+		}
+
+		if (viewerEls && viewerEls.length > 0) {
+			viewerEls.forEach(function (viewerEl) {
+				viewerEl.classList.add("toastui-editor-dark");
+			})
+		}
 	} else {
 		document.body.removeAttribute("data-bs-theme");
 		if (charts && charts.length > 0) {
 			charts.forEach(function (chart) {
 				chart.setAttribute('stroke', '#FFFFFF');
 			});
+		}
+
+		if (editorEls && editorEls.length > 0) {
+			editorEls.forEach(function (editorEl) {
+				editorEl.classList.remove("toastui-editor-dark");
+			})
+		}
+
+		if (viewerEls && viewerEls.length > 0) {
+			viewerEls.forEach(function (viewerEl) {
+				viewerEl.classList.remove("toastui-editor-dark");
+			})
 		}
 	}
 }
