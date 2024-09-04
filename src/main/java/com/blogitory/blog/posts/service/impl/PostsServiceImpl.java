@@ -454,7 +454,6 @@ public class PostsServiceImpl implements PostsService {
   @Override
   public Map<DayOfWeek, List<GetPostActivityResponseDto>> getPostActivity(String username) {
     int dayOfYear = 365;
-    final int weekDays = 7;
 
     LocalDate today = LocalDate.now();
 
@@ -464,12 +463,10 @@ public class PostsServiceImpl implements PostsService {
 
     LocalDate start = today.minusDays(dayOfYear);
 
-    if (!start.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-      int startDayOfWeek = start.getDayOfWeek().getValue();
-      int minusDayValue = weekDays - startDayOfWeek;
+    int minusDayValue = DayOfWeek.SUNDAY.equals(start.getDayOfWeek())
+            ? 0 : start.getDayOfWeek().getValue();
 
-      start = start.minusDays(minusDayValue);
-    }
+    start = start.minusDays(minusDayValue);
 
     List<LocalDate> dates = Stream.iterate(start, date -> date.plusDays(1))
             .limit(ChronoUnit.DAYS.between(start, today) + 1)
