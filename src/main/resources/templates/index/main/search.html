@@ -113,9 +113,6 @@
         </div>
     </div>
     <div class="page-body mt-0">
-        <div class="page-header">
-            <h1 id="search-keyword"></h1>
-        </div>
         <div id="recent-posting" class="row row-cards row-deck mt-2">
 
         </div>
@@ -137,7 +134,6 @@
         let viewGridBtn = document.getElementById("view-grid-btn");
         let searchBtn = document.getElementById("search-button");
         let searchInput = document.getElementById("search-input");
-        let searchKeyword = document.getElementById("search-keyword");
         let spinner = document.getElementById("spinner");
         let page = 0;
 
@@ -154,7 +150,6 @@
         if (keyword) {
             searchInput.value = keyword;
             document.title = keyword + " - Blogitory 검색";
-            searchKeyword.textContent = keyword + "의 검색 결과입니다.";
 
             const io = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
