@@ -133,7 +133,7 @@ public class IndexController {
    */
   @RoleUser
   @GetMapping("/settings/posts")
-  public String postSettings(@PageableDefault(size = 20) Pageable pageable, Model model) {
+  public String postSettings(@PageableDefault(size = 200) Pageable pageable, Model model) {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     model.addAttribute("posts", postsService.getPostsByMemberNo(pageable, memberNo));

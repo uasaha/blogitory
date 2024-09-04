@@ -779,7 +779,8 @@ function closePosts() {
 
     axios.delete("/api" + path + "/visible")
         .then(() => {
-            location.reload();
+            let paths = path.split("/");
+            location.href = "/" + paths[1] + "/" + paths[2];
         })
         .catch(() => {
             openFailedAlerts("잠시 후 다시 시도해주세요.");
