@@ -11,6 +11,8 @@ import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsPagesResponseDto;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
@@ -505,6 +507,26 @@ public class PostsServiceImpl implements PostsService {
             result.hasPrevious(),
             result.hasNext(),
             result.getTotalElements());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public GetFeedPostsPagesResponseDto feed(Integer memberNo, Long start, Pageable pageable) {
+    if (Objects.isNull(start) || start <= 0) {
+      start = postsRepository.getFeedStartPostsNoByMemberNo(memberNo);
+    }
+
+    Page<GetFeedPostsResponseDto> result = postsRepository
+            .getFeedPostsByMemberNo(memberNo, start, pageable);
+
+    return new GetFeedPostsPagesResponseDto(start, new Pages<>(result.getContent(),
+            pageable.getPageNumber(),
+            result.hasPrevious(),
+            result.hasNext(),
+            result.getTotalElements()));
   }
 
 

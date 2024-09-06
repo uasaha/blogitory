@@ -28,8 +28,9 @@ function setTheme(theme) {
 	let defaultTheme = "light";
 	let selectedTheme = theme;
 	let charts = document.querySelectorAll('.apexcharts-heatmap-rect');
-	let editorEls = document.getElementsByClassName(".toastui-editor-defaultUI");
-	let viewerEls = document.querySelectorAll("#viewer");
+	let editorEls = document.querySelectorAll(".toastui-editor-defaultUI");
+	let viewerEls = document.querySelectorAll(".viewer");
+	console.log(viewerEls);
 
 	if (localStorage.getItem(themeStorageKey) == null) {
 		localStorage.setItem(themeStorageKey, defaultTheme);

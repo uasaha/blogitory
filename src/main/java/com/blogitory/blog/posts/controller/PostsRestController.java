@@ -8,6 +8,7 @@ import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsPagesResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
@@ -305,5 +306,15 @@ public class PostsRestController {
           @PageableDefault(size = 24) Pageable pageable,
           @RequestParam String q) {
     return ResponseEntity.ok(postsService.searchPosts(pageable, q));
+  }
+
+  @RoleUser
+  @GetMapping("/feed")
+  ResponseEntity<GetFeedPostsPagesResponseDto> feed(
+          @PageableDefault(size = 12) Pageable pageable,
+          @RequestParam(value = "s", required = false) Long start) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+
+    return ResponseEntity.ok(postsService.feed(memberNo, start, pageable));
   }
 }

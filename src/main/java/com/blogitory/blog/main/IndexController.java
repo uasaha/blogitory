@@ -56,16 +56,6 @@ public class IndexController {
    *
    * @return shuffle page
    */
-  @GetMapping("/shuffle")
-  public String shufflePage() {
-    return "index/main/shuffle";
-  }
-
-  /**
-   * Go to feed page.
-   *
-   * @return feed page
-   */
   @RoleUser
   @GetMapping("/feed")
   public String feedPage() {

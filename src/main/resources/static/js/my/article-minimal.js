@@ -550,3 +550,118 @@ function getPostsByStyle(article) {
     return getListStylePostsComponent(article);
 }
 
+/*
+article = {
+    username: "",
+    title: "",
+    createdAt: "",
+    updatedAt: "",
+    details: "",
+    postsUrl: "",
+    blogUrl: "",
+    blogName: "",
+    blogThumb: "",
+*/
+function getFeedPostsComponent(article) {
+    let cardDiv = document.createElement('div');
+    cardDiv.className = "card mb-4";
+
+    let cardHeaderDiv = document.createElement('div');
+    cardHeaderDiv.className = "card-header";
+
+    let cardHeaderColDiv = document.createElement('div');
+    cardHeaderColDiv.className = "col";
+
+    let cardHeaderH1 = document.createElement('h1');
+    cardHeaderH1.className = "card-title text-center";
+    cardHeaderH1.style = "font-size: 25px;";
+    cardHeaderH1.innerText = article.title;
+
+    let cardHeaderDateP = document.createElement('p');
+    cardHeaderDateP.className = "card-subtitle text-center";
+    cardHeaderDateP.style = "font-size: 10px;";
+    let date = getRelativeDate(new Date(article.createdAt));
+
+    if (article.updatedAt) {
+        date = date + " (수정 됨)";
+    }
+
+    cardHeaderDateP.innerText = date;
+
+    cardHeaderColDiv.appendChild(cardHeaderH1);
+    cardHeaderColDiv.appendChild(cardHeaderDateP);
+    cardHeaderDiv.appendChild(cardHeaderColDiv);
+    cardDiv.appendChild(cardHeaderDiv);
+
+    let cardBodyDiv = document.createElement('div');
+    cardBodyDiv.className = "card-body content p-5";
+
+    let cardBodyRowDiv = document.createElement('div');
+    cardBodyRowDiv.className = "row";
+
+    let cardBodyViwer = document.createElement('div');
+    cardBodyViwer.className = "viewer";
+    cardBodyViwer.id = article.postsUrl;
+
+    let viewer = new Editor.factory({
+        el: cardBodyViwer,
+        viewer: true,
+    });
+
+    viewer.setMarkdown(article.details);
+
+    cardBodyRowDiv.appendChild(cardBodyViwer);
+    cardBodyDiv.appendChild(cardBodyRowDiv);
+    cardDiv.appendChild(cardBodyDiv);
+
+    let cardFooterDiv = document.createElement('div');
+    cardFooterDiv.className = "card-footer";
+
+    let cardFooterRowDiv = document.createElement('div');
+    cardFooterRowDiv.className = "row";
+
+    let cardFooterColDiv = document.createElement('div');
+    cardFooterColDiv.className = "col";
+
+    let cardFooterPostsA = document.createElement('a');
+    cardFooterPostsA.className = "float-start";
+    cardFooterPostsA.href = article.postsUrl;
+
+    let cardFooterPostsDiv = document.createElement('div');
+    cardFooterPostsDiv.className = "text-secondary";
+    cardFooterPostsDiv.innerText = "자세히 보기";
+
+    cardFooterPostsA.appendChild(cardFooterPostsDiv);
+    cardFooterColDiv.appendChild(cardFooterPostsA);
+
+    let cardFooterUserA = document.createElement('a');
+    cardFooterUserA.className = "d-flex lh-1 text-body p-0 float-end";
+    cardFooterUserA.href = "/" + article.blogUrl;
+
+    let cardFooterBlogThumb = document.createElement('img');
+    cardFooterBlogThumb.className = "avatar avatar-sm";
+    cardFooterBlogThumb.src = article.blogThumb;
+    cardFooterBlogThumb.alt = "pfp";
+
+    cardFooterUserA.appendChild(cardFooterBlogThumb);
+
+    let cardFooterUserDiv = document.createElement('div');
+    cardFooterUserDiv.className = "ps-2";
+
+    let cardFooterBlogName = document.createElement('div');
+    cardFooterBlogName.innerText = article.blogName;
+
+    let cardFooterUsername = document.createElement('div');
+    cardFooterUsername.className = "mt-1 small text-secondary";
+    cardFooterUsername.innerText = "@" + article.username;
+
+    cardFooterUserDiv.appendChild(cardFooterBlogName);
+    cardFooterUserDiv.appendChild(cardFooterUsername);
+    cardFooterUserA.appendChild(cardFooterUserDiv);
+    cardFooterColDiv.appendChild(cardFooterUserA);
+    cardFooterRowDiv.appendChild(cardFooterColDiv);
+    cardFooterDiv.appendChild(cardFooterRowDiv);
+    cardDiv.appendChild(cardFooterDiv);
+
+    return cardDiv;
+}

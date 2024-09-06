@@ -4,6 +4,7 @@ import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsPagesResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
@@ -209,4 +210,14 @@ public interface PostsService {
    * @return search result
    */
   Pages<GetRecentPostResponseDto> searchPosts(Pageable pageable, String word);
+
+  /**
+   * Feed.
+   *
+   * @param memberNo member no
+   * @param start    start posts no
+   * @param pageable pageable
+   * @return
+   */
+  GetFeedPostsPagesResponseDto feed(Integer memberNo, Long start, Pageable pageable);
 }

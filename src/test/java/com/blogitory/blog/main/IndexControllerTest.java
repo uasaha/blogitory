@@ -155,18 +155,29 @@ class IndexControllerTest {
             .andExpect(content().string(containsString("name")));
   }
 
-  @Test
-  @DisplayName("셔플 페이지")
-  void shufflePage() throws Exception {
-    mvc.perform(MockMvcRequestBuilders.get("/shuffle"))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Blogitory")));
-  }
-
+  @WithMockUser("1")
   @Test
   @DisplayName("피드 페이지")
   void feedPage() throws Exception {
-    mvc.perform(MockMvcRequestBuilders.get("/feed"))
+    GetMemberPersistInfoDto persistInfoDto = MemberPersistInfoDtoDummy.dummy();
+
+    GetMemberProfileInSettingsResponseDto responseDto =
+            new GetMemberProfileInSettingsResponseDto(
+                    "username",
+                    "name",
+                    "pfp",
+                    "email",
+                    "bio",
+                    "intro",
+                    List.of());
+    when(memberService.getSettingsProfile(any())).thenReturn(responseDto);
+
+    Map<String, Object> attrs = new HashMap<>();
+    attrs.put("members", persistInfoDto);
+    attrs.put("noBlog", false);
+
+    mvc.perform(MockMvcRequestBuilders.get("/feed")
+                    .flashAttrs(attrs))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("Blogitory")));
   }

@@ -1,5 +1,6 @@
 package com.blogitory.blog.posts.repository;
 
+import com.blogitory.blog.posts.dto.response.GetFeedPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
@@ -145,4 +146,23 @@ public interface PostsRepositoryCustom {
    * @return posts
    */
   Page<GetRecentPostResponseDto> searchPosts(Pageable pageable, String words);
+
+  /**
+   * Get feed start posts no.
+   *
+   * @param memberNo member no
+   * @return start posts no
+   */
+  Long getFeedStartPostsNoByMemberNo(Integer memberNo);
+
+  /**
+   * Get feed posts.
+   *
+   * @param memberNo member no
+   * @param start    start
+   * @param pageable pageable
+   * @return posts
+   */
+  Page<GetFeedPostsResponseDto> getFeedPostsByMemberNo(Integer memberNo,
+                                                       Long start, Pageable pageable);
 }

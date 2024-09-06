@@ -3,8 +3,10 @@ package com.blogitory.blog.posts.repository.impl;
 import com.blogitory.blog.blog.entity.QBlog;
 import com.blogitory.blog.category.entity.QCategory;
 import com.blogitory.blog.comment.entity.QComment;
+import com.blogitory.blog.follow.entity.QFollow;
 import com.blogitory.blog.heart.entity.QHeart;
 import com.blogitory.blog.member.entity.QMember;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
@@ -390,6 +392,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
             .where(blog.deleted.isFalse())
             .where(category.deleted.isFalse())
             .where(posts.deleted.isFalse())
+            .orderBy(posts.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -570,6 +573,81 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
     return new PageImpl<>(content, pageable, total);
   }
 
+  @Override
+  public Long getFeedStartPostsNoByMemberNo(Integer memberNo) {
+    QFollow follow = QFollow.follow;
+    QMember followee = new QMember("followee");
+
+    return queryFactory.from(follow)
+            .select(posts.postsNo)
+            .innerJoin(member).on(follow.followFrom.memberNo.eq(member.memberNo))
+            .innerJoin(followee).on(follow.followTo.memberNo.eq(followee.memberNo))
+            .innerJoin(blog).on(blog.member.memberNo.eq(followee.memberNo))
+            .innerJoin(category).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(posts).on(posts.category.categoryNo.eq(category.categoryNo))
+            .where(member.memberNo.eq(memberNo))
+            .where(member.blocked.isFalse().and(member.left.isFalse()))
+            .where(blog.deleted.isFalse())
+            .where(category.deleted.isFalse())
+            .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+            .orderBy(posts.postsNo.desc())
+            .limit(1L)
+            .fetchOne();
+  }
+
+  @Override
+  public Page<GetFeedPostsResponseDto> getFeedPostsByMemberNo(Integer memberNo,
+                                                              Long start,
+                                                              Pageable pageable) {
+    QFollow follow = QFollow.follow;
+    QMember followee = new QMember("followee");
+
+    List<GetFeedPostsResponseDto> postList = queryFactory.from(follow)
+            .select(Projections.constructor(
+                    GetFeedPostsResponseDto.class,
+                    followee.username,
+                    posts.subject,
+                    posts.createdAt,
+                    posts.updatedAt,
+                    posts.detail,
+                    posts.url,
+                    blog.urlName,
+                    blog.name,
+                    blog.background
+            ))
+            .innerJoin(member).on(follow.followFrom.memberNo.eq(member.memberNo))
+            .innerJoin(followee).on(follow.followTo.memberNo.eq(followee.memberNo))
+            .innerJoin(blog).on(blog.member.memberNo.eq(followee.memberNo))
+            .innerJoin(category).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(posts).on(posts.category.categoryNo.eq(category.categoryNo))
+            .where(member.memberNo.eq(memberNo))
+            .where(posts.postsNo.loe(start))
+            .where(member.blocked.isFalse().and(member.left.isFalse()))
+            .where(blog.deleted.isFalse())
+            .where(category.deleted.isFalse())
+            .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+            .orderBy(posts.postsNo.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+    long total = from(follow)
+            .select(posts.postsNo.count())
+            .innerJoin(member).on(follow.followFrom.memberNo.eq(member.memberNo))
+            .innerJoin(followee).on(follow.followTo.memberNo.eq(followee.memberNo))
+            .innerJoin(blog).on(blog.member.memberNo.eq(followee.memberNo))
+            .innerJoin(category).on(category.blog.blogNo.eq(blog.blogNo))
+            .innerJoin(posts).on(posts.category.categoryNo.eq(category.categoryNo))
+            .where(member.memberNo.eq(memberNo))
+            .where(posts.postsNo.loe(start))
+            .where(member.blocked.isFalse().and(member.left.isFalse()))
+            .where(blog.deleted.isFalse())
+            .where(category.deleted.isFalse())
+            .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+            .fetchCount();
+
+    return new PageImpl<>(postList, pageable, total);
+  }
 
 
   /**
