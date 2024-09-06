@@ -6,10 +6,10 @@
       layout:decorate="~{profile/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${profile.username}  + ' (' + ${profile.name} + ') - Blogitory'"></title>
+    <title th:text="'@' + ${profile.username}  + ' (' + ${profile.name} + ') - Blogitory'"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/@' + profile.username}">
     <meta property="og:url" th:content="${'https://blogitory.com/@' + profile.username}">
-    <meta property="og:title" th:content="${profile.username}  + ' (' + ${profile.name} + ') - Blogitory'">
+    <meta property="og:title" th:content="'@' + ${profile.username}  + ' (' + ${profile.name} + ') - Blogitory'">
     <meta property="og:description" th:content="${profile.bio}">
     <meta property="og:image" th:content="${#strings.isEmpty(profile.profileThumb)} ? '/static/icons/person.svg' : ${profile.profileThumb}">
     <meta name="description" th:content="${profile.bio}">

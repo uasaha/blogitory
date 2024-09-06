@@ -6,10 +6,10 @@
       layout:decorate="~{blog/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${blog.blogName} + ' - ' + ${posts.subject}"></title>
+    <title th:text="${posts.subject} + ' - ' + ${blog.blogName}"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/' + posts.postUrl}">
     <meta property="og:url" th:content="${'https://blogitory.com/' + posts.postUrl}">
-    <meta property="og:title" th:content="${blog.blogName} + ' - ' + ${posts.subject}">
+    <meta property="og:title" th:content="${posts.subject} + ' - ' + ${blog.blogName}">
     <meta property="og:description" th:content="${posts.summary}">
     <meta property="og:image" th:content="${not #strings.isEmpty(posts.postThumb)} ? ${posts.postThumb} : '/static/logo/logo-375582.png'">
     <meta name="description" th:content="${posts.summary}">
@@ -53,7 +53,7 @@
                 </div>
                 <div class="card-body" style="padding: 2em !important;">
                     <div class="row">
-                        <div id="viewer"></div>
+                        <div id="viewer" class="viewer"></div>
                     </div>
                     <div class="row">
                         <div class="col">

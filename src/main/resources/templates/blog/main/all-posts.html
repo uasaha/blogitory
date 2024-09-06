@@ -5,14 +5,14 @@
       layout:decorate="~{blog/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${blog.blogName} + ' - 전체 글'"></title>
+    <title th:text="'전체 글 - ' + ${blog.blogName}"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/' + blog.blogUrl + '/posts'}">
     <meta property="og:url" th:content="${'https://blogitory.com/' + blog.blogUrl + '/posts'}">
-    <meta property="og:title" th:content="${blog.blogName} + ' - 전체 글'">
-    <meta property="og:description" th:content="${blog.blogName} + ' - 전체 글'">
+    <meta property="og:title" th:content="'전체 글 - ' + ${blog.blogName}">
+    <meta property="og:description" th:content="'전체 글 - ' + ${blog.blogName}v">
     <meta property="og:image"
           th:content="${not #strings.isEmpty(blog.blogThumbUrl)} ? ${blog.blogThumbUrl} : '/static/logo/logo-375582.png'">
-    <meta name="description" th:content="${blog.blogName} + ' - 전체 글'">
+    <meta name="description" th:content="'전체 글 - ' + ${blog.blogName}">
 </head>
 <body>
 <div class="container-xl" layout:fragment="main-content">

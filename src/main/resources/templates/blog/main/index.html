@@ -5,10 +5,10 @@
       layout:decorate="~{blog/layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${blog.blogName}"></title>
+    <title th:text="${blog.blogName} + ' - blogitory'"></title>
     <link rel="canonical" th:href="${'https://blogitory.com/' + blog.blogUrl}">
-    <meta property="og:url" th:content="${'https://blogitory.com/' + blog.blogUrl}">
-    <meta property="og:title" th:content="${blog.blogName}">
+    <meta property="og:url" th:content="'https://blogitory.com/' + ${blog.blogUrl}">
+    <meta property="og:title" th:content="${blog.blogName} + ' - blogitory'">
     <meta property="og:description" th:content="${blog.blogBio}">
     <meta property="og:image"
           th:content="${not #strings.isEmpty(blog.blogThumbUrl)} ? ${blog.blogThumbUrl} : '/static/logo/logo-375582.png'">
