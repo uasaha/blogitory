@@ -35,7 +35,6 @@ function setTheme(theme) {
 		localStorage.setItem(themeStorageKey, defaultTheme);
 	}
 
-
 	if (selectedTheme === "light") {
 		localStorage.setItem(themeStorageKey, "light");
 	} else if (selectedTheme === "dark") {

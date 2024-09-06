@@ -638,12 +638,14 @@ function getFeedPostsComponent(article) {
     cardFooterUserA.className = "d-flex lh-1 text-body p-0 float-end";
     cardFooterUserA.href = "/" + article.blogUrl;
 
-    let cardFooterBlogThumb = document.createElement('img');
-    cardFooterBlogThumb.className = "avatar avatar-sm";
-    cardFooterBlogThumb.src = article.blogThumb;
-    cardFooterBlogThumb.alt = "pfp";
+    if (article.blogThumb) {
+        let cardFooterBlogThumb = document.createElement('img');
+        cardFooterBlogThumb.className = "avatar avatar-sm";
+        cardFooterBlogThumb.src = article.blogThumb;
+        cardFooterBlogThumb.alt = "pfp";
 
-    cardFooterUserA.appendChild(cardFooterBlogThumb);
+        cardFooterUserA.appendChild(cardFooterBlogThumb);
+    }
 
     let cardFooterUserDiv = document.createElement('div');
     cardFooterUserDiv.className = "ps-2";
