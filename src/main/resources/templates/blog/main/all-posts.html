@@ -9,7 +9,7 @@
     <link rel="canonical" th:href="${'https://blogitory.com/' + blog.blogUrl + '/posts'}">
     <meta property="og:url" th:content="${'https://blogitory.com/' + blog.blogUrl + '/posts'}">
     <meta property="og:title" th:content="'전체 글 - ' + ${blog.blogName}">
-    <meta property="og:description" th:content="'전체 글 - ' + ${blog.blogName}v">
+    <meta property="og:description" th:content="'전체 글 - ' + ${blog.blogName}">
     <meta property="og:image"
           th:content="${not #strings.isEmpty(blog.blogThumbUrl)} ? ${blog.blogThumbUrl} : '/static/logo/logo-375582.png'">
     <meta name="description" th:content="'전체 글 - ' + ${blog.blogName}">
