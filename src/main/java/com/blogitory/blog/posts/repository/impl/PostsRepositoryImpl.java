@@ -494,7 +494,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
             .innerJoin(member).on(blog.member.memberNo.eq(member.memberNo))
             .where(member.username.eq(username))
             .where(posts.createdAt.after(start.atTime(0, 0)))
-            .where(posts.createdAt.before(end.atTime(0, 0)))
+            .where(posts.createdAt.before(end.plusDays(1).atTime(0, 0)))
             .where(member.blocked.isFalse().and(member.left.isFalse()))
             .where(blog.deleted.isFalse())
             .where(category.deleted.isFalse())
