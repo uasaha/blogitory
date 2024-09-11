@@ -87,14 +87,16 @@ public class ViewerServiceImpl implements ViewerService {
       hashOperations.delete(VIEWER_KEY, key);
 
       Posts posts = postsRepository.findByUrl(key)
-              .orElseThrow();
+              .orElse(null);
 
-      Viewer viewer = viewerRepository.findByPostsUrlAndDate(posts.getUrl(), LocalDate.now())
-              .orElse(new Viewer(posts, 0));
+      if (Objects.nonNull(posts)) {
+        Viewer viewer = viewerRepository.findByPostsUrlAndDate(posts.getUrl(), LocalDate.now())
+                .orElse(new Viewer(posts, 0));
 
-      viewer.addCount(viewers.size());
+        viewer.addCount(viewers.size());
 
-      viewerRepository.save(viewer);
+        viewerRepository.save(viewer);
+      }
     }
   }
 

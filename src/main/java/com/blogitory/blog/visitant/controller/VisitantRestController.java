@@ -2,7 +2,9 @@ package com.blogitory.blog.visitant.controller;
 
 import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
 
+import com.blogitory.blog.commons.annotaion.RoleAdmin;
 import com.blogitory.blog.visitant.service.VisitantService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +39,19 @@ public class VisitantRestController {
     String blogKey = getBlogKey(username, blogUrl);
 
     return ResponseEntity.ok(visitantService.getVisitantCount(blogKey));
+  }
+
+  /**
+   * Save and delete visitant now.
+   *
+   * @return 200 ok
+   * @throws JsonProcessingException object mapper
+   */
+  @RoleAdmin
+  @GetMapping("/admin/visitants/now")
+  public ResponseEntity<Void> nowSaveAndDelete() throws JsonProcessingException {
+    visitantService.saveAndDelete();
+
+    return ResponseEntity.ok().build();
   }
 }

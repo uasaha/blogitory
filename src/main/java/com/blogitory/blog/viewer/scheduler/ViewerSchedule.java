@@ -22,7 +22,7 @@ public class ViewerSchedule {
   /**
    * Save viewers, from redis to DB.
    */
-  @Scheduled(fixedRate = 600000, initialDelay = 600000)
+  @Scheduled(fixedRate = 1200000, initialDelay = 1200000)
   public void saveViewers() {
     log.debug("Saving viewers start.");
     try {

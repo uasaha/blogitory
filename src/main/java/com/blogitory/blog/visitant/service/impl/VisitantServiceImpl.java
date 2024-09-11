@@ -97,16 +97,7 @@ public class VisitantServiceImpl implements VisitantService {
       String visitantString = hashOperations.get(VISITANT_KEY, key);
       Set<VisitantInfoDto> visitants = objectMapper.readValue(visitantString, Set.class);
 
-      Blog blog = blogRepository.findBlogByUrlName(key)
-              .orElseThrow();
-
-      Visitant visitant = visitantRepository
-              .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
-              .orElse(new Visitant(blog, 0));
-
-      visitant.addCount(visitants.size());
-
-      visitantRepository.save(visitant);
+      saveVisitants(visitants, key);
     }
   }
 
@@ -123,9 +114,15 @@ public class VisitantServiceImpl implements VisitantService {
       Set<VisitantInfoDto> visitants = objectMapper.readValue(visitantString, Set.class);
       hashOperations.delete(VISITANT_KEY, key);
 
-      Blog blog = blogRepository.findBlogByUrlName(key)
-              .orElseThrow();
+      saveVisitants(visitants, key);
+    }
+  }
 
+  private void saveVisitants(Set<VisitantInfoDto> visitants, String blogUrl) {
+    Blog blog = blogRepository.findBlogByUrlName(blogUrl)
+            .orElse(null);
+
+    if (Objects.nonNull(blog)) {
       Visitant visitant = visitantRepository
               .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
               .orElse(new Visitant(blog, 0));
@@ -143,9 +140,7 @@ public class VisitantServiceImpl implements VisitantService {
 
     try {
       visitants = objectMapper.readValue(visitantString, Set.class);
-    } catch (IllegalArgumentException e) {
-      visitants = new HashSet<>();
-    } catch (JsonProcessingException e) {
+    } catch (IllegalArgumentException | JsonProcessingException e) {
       log.error(e.getMessage());
     }
 
