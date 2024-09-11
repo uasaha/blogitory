@@ -21,8 +21,7 @@ public class UrlUtil {
   private static final String REFERER = "Referer";
   private static final String INDEX_PAGE = "/";
   private static final String BLOG_URL_REGEX = "^(/)(@\\w+/[a-zA-Z0-9_-]+)(/.*)?$";
-  private static final String POSTS_URL_REGEX =
-          "^(/)(@\\w+/[a-zA-Z0-9_-]+/.+)(/.*)?$";
+  private static final String POSTS_URL_REGEX = "^(/)(@\\w+/[a-zA-Z0-9_-]+/.{1,100}+)(/.*)?$";
 
   /**
    * Get base url on request.
