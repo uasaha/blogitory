@@ -84,7 +84,6 @@ public class ViewerServiceImpl implements ViewerService {
     for (String key : keys) {
       String viewersString = hashOperations.get(VIEWER_KEY, key);
       Set<ViewerInfoDto> viewers = objectMapper.readValue(viewersString, Set.class);
-      hashOperations.delete(VIEWER_KEY, key);
 
       Posts posts = postsRepository.findByUrl(key)
               .orElse(null);
@@ -96,6 +95,7 @@ public class ViewerServiceImpl implements ViewerService {
         viewer.addCount(viewers.size());
 
         viewerRepository.save(viewer);
+        hashOperations.delete(VIEWER_KEY, key);
       }
     }
   }

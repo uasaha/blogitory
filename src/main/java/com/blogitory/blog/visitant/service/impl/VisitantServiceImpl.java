@@ -97,7 +97,18 @@ public class VisitantServiceImpl implements VisitantService {
       String visitantString = hashOperations.get(VISITANT_KEY, key);
       Set<VisitantInfoDto> visitants = objectMapper.readValue(visitantString, Set.class);
 
-      saveVisitants(visitants, key);
+      Blog blog = blogRepository.findBlogByUrlName(key)
+              .orElse(null);
+
+      if (Objects.nonNull(blog)) {
+        Visitant visitant = visitantRepository
+                .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
+                .orElse(new Visitant(blog, 0));
+
+        visitant.addCount(visitants.size());
+
+        visitantRepository.save(visitant);
+      }
     }
   }
 
@@ -112,24 +123,20 @@ public class VisitantServiceImpl implements VisitantService {
     for (String key : keys) {
       String visitantString = hashOperations.get(VISITANT_KEY, key);
       Set<VisitantInfoDto> visitants = objectMapper.readValue(visitantString, Set.class);
-      hashOperations.delete(VISITANT_KEY, key);
 
-      saveVisitants(visitants, key);
-    }
-  }
+      Blog blog = blogRepository.findBlogByUrlName(key)
+              .orElse(null);
 
-  private void saveVisitants(Set<VisitantInfoDto> visitants, String blogUrl) {
-    Blog blog = blogRepository.findBlogByUrlName(blogUrl)
-            .orElse(null);
+      if (Objects.nonNull(blog)) {
+        Visitant visitant = visitantRepository
+                .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
+                .orElse(new Visitant(blog, 0));
 
-    if (Objects.nonNull(blog)) {
-      Visitant visitant = visitantRepository
-              .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
-              .orElse(new Visitant(blog, 0));
+        visitant.addCount(visitants.size());
 
-      visitant.addCount(visitants.size());
-
-      visitantRepository.save(visitant);
+        visitantRepository.save(visitant);
+        hashOperations.delete(VISITANT_KEY, key);
+      }
     }
   }
 
