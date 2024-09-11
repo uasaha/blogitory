@@ -81,7 +81,7 @@ function openSuccessAlerts(msg) {
 
     setTimeout(function () {
         successAlerts.classList.add("d-none");
-    }, 6000)
+    }, 5000)
 }
 
 function openFailedAlerts(msg) {
@@ -92,7 +92,7 @@ function openFailedAlerts(msg) {
 
     setTimeout(function () {
         failedAlerts.classList.add("d-none");
-    }, 6000)
+    }, 5000)
 }
 
 function openWarnAlerts(msg) {
@@ -103,5 +103,5 @@ function openWarnAlerts(msg) {
 
     setTimeout(function () {
         warnAlerts.classList.add("d-none");
-    }, 6000)
+    }, 5000)
 }
