@@ -3,6 +3,8 @@ package com.blogitory.blog.visitant.entity;
 import com.blogitory.blog.blog.entity.Blog;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -27,6 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Visitant {
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long visitantNo;
 
   @ManyToOne
@@ -38,4 +41,22 @@ public class Visitant {
 
   @Column(name = "visitant_date")
   private LocalDate visitDate;
+
+  /**
+   * Constructor.
+   */
+  public Visitant(Blog blog, Integer visitantCnt) {
+    this.blog = blog;
+    this.visitantCnt = visitantCnt;
+    this.visitDate = LocalDate.now();
+  }
+
+  /**
+   * Add count.
+   *
+   * @param count count
+   */
+  public void addCount(Integer count) {
+    this.visitantCnt += count;
+  }
 }
