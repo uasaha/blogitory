@@ -47,22 +47,7 @@ public class VisitantServiceImpl implements VisitantService {
   @Override
   public void viewBlogs(String blogUrl, Integer memberNo, String ip) {
     HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-
-    String visitantString = hashOperations.get(VISITANT_KEY, blogUrl);
-
-    Set<VisitantInfoDto> visitants = null;
-
-    try {
-      visitants = objectMapper.readValue(visitantString, Set.class);
-    } catch (IllegalArgumentException e) {
-      visitants = new HashSet<>();
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage());
-    }
-
-    if (Objects.isNull(visitants)) {
-      visitants = new HashSet<>();
-    }
+    Set<VisitantInfoDto> visitants = getVisitants(blogUrl);
 
     VisitantInfoDto infoDto = new VisitantInfoDto(memberNo, ip);
     visitants.add(infoDto);
@@ -81,21 +66,7 @@ public class VisitantServiceImpl implements VisitantService {
   @Override
   @Transactional(readOnly = true)
   public Map<String, Integer> getVisitantCount(String blogUrl) {
-    HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-    String visitantString = hashOperations.get(VISITANT_KEY, blogUrl);
-    Set<VisitantInfoDto> visitants = null;
-
-    try {
-      visitants = objectMapper.readValue(visitantString, Set.class);
-    } catch (IllegalArgumentException e) {
-      visitants = new HashSet<>();
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage());
-    }
-
-    if (Objects.isNull(visitants)) {
-      visitants = new HashSet<>();
-    }
+    Set<VisitantInfoDto> visitants = getVisitants(blogUrl);
 
     Integer totalCount = visitantRepository.getCountByBlogUrl(blogUrl);
     Integer todayCount = visitantRepository.getCountByBlogUrlAndDate(blogUrl, LocalDate.now());
@@ -163,5 +134,21 @@ public class VisitantServiceImpl implements VisitantService {
 
       visitantRepository.save(visitant);
     }
+  }
+
+  private Set<VisitantInfoDto> getVisitants(String blogUrl) {
+    HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+    String visitantString = hashOperations.get(VISITANT_KEY, blogUrl);
+    Set<VisitantInfoDto> visitants = null;
+
+    try {
+      visitants = objectMapper.readValue(visitantString, Set.class);
+    } catch (IllegalArgumentException e) {
+      visitants = new HashSet<>();
+    } catch (JsonProcessingException e) {
+      log.error(e.getMessage());
+    }
+
+    return Objects.isNull(visitants) ? new HashSet<>() : visitants;
   }
 }

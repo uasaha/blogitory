@@ -42,22 +42,8 @@ public class ViewerServiceImpl implements ViewerService {
    */
   @Override
   public void viewPosts(String postsUrl, Integer memberNo, String ip) {
-    HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-
-    String viewersString = hashOperations.get(VIEWER_KEY, postsUrl);
-    Set<ViewerInfoDto> viewers = null;
-
-    try {
-      viewers = objectMapper.readValue(viewersString, Set.class);
-    } catch (IllegalArgumentException e) {
-      viewers = new HashSet<>();
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage());
-    }
-
-    if (Objects.isNull(viewers)) {
-      viewers = new HashSet<>();
-    }
+    HashOperations<String, Object, Object> hashOperations = redisTemplate.opsForHash();
+    Set<ViewerInfoDto> viewers = getViewers(postsUrl);
 
     ViewerInfoDto viewerInfoDto = new ViewerInfoDto(memberNo, ip);
     viewers.add(viewerInfoDto);
@@ -76,22 +62,7 @@ public class ViewerServiceImpl implements ViewerService {
   @Override
   @Transactional(readOnly = true)
   public Integer getViewersCount(String postsUrl) {
-    HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
-
-    String viewersString = hashOperations.get(VIEWER_KEY, postsUrl);
-    Set<ViewerInfoDto> viewers = null;
-
-    try {
-      viewers = objectMapper.readValue(viewersString, Set.class);
-    } catch (IllegalArgumentException e) {
-      viewers = new HashSet<>();
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage());
-    }
-
-    if (Objects.isNull(viewers)) {
-      viewers = new HashSet<>();
-    }
+    Set<ViewerInfoDto> viewers = getViewers(postsUrl);
 
     Integer view = viewerRepository.getCountByPostsUrl(postsUrl);
 
@@ -125,5 +96,22 @@ public class ViewerServiceImpl implements ViewerService {
 
       viewerRepository.save(viewer);
     }
+  }
+
+  private Set<ViewerInfoDto> getViewers(String postsUrl) {
+    HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+
+    String viewersString = hashOperations.get(VIEWER_KEY, postsUrl);
+    Set<ViewerInfoDto> viewers = null;
+
+    try {
+      viewers = objectMapper.readValue(viewersString, Set.class);
+    } catch (IllegalArgumentException e) {
+      viewers = new HashSet<>();
+    } catch (JsonProcessingException e) {
+      log.error(e.getMessage());
+    }
+
+    return Objects.isNull(viewers) ? new HashSet<>() : viewers;
   }
 }
