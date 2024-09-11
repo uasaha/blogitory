@@ -22,7 +22,7 @@ public class UrlUtil {
   private static final String INDEX_PAGE = "/";
   private static final String BLOG_URL_REGEX = "^(/)(@\\w+/[a-zA-Z0-9_-]+)(/.*)?$";
   private static final String POSTS_URL_REGEX =
-          "^(/)(@\\w+/[a-zA-Z0-9_-]+/[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+)(/.*)?$";
+          "^(/)(@\\w+/[a-zA-Z0-9_-]+/.+)(/.*)?$";
 
   /**
    * Get base url on request.
