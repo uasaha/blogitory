@@ -47,7 +47,7 @@ class TempPostsRepositoryTest {
   @Test
   void getTempPostsByMemberNo() {
     Member member = MemberDummy.dummy();
-    memberRepository.save(member);
+    member = memberRepository.save(member);
 
     UUID uuid = UUID.randomUUID();
     TempPosts tempPosts = new TempPosts(uuid, member);
