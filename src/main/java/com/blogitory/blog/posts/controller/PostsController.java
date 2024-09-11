@@ -14,6 +14,9 @@ import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
+import com.blogitory.blog.viewer.aspect.point.Viewer;
+import com.blogitory.blog.visitant.aspect.point.Visitant;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +44,6 @@ public class PostsController {
   private final PostsService postsService;
   private final FollowService followService;
   private static final String POSTS_ATTR = "posts";
-  private static final String RECENT_KEYWORD = "recent-q";
 
   /**
    * Posts issue page.
@@ -104,8 +106,11 @@ public class PostsController {
    * @param model    model
    * @return page
    */
+  @Visitant
+  @Viewer
   @GetMapping("/@{username}/{blogUrl}/{postUrl}")
-  public String postsPage(@PathVariable String username,
+  public String postsPage(HttpServletRequest request,
+                          @PathVariable String username,
                           @PathVariable String blogUrl,
                           @PathVariable String postUrl,
                           Model model) {

@@ -14,12 +14,16 @@ import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.config.JpaConfig;
 import com.blogitory.blog.commons.config.QuerydslConfig;
+import com.blogitory.blog.follow.entity.Follow;
+import com.blogitory.blog.follow.entity.FollowDummy;
+import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.heart.entity.Heart;
 import com.blogitory.blog.heart.entity.HeartDummy;
 import com.blogitory.blog.heart.repository.HeartRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
@@ -45,6 +49,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Posts repository test.
@@ -78,6 +83,9 @@ class PostsRepositoryTest {
   HeartRepository heartRepository;
 
   @Autowired
+  FollowRepository followRepository;
+
+  @Autowired
   EntityManager entityManager;
 
   /**
@@ -96,6 +104,8 @@ class PostsRepositoryTest {
     entityManager.createNativeQuery("ALTER TABLE `tag` ALTER COLUMN `tag_no` RESTART")
             .executeUpdate();
     entityManager.createNativeQuery("ALTER TABLE `posts_tag` ALTER COLUMN `posts_tag_no` RESTART")
+            .executeUpdate();
+    entityManager.createNativeQuery("ALTER TABLE `follow` ALTER COLUMN `follow_no` RESTART")
             .executeUpdate();
   }
 
@@ -373,5 +383,58 @@ class PostsRepositoryTest {
     GetRecentPostResponseDto actual = page.getContent().getFirst();
 
     assertEquals(posts.getSubject(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("피드 시작 번호 조회")
+  void getFeedStartPostsNoByMemberNo() {
+    Member followee = MemberDummy.dummy();
+    followee = memberRepository.save(followee);
+    Blog blog = BlogDummy.dummy(followee);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Member follower = MemberDummy.dummy();
+    ReflectionTestUtils.setField(follower, "memberNo", 2);
+    memberRepository.save(follower);
+
+    Follow follow = FollowDummy.dummy(followee, follower);
+    followRepository.save(follow);
+
+    Long startNo = postsRepository.getFeedStartPostsNoByMemberNo(follower.getMemberNo());
+
+    assertEquals(posts.getPostsNo(), startNo);
+  }
+
+  @Test
+  @DisplayName("피드 조회")
+  void getFeedPostsByMemberNo() {
+    Member followee = MemberDummy.dummy();
+    followee = memberRepository.save(followee);
+    Blog blog = BlogDummy.dummy(followee);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+
+    Member follower = MemberDummy.dummy();
+    ReflectionTestUtils.setField(follower, "memberNo", 2);
+    memberRepository.save(follower);
+
+    Follow follow = FollowDummy.dummy(followee, follower);
+    followRepository.save(follow);
+
+    Pageable pageable = PageRequest.of(0, 10);
+
+    Page<GetFeedPostsResponseDto> result =
+            postsRepository.getFeedPostsByMemberNo(follower.getMemberNo(),
+                    posts.getPostsNo(), pageable);
+
+    assertEquals(1L, result.getTotalElements());
+    assertEquals(posts.getUrl(), result.getContent().getFirst().getPostsUrl());
   }
 }

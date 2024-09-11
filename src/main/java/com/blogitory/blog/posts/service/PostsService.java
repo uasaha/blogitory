@@ -217,7 +217,7 @@ public interface PostsService {
    * @param memberNo member no
    * @param start    start posts no
    * @param pageable pageable
-   * @return
+   * @return posts
    */
   GetFeedPostsPagesResponseDto feed(Integer memberNo, Long start, Pageable pageable);
 }

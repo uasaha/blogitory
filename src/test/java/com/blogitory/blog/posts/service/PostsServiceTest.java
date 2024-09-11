@@ -26,6 +26,8 @@ import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsPagesResponseDto;
+import com.blogitory.blog.posts.dto.response.GetFeedPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
@@ -931,5 +933,30 @@ class PostsServiceTest {
     GetRecentPostResponseDto actual = resultList.getFirst();
 
     assertEquals(response.getTitle(), actual.getTitle());
+  }
+
+  @Test
+  @DisplayName("피드 조회")
+  void feed() {
+    GetFeedPostsResponseDto expect = new GetFeedPostsResponseDto(
+            "username",
+            "title",
+            LocalDateTime.now(),
+            null,
+            "details",
+            "postUrl",
+            "blogUrl",
+            "blogName",
+            "blogThumb");
+    Page<GetFeedPostsResponseDto> expectPage = new PageImpl<>(List.of(expect));
+    Pageable pageable = PageRequest.of(0, 4);
+
+    when(postsRepository.getFeedStartPostsNoByMemberNo(anyInt())).thenReturn(1L);
+    when(postsRepository.getFeedPostsByMemberNo(anyInt(), any(), any())).thenReturn(expectPage);
+
+    GetFeedPostsPagesResponseDto actual = postsService.feed(1, null, pageable);
+
+    assertEquals(1L, actual.getStart());
+    assertEquals(expect.getUsername(), actual.getPages().body().getFirst().getUsername());
   }
 }

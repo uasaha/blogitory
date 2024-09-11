@@ -263,4 +263,14 @@ class PostsRestControllerTest {
     mvc.perform(get("/api/posts/search?q=as"))
             .andExpect(status().isOk());
   }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("피드 조회")
+  void feed() throws Exception {
+    when(postsService.feed(any(), any(), any())).thenReturn(null);
+
+    mvc.perform(get("/api/feed"))
+            .andExpect(status().isOk());
+  }
 }
