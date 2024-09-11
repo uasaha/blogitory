@@ -12,11 +12,11 @@ public class FollowDummy {
   /**
    * Dummy follow.
    *
-   * @param follower the follower
-   * @param leader   the leader
+   * @param followToNo the follower
+   * @param followFromNo   the leader
    * @return the follow
    */
-  public static Follow dummy(Member follower, Member leader) {
-    return new Follow(1L, follower, leader);
+  public static Follow dummy(Member followToNo, Member followFromNo) {
+    return new Follow(1L, followToNo, followFromNo);
   }
 }

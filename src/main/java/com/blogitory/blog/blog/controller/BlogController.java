@@ -6,6 +6,8 @@ import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
+import com.blogitory.blog.visitant.aspect.point.Visitant;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +37,16 @@ public class BlogController {
   /**
    * Go to blog page.
    *
+   * @param request HttpServletRequest
    * @param username username
    * @param blogUrl  blog url
    * @param model    model
    * @return page
    */
+  @Visitant
   @GetMapping("/@{username}/{blogUrl}")
-  public String blog(@PathVariable("username") String username,
+  public String blog(HttpServletRequest request,
+                     @PathVariable("username") String username,
                      @PathVariable("blogUrl") String blogUrl,
                      Model model) {
     String blogKey = getBlogKey(username, blogUrl);
@@ -57,14 +62,17 @@ public class BlogController {
   /**
    * All posts page.
    *
+   * @param request HttpServletRequest
    * @param username username
    * @param blogUrl  blog url
    * @param model    model
    * @param pageable pageable
    * @return all posts page
    */
+  @Visitant
   @GetMapping("/@{username}/{blogUrl}/posts")
-  public String blogPosts(@PathVariable("username") String username,
+  public String blogPosts(HttpServletRequest request,
+                          @PathVariable("username") String username,
                           @PathVariable("blogUrl") String blogUrl,
                           @PageableDefault Pageable pageable,
                           Model model) {
@@ -81,6 +89,7 @@ public class BlogController {
   /**
    * Category post page.
    *
+   * @param request HttpServletRequest
    * @param username     username
    * @param blogUrl      blog url
    * @param categoryName category name
@@ -88,8 +97,10 @@ public class BlogController {
    * @param model        model
    * @return category page
    */
+  @Visitant
   @GetMapping("/@{username}/{blogUrl}/categories/{categoryName}")
-  public String categoryPosts(@PathVariable("username") String username,
+  public String categoryPosts(HttpServletRequest request,
+                              @PathVariable("username") String username,
                               @PathVariable("blogUrl") String blogUrl,
                               @PathVariable("categoryName") String categoryName,
                               @PageableDefault Pageable pageable,
@@ -108,6 +119,7 @@ public class BlogController {
   /**
    * Tag post page.
    *
+   * @param request HttpServletRequest
    * @param username username
    * @param blogUrl  blog url
    * @param tagName  tag name
@@ -115,8 +127,10 @@ public class BlogController {
    * @param model    model
    * @return category page
    */
+  @Visitant
   @GetMapping("/@{username}/{blogUrl}/tags/{tagName}")
-  public String tagPosts(@PathVariable("username") String username,
+  public String tagPosts(HttpServletRequest request,
+                         @PathVariable("username") String username,
                          @PathVariable("blogUrl") String blogUrl,
                          @PathVariable("tagName") String tagName,
                          @PageableDefault Pageable pageable,

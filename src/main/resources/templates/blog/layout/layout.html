@@ -170,10 +170,15 @@
         </div>
     </div>
 </div>
-<script defer>
+<script defer th:inline="javascript">
     document.addEventListener("DOMContentLoaded", function () {
-        let path = window.location.pathname;
-        let recentItem = document.querySelector("#recent-item");
+        let blogUrl = [[${blog}]].blogUrl;
+
+        axios.get("/api/" + blogUrl + "/visitants")
+            .then((res) => {
+                document.getElementById("today-count").textContent = res.data.today;
+                document.getElementById("total-count").innerHTML = res.data.total;
+            });
     });
 </script>
 <th:block layout:fragment="script"></th:block>
