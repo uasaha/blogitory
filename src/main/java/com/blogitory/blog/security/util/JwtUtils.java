@@ -105,8 +105,7 @@ public class JwtUtils {
     Claims claims = parseToken(secret, token);
 
     LocalDateTime exp = claims.getExpiration().toInstant()
-            .atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime().minusHours(2L);
-
+            .atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime().minusDays(1L);
 
     LocalDateTime now = LocalDateTime.now();
 
