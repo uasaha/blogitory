@@ -606,6 +606,7 @@ function getFeedPostsComponent(article) {
     let viewer = new Editor.factory({
         el: cardBodyViwer,
         viewer: true,
+        usageStatistics: false,
     });
 
     viewer.setMarkdown(article.details);

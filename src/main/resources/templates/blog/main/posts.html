@@ -235,7 +235,8 @@
         const viewer = Editor.factory({
             el: viewers[0],
             viewer: true,
-            plugins: [codeSyntaxHighlight, colorSyntax]
+            usageStatistics: false,
+            plugins: [codeSyntaxHighlight, colorSyntax],
         });
 
         const elem = [[${posts.detail}]];

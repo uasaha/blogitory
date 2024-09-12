@@ -132,10 +132,11 @@ public class VisitantServiceImpl implements VisitantService {
                 .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
                 .orElse(new Visitant(blog, 0));
 
+        hashOperations.delete(VISITANT_KEY, key);
+
         visitant.sync(visitants.size());
 
         visitantRepository.save(visitant);
-        hashOperations.delete(VISITANT_KEY, key);
       }
     }
   }
