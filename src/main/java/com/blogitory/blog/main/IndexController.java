@@ -130,10 +130,5 @@ public class IndexController {
 
     return "index/settings/posts";
   }
-
-  @GetMapping("/naverfd4b9edc93a86a9552e17f201c01e7f9.html")
-  public String naverSettings() {
-    return "admin/naverfd4b9edc93a86a9552e17f201c01e7f9";
-  }
 }
 
