@@ -105,7 +105,7 @@ public class VisitantServiceImpl implements VisitantService {
                 .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
                 .orElse(new Visitant(blog, 0));
 
-        visitant.addCount(visitants.size());
+        visitant.sync(visitants.size());
 
         visitantRepository.save(visitant);
       }
@@ -132,7 +132,7 @@ public class VisitantServiceImpl implements VisitantService {
                 .findByBlogUrlAndDate(blog.getUrlName(), LocalDate.now())
                 .orElse(new Visitant(blog, 0));
 
-        visitant.addCount(visitants.size());
+        visitant.sync(visitants.size());
 
         visitantRepository.save(visitant);
         hashOperations.delete(VISITANT_KEY, key);

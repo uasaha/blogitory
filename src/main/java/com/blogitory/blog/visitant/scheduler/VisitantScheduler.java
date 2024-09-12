@@ -21,9 +21,9 @@ public class VisitantScheduler {
   private final VisitantService visitantService;
 
   /**
-   * Save visitant to DB. every 10 minutes.
+   * Save visitant to DB. every 1 hour.
    */
-  @Scheduled(fixedRate = 600000, initialDelay = 600000)
+  @Scheduled(fixedRate = 3600000, initialDelay = 3600000)
   public void saveVisitant() {
     log.debug("Saving visitant start.");
     try {

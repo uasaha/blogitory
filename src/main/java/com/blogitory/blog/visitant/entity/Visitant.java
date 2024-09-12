@@ -52,11 +52,11 @@ public class Visitant {
   }
 
   /**
-   * Add count.
+   * Synchronization.
    *
    * @param count count
    */
-  public void addCount(Integer count) {
-    this.visitantCnt += count;
+  public void sync(Integer count) {
+    this.visitantCnt = Math.max(this.visitantCnt, count);
   }
 }
