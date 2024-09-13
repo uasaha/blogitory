@@ -9,7 +9,7 @@
                 <a href="/">
                     <img src="/static/logo/logo-375582.png" width="30" height="30" alt="">
                 </a>
-                <a style="font-size: 22px; font-weight: bold" th:text="${profile.username}" th:username="${profile.username}" th:onclick="|location.href='/@'+this.getAttribute('username')|"></a>
+                <a class="cursor-pointer" style="font-size: 22px; font-weight: bold" th:text="${profile.username}" th:username="${profile.username}" th:onclick="|location.href='/@'+this.getAttribute('username')|"></a>
             </h1>
             <div class="navbar-nav flex-row order-md-last">
                 <a sec:authorize="isAnonymous()" class="nav-link px-0" href="/search">
@@ -52,7 +52,7 @@
                             <path d="M21 21l-6 -6"/>
                         </svg>
                     </a>
-                    <a class="nav-link px-0 hide-theme-dark me-3"
+                    <a class="nav-link px-0 hide-theme-dark me-3 cursor-pointer"
                        onclick="setTheme('dark')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -61,7 +61,7 @@
                             <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/>
                         </svg>
                     </a>
-                    <a onclick="setTheme('light')" class="nav-link px-0 hide-theme-light me-3">
+                    <a onclick="setTheme('light')" class="nav-link px-0 hide-theme-light me-3 cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                              stroke-linejoin="round">
@@ -213,7 +213,7 @@
                         <a onclick="setTheme('dark')" class="dropdown-item d-md-none hide-theme-dark">테마 변경</a>
                         <a onclick="setTheme('light')" class="dropdown-item d-md-none hide-theme-light">테마 변경</a>
                         <a href="/settings" class="dropdown-item">설정</a>
-                        <p onclick="logout()" class="dropdown-item">로그아웃</p>
+                        <p onclick="logout()" class="dropdown-item cursor-pointer">로그아웃</p>
                     </div>
                 </div>
                 <a sec:authorize="isAnonymous()" id="login-modal-btn" class="nav-link px-0" title="로그인"

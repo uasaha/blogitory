@@ -126,23 +126,25 @@
             row.className = "row align-items-center";
 
             let pfpDiv = document.createElement("div");
-            pfpDiv.className = "col-auto d-flex lh-1 text-body p-0";
+            pfpDiv.className = "col-auto d-flex lh-1 text-body p-0 cursor-pointer";
+            pfpDiv.addEventListener("click", () => {
+                location.href = "/@" + comment.username;
+            })
 
             let pfp = document.createElement("img");
             pfp.className = "avatar avatar-sm rounded-circle cursor-pointer";
             pfp.src = comment.userPfp;
-
-            pfp.addEventListener("click", () => {
-                location.href = '/@' + comment.username;
-            })
-
             pfpDiv.appendChild(pfp);
 
             let contentDiv = document.createElement("div");
             contentDiv.className = "col-auto me-3";
 
             let content = document.createElement("span");
+            content.classList.add("cursor-pointer");
             content.innerText = comment.content;
+            content.addEventListener("click", () => {
+                location.href = "/" + comment.postUrl;
+            })
 
             contentDiv.appendChild(content);
 
