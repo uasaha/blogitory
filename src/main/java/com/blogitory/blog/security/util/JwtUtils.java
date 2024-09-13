@@ -23,7 +23,7 @@ import org.json.simple.parser.ParseException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtils {
   public static final String ACCESS_TOKEN_COOKIE_NAME = "uids";
-  public static final Integer ACCESS_COOKIE_EXPIRE = 259200;
+  public static final Integer ACCESS_COOKIE_EXPIRE = 86400;
   public static final String BLACK_LIST_KEY = "Black-List";
 
   /**
@@ -105,8 +105,7 @@ public class JwtUtils {
     Claims claims = parseToken(secret, token);
 
     LocalDateTime exp = claims.getExpiration().toInstant()
-            .atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime().minusDays(1L);
-
+            .atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime().minusHours(23L);
     LocalDateTime now = LocalDateTime.now();
 
     return now.isAfter(exp);
