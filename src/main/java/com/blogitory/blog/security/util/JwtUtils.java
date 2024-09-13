@@ -23,7 +23,7 @@ import org.json.simple.parser.ParseException;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtils {
   public static final String ACCESS_TOKEN_COOKIE_NAME = "uids";
-  public static final Integer ACCESS_COOKIE_EXPIRE = 14400;
+  public static final Integer ACCESS_COOKIE_EXPIRE = 259200;
   public static final String BLACK_LIST_KEY = "Black-List";
 
   /**

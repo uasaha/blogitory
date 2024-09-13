@@ -190,7 +190,7 @@
                         </div>
                     </div>
                 </div>
-                <div sec:authorize="isAuthenticated()" id="comment-write-form" class="card-footer d-none">
+                <div sec:authorize="isAuthenticated()" id="comment-write-form" class="card-footer">
                     <div class="row">
                         <div class="row">
                             <a th:href="'/@' + ${members.username}" class="d-flex lh-1 text-body p-0">
@@ -205,14 +205,20 @@
                             </a>
                         </div>
                         <div class="row mt-2">
-                            <textarea id="comment-write-area" class="form-control" rows="4"></textarea>
+                            <textarea id="comment-write-area" class="form-control" rows="4" placeholder="내용을 입력해주세요."></textarea>
                         </div>
                         <div class="row d-flex justify-content-end">
-                            <button class="btn mt-2" style="font-size: 10px; height: 30px; width: 50px" onclick="registerComment()">
+                            <button class="btn mt-2" style="width: 80px" onclick="registerComment()">
                                     등록
                             </button>
                         </div>
                     </div>
+                </div>
+                <div sec:authorize="isAnonymous()" class="card-footer mb-1">
+                    <p>
+                        <a class="link" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</a>
+                        후 댓글을 작성해보세요!
+                    </p>
                 </div>
                 <div id="comment-div"></div>
             </div>
