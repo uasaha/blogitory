@@ -15,14 +15,19 @@ import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
+import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import com.blogitory.blog.posts.repository.PostsRepository;
+import com.blogitory.blog.security.exception.AuthorizationException;
+import com.blogitory.blog.viewer.dto.GetViewerCountResponseDto;
 import com.blogitory.blog.viewer.dto.ViewerInfoDto;
 import com.blogitory.blog.viewer.repository.ViewerRepository;
 import com.blogitory.blog.viewer.service.impl.ViewerServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +43,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @since 1.0
  **/
 class ViewerServiceTest {
+  MemberRepository memberRepository;
   PostsRepository postsRepository;
   ViewerRepository viewerRepository;
   ViewerService viewerService;
@@ -46,6 +52,7 @@ class ViewerServiceTest {
 
   @BeforeEach
   void setUp() {
+    memberRepository = mock(MemberRepository.class);
     postsRepository = mock(PostsRepository.class);
     objectMapper = mock(ObjectMapper.class);
     redisTemplate = mock(RedisTemplate.class);
@@ -69,12 +76,18 @@ class ViewerServiceTest {
 
   @Test
   void getViewersCount() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
     HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
     when(redisTemplate.opsForHash()).thenReturn(hashOperations);
     when(hashOperations.get(any(), anyString())).thenReturn(null);
     when(viewerRepository.getCountByPostsUrl(anyString())).thenReturn(null);
 
-    int actual = viewerService.getViewersCount("@posts/posts/posts");
+    int actual = viewerService.getViewersCount(1, "@posts/posts/posts");
 
     assertEquals(0, actual);
   }
@@ -100,5 +113,34 @@ class ViewerServiceTest {
     viewerService.persistence();
 
     verify(viewerRepository, times(1)).save(any());
+  }
+
+  @Test
+  void getViewerMonthlyCount() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+    when(viewerRepository.getCountsByPostUrl(anyString(), any(), any()))
+            .thenReturn(List.of(new GetViewerCountResponseDto(LocalDate.now(), 1)));
+
+    List<GetViewerCountResponseDto> result = viewerService.getViewerMonthlyCount(1, "posts");
+    assertEquals(30, result.size());
+  }
+
+  @Test
+  void getViewerMonthlyCountFailed() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+    Category category = CategoryDummy.dummy(blog);
+    Posts posts = PostsDummy.dummy(category);
+
+    when(postsRepository.findByUrl(anyString())).thenReturn(Optional.of(posts));
+    when(viewerRepository.getCountsByPostUrl(anyString(), any(), any()))
+            .thenReturn(List.of(new GetViewerCountResponseDto(LocalDate.now(), 1)));
+
+    assertThrows(AuthorizationException.class, () -> viewerService.getViewerMonthlyCount(2, "posts"));
   }
 }

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:xmls="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <title th:text="'최근 30일 조회수 - ' + ${posts.subject}"></title>
+    <meta property="og:locale" content="ko">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <link rel="shortcut icon" href="/static/logo/logo-375582.png">
+    <link rel="apple-touch-icon" href="/static/logo/logo-375582.png">
+    <link rel="icon" type="image/png" href="/static/logo/logo-375582.png">
+    <link rel="msapplication-TileColor" content="#375582">
+    <link rel="msapplication-TileImage" content="/static/logo/logo-375582.png">
+    <link rel="icon" type="image/svg+xml" href="/static/logo/logo-375582.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="canonical" th:href="${'https://blogitory.com/' + posts.postUrl}">
+    <meta property="og:url" th:content="'https://blogitory.com/' + ${posts.postUrl}">
+    <meta property="og:title" th:content="'최근 30일 조회수 - ' + ${posts.subject}">
+    <meta property="og:image"
+          th:content="${not #strings.isEmpty(posts.postThumb)} ? ${posts.postThumb} : '/static/logo/logo-375582.png'">
+
+    <link href="/static/css/lib/tabler.css" rel="stylesheet"/>
+    <link href="/static/css/lib/tabler-vendors.min.css" rel="stylesheet"/>
+    <link href="/static/css/my/blogi.css" rel="stylesheet"/>
+    <th:block layout:fragment="css"></th:block>
+    <style>
+        @font-face {
+            font-family: "Noto Sans KR", sans-serif;
+            src: url("/static/fonts/NotoSansKR-Regular.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Light", sans-serif;
+            src: url("/static/fonts/NotoSansKR-Light.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Medium", sans-serif;
+            font-weight: bold;
+            src: url("/static/fonts/NotoSansKR-Medium.ttf") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Noto Sans KR Bold", sans-serif;
+            font-weight: bold;
+            src: url("/static/fonts/NotoSansKR-Bold.ttf") format("truetype");
+        }
+
+        :root {
+            --tblr-font-weight-light: "Noto Sans KR Light", sans-serif;
+            --tblr-font-sans-serif: "Noto Sans KR", sans-serif;
+            --tblr-font-normal: "Noto Sans KR", sans-serif;
+            --tblr-font-weight-medium: "Noto Sans KR Medium", sans-serif;
+            --tblr-font-weight-bold: "Noto Sans KR Bold", sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="container" style="max-width: 800px">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" th:text="${posts.subject} + ' - 총 조회수 : ' + ${total}"></h3>
+            </div>
+            <div class="card-body">
+                <div class="ms-auto me-auto" id="visitant-chart">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/lib/apexcharts.min.js" defer></script>
+<script src="/static/js/lib/tabler.min.js" defer></script>
+<script src="/static/js/lib/axios.js" defer></script>
+<script defer th:inline="javascript">
+    let postsUrl = [[ ${posts.postUrl} ]];
+    let subject = [[ ${posts.subject} ]];
+    let requestUrl = "/api/" + postsUrl + "/viewers/statistic";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        axios.get(requestUrl)
+            .then(res => {
+                let dataArr = res.data;
+                let dateArr = [];
+                let valueArr = [];
+
+                for (data of dataArr) {
+                    dateArr.push(data.date);
+                    valueArr.push(data.viewers);
+                }
+
+                let options = {
+                    series: [{
+                        name: "조회",
+                        data: valueArr,
+                    }],
+                    chart: {
+                        height: 350,
+                        type: 'line',
+                        zoom: {
+                            enabled: false
+                        }
+                    },
+                    colors: ["#375582"],
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        curve: 'straight'
+                    },
+                    title: {
+                        text: '최근 30일 조회수',
+                        align: 'left'
+                    },
+                    grid: {
+                        row: {
+                            opacity: 0.5
+                        },
+                    },
+                    xaxis: {
+                        categories: dateArr,
+                        type: "datetime",
+                        labels: {
+                            format: 'MM/dd'
+                        },
+                        axisBorder: { show: false },
+                        tickAmount: 5,
+                        tickPlacement: 'between',
+                        axisTicks: { show: true },
+                    },
+                };
+
+                let chart = new ApexCharts(document.querySelector("#visitant-chart"), options);
+                chart.render();
+            });
+    });
+</script>
+</body>
+</html>

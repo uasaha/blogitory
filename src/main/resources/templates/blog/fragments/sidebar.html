@@ -150,6 +150,9 @@
                 <div class="card">
                     <div class="card-status-top bg-secondary"></div>
                     <div class="card-body">
+                        <a sec:authorize="isAuthenticated()" th:if="${blog.username} == ${members.username}" class="text-black float-end" target="_blank" th:href="'/' + ${blog.blogUrl} + '/visitants'">
+                            <svg xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-dots"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /><path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg>
+                        </a>
                         <h3 class="card-text" style="margin: 0em;">Today</h3>
                         <p id="today-count" class="card-title" style="margin: 0em; font-weight: bold; font-size: 18px">0</p>
                         <h3 class="card-text mt-1" style="margin: 0em;">Total</h3>

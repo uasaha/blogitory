@@ -15,6 +15,7 @@ import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import com.blogitory.blog.viewer.aspect.point.Viewer;
+import com.blogitory.blog.viewer.service.ViewerService;
 import com.blogitory.blog.visitant.aspect.point.Visitant;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -43,6 +44,7 @@ public class PostsController {
   private final BlogService blogService;
   private final PostsService postsService;
   private final FollowService followService;
+  private final ViewerService viewerService;
   private static final String POSTS_ATTR = "posts";
 
   /**
@@ -161,5 +163,29 @@ public class PostsController {
     }
 
     return "index/main/search";
+  }
+
+  /**
+   * Viewer page.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param postUrl  post url
+   * @param model    model
+   * @return viewer page
+   */
+  @RoleUser
+  @GetMapping("/@{username}/{blogUrl}/{postUrl}/viewers")
+  public String viewerPage(@PathVariable String username,
+                           @PathVariable String blogUrl,
+                           @PathVariable String postUrl,
+                           Model model) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+    String postKey = getPostsKey(username, blogUrl, postUrl);
+
+    model.addAttribute(POSTS_ATTR, postsService.getPostByUrl(postKey));
+    model.addAttribute("total", viewerService.getViewersCount(memberNo, postKey));
+
+    return "chart/posts";
   }
 }

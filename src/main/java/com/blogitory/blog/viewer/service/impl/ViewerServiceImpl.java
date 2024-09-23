@@ -1,7 +1,10 @@
 package com.blogitory.blog.viewer.service.impl;
 
+import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.repository.PostsRepository;
+import com.blogitory.blog.security.exception.AuthorizationException;
+import com.blogitory.blog.viewer.dto.GetViewerCountResponseDto;
 import com.blogitory.blog.viewer.dto.ViewerInfoDto;
 import com.blogitory.blog.viewer.entity.Viewer;
 import com.blogitory.blog.viewer.repository.ViewerRepository;
@@ -9,8 +12,11 @@ import com.blogitory.blog.viewer.service.ViewerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementation of Viewer service.
  *
  * @author woonseok
- * @Date 2024-09-09
  * @since 1.0
  **/
 @Slf4j
@@ -61,7 +66,14 @@ public class ViewerServiceImpl implements ViewerService {
    */
   @Override
   @Transactional(readOnly = true)
-  public Integer getViewersCount(String postsUrl) {
+  public Integer getViewersCount(Integer memberNo, String postsUrl) {
+    Posts posts = postsRepository.findByUrl(postsUrl)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+
+    if (!posts.getCategory().getBlog().getMember().getMemberNo().equals(memberNo)) {
+      throw new AuthorizationException();
+    }
+
     Set<ViewerInfoDto> viewers = getViewers(postsUrl);
 
     Integer view = viewerRepository.getCountByPostsUrl(postsUrl);
@@ -98,6 +110,38 @@ public class ViewerServiceImpl implements ViewerService {
         hashOperations.delete(VIEWER_KEY, key);
       }
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public List<GetViewerCountResponseDto> getViewerMonthlyCount(Integer memberNo, String postsUrl) {
+    Posts posts = postsRepository.findByUrl(postsUrl)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+
+    if (!memberNo.equals(posts.getCategory().getBlog().getMember().getMemberNo())) {
+      throw new AuthorizationException();
+    }
+
+    LocalDate today = LocalDate.now();
+    LocalDate start = today.minusDays(30L);
+
+    List<GetViewerCountResponseDto> viewerCountList =
+            viewerRepository.getCountsByPostUrl(postsUrl, start, today);
+
+    List<GetViewerCountResponseDto> result = new ArrayList<>();
+
+    for (LocalDate now = start; now.isBefore(today); now = now.plusDays(1)) {
+      LocalDate nowDate = now;
+      Optional<GetViewerCountResponseDto> countOptional = viewerCountList
+              .stream().filter(c -> nowDate.isEqual(c.getDate())).findFirst();
+
+      result.add(countOptional.orElse(new GetViewerCountResponseDto(now, 0)));
+    }
+
+    return result;
   }
 
   private Set<ViewerInfoDto> getViewers(String postsUrl) {

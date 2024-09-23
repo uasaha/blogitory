@@ -1,12 +1,13 @@
 package com.blogitory.blog.viewer.service;
 
+import com.blogitory.blog.viewer.dto.GetViewerCountResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
 
 /**
  * Viewer service.
  *
  * @author woonseok
- * @Date 2024-09-09
  * @since 1.0
  **/
 public interface ViewerService {
@@ -26,7 +27,7 @@ public interface ViewerService {
    * @param postsUrl post url
    * @return count
    */
-  Integer getViewersCount(String postsUrl);
+  Integer getViewersCount(Integer memberNo, String postsUrl);
 
   /**
    * Save count to DB.
@@ -34,4 +35,13 @@ public interface ViewerService {
    * @throws JsonProcessingException Object mapper exception
    */
   void persistence() throws JsonProcessingException;
+
+  /**
+   * Get viewer monthly count.
+   *
+   * @param memberNo member no
+   * @param postsUrl post url
+   * @return monthly count
+   */
+  List<GetViewerCountResponseDto> getViewerMonthlyCount(Integer memberNo, String postsUrl);
 }

@@ -16,10 +16,13 @@ import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import com.blogitory.blog.posts.repository.PostsRepository;
+import com.blogitory.blog.viewer.dto.GetViewerCountResponseDto;
 import com.blogitory.blog.viewer.entity.Viewer;
 import com.blogitory.blog.viewer.entity.ViewerDummy;
 import com.blogitory.blog.viewer.repository.ViewerRepository;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -105,5 +108,23 @@ class ViewerRepositoryTest {
 
     assertTrue(result.isPresent());
     assertEquals(0, result.get().getViewerCnt());
+  }
+
+  @Test
+  void getCountsByPostUrl() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Category category = CategoryDummy.dummy(blog);
+    category = categoryRepository.save(category);
+    Posts posts = PostsDummy.dummy(category);
+    posts = postsRepository.save(posts);
+    Viewer viewer = ViewerDummy.dummy(posts);
+    viewerRepository.save(viewer);
+
+    List<GetViewerCountResponseDto> result =
+            viewerRepository.getCountsByPostUrl(posts.getUrl(), LocalDate.now(), LocalDate.now());
+    assertEquals(1, result.size());
   }
 }

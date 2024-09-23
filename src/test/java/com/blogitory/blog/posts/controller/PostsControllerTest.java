@@ -22,6 +22,7 @@ import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
+import com.blogitory.blog.viewer.service.ViewerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -61,6 +62,9 @@ class PostsControllerTest {
 
   @MockBean
   FollowService followService;
+
+  @MockBean
+  ViewerService viewerService;
 
   @BeforeEach
   void setUp() {
@@ -218,7 +222,27 @@ class PostsControllerTest {
   @Test
   @DisplayName("검색 페이지")
   void searchPage() throws Exception {
-    mvc.perform(get("/search"))
+    mvc.perform(get("/search?q=asd"))
+            .andExpect(status().isOk())
+            .andExpect(model().attributeExists("keyword"));
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("조회수 페이지")
+  void viewerPage() throws Exception {
+    GetPostResponseDto responseDto = new GetPostResponseDto(
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null, null,
+            null, null);
+
+    when(postsService.getPostByUrl(anyString())).thenReturn(responseDto);
+    when(viewerService.getViewersCount(anyInt(), anyString()))
+            .thenReturn(1);
+
+    mvc.perform(get("/@test/test/test/viewers"))
             .andExpect(status().isOk());
   }
 }
