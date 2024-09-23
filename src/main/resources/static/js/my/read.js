@@ -286,7 +286,7 @@ function getCommentDropdown(targetNo, childCnt) {
         "        stroke-width=\"2\"\n" +
         "        stroke-linecap=\"round\"\n" +
         "        stroke-linejoin=\"round\"\n" +
-        "        class=\"icon icon-tabler icons-tabler-outline icon-tabler-dots\"\n" +
+        "        class=\"text-body icon icon-tabler icons-tabler-outline icon-tabler-dots\"\n" +
         "        >\n" +
         "        <path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/>\n" +
         "        <path d=\"M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0\" />\n" +

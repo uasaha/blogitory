@@ -16,7 +16,8 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * @author woonseok
  * @since 1.0
  **/
-public class TempPostsRepositoryImpl extends QuerydslRepositorySupport implements TempPostsRepositoryCustom {
+public class TempPostsRepositoryImpl extends QuerydslRepositorySupport
+        implements TempPostsRepositoryCustom {
   public TempPostsRepositoryImpl() {
     super(TempPosts.class);
   }

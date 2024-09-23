@@ -49,5 +49,6 @@ public interface VisitantRepositoryCustom {
    * @param end     end date
    * @return counts
    */
-  List<GetVisitantCountResponseDto> getCountsByBlogUrl(String blogUrl, LocalDate start, LocalDate end);
+  List<GetVisitantCountResponseDto> getCountsByBlogUrl(
+          String blogUrl, LocalDate start, LocalDate end);
 }

@@ -151,7 +151,8 @@ public class VisitantServiceImpl implements VisitantService {
    */
   @Transactional(readOnly = true)
   @Override
-  public List<GetVisitantCountResponseDto> getVisitantMonthlyCount(Integer memberNo, String blogUrl) {
+  public List<GetVisitantCountResponseDto> getVisitantMonthlyCount(
+          Integer memberNo, String blogUrl) {
     Blog blog = blogRepository.findBlogByUrlName(blogUrl)
             .orElseThrow(() -> new NotFoundException(Blog.class));
 

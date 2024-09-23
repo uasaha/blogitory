@@ -18,7 +18,8 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * @author woonseok
  * @since 1.0
  **/
-public class VisitantRepositoryImpl extends QuerydslRepositorySupport implements VisitantRepositoryCustom {
+public class VisitantRepositoryImpl extends QuerydslRepositorySupport
+        implements VisitantRepositoryCustom {
 
   private final JPAQueryFactory queryFactory;
 
@@ -78,7 +79,8 @@ public class VisitantRepositoryImpl extends QuerydslRepositorySupport implements
    * {@inheritDoc}
    */
   @Override
-  public List<GetVisitantCountResponseDto> getCountsByBlogUrl(String blogUrl, LocalDate start, LocalDate end) {
+  public List<GetVisitantCountResponseDto> getCountsByBlogUrl(
+          String blogUrl, LocalDate start, LocalDate end) {
     QVisitant visitant = QVisitant.visitant;
     QBlog blog = QBlog.blog;
 

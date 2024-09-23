@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author woonseok
  * @since 1.0
  **/
-public interface VisitantRepository extends JpaRepository<Visitant, Long>, VisitantRepositoryCustom {
+public interface VisitantRepository extends JpaRepository<Visitant, Long>,
+        VisitantRepositoryCustom {
 }
