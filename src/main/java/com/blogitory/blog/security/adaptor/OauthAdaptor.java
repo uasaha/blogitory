@@ -7,7 +7,6 @@ import com.blogitory.blog.security.dto.GithubUserInfoResponseDto;
  * OauthAdaptor for getting user's info with Oauth.
  *
  * @author woonseok
- * @Date 2024-08-23
  * @since 1.0
  **/
 public interface OauthAdaptor {

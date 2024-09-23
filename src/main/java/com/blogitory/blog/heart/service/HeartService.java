@@ -4,7 +4,6 @@ package com.blogitory.blog.heart.service;
  * Heart service.
  *
  * @author woonseok
- * @Date 2024-08-29
  * @since 1.0
  **/
 public interface HeartService {

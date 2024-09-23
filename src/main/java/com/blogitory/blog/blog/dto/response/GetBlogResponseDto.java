@@ -10,7 +10,6 @@ import lombok.Getter;
  * Get blog response dto.
  *
  * @author woonseok
- * @Date 2024-07-31
  * @since 1.0
  **/
 @Getter

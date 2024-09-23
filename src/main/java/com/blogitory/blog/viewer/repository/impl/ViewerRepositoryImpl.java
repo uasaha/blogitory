@@ -16,7 +16,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * Implementation of Viewer repository for using querydsl.
  *
  * @author woonseok
- * @Date 2024-09-09
  * @since 1.0
  **/
 public class ViewerRepositoryImpl extends QuerydslRepositorySupport

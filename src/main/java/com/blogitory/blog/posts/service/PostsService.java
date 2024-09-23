@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
  * Posts service.
  *
  * @author woonseok
- * @Date 2024-08-01
  * @since 1.0
  **/
 public interface PostsService {

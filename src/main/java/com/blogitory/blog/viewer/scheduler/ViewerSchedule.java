@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  * Viewer scheduler.
  *
  * @author woonseok
- * @Date 2024-09-09
  * @since 1.0
  **/
 @Component

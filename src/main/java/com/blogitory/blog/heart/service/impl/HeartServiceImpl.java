@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Heart service.
  *
  * @author woonseok
- * @Date 2024-08-29
  * @since 1.0
  **/
 @Transactional

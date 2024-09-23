@@ -7,7 +7,6 @@ import lombok.Getter;
  * Dto, Blog list for using header.
  *
  * @author woonseok
- * @Date 2024-07-31
  * @since 1.0
  **/
 @AllArgsConstructor

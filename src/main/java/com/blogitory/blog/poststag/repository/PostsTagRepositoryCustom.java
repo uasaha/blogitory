@@ -8,7 +8,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Custom PostsTagRepository for using querydsl.
  *
  * @author woonseok
- * @Date 2024-08-21
  * @since 1.0
  **/
 @NoRepositoryBean

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
  * Visitant rest controller.
  *
  * @author woonseok
- * @Date 2024-09-10
  * @since 1.0
  **/
 @RequiredArgsConstructor

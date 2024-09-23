@@ -9,7 +9,6 @@ import java.util.Map;
  * Visitant service.
  *
  * @author woonseok
- * @Date 2024-09-10
  * @since 1.0
  **/
 public interface VisitantService {

@@ -8,7 +8,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Custom category repository.
  *
  * @author woonseok
- * @Date 2024-08-28
  * @since 1.0
  **/
 @NoRepositoryBean

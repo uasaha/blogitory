@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
  * Blog Rest Controller.
  *
  * @author woonseok
- * @Date 2024-07-15
  * @since 1.0
  **/
 @RestController

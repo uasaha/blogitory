@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  * Visitant scheduler.
  *
  * @author woonseok
- * @Date 2024-09-10
  * @since 1.0
  **/
 @Slf4j

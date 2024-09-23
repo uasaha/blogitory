@@ -6,7 +6,6 @@ import com.blogitory.blog.follow.dto.response.GetAllFollowResponseDto;
  * Follow service.
  *
  * @author woonseok
- * @Date 2024-08-26
  * @since 1.0
  **/
 public interface FollowService {

@@ -44,7 +44,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * Post repository implementation.
  *
  * @author woonseok
- * @Date 2024-08-03
  * @since 1.0
  **/
 public class PostsRepositoryImpl extends QuerydslRepositorySupport

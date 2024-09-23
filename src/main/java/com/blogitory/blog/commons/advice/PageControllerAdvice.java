@@ -28,7 +28,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * Controller advice for controller.
  *
  * @author woonseok
- * @Date 2024-07-17
  * @since 1.0
  **/
 @ControllerAdvice(assignableTypes = {BlogController.class,

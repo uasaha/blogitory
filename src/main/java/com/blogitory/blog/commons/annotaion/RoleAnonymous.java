@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
  * Restrict access to anonymous only content.
  *
  * @author woonseok
- * @Date 2024-07-24
  * @since 1.0
  **/
 @Target({ElementType.METHOD})

@@ -4,7 +4,6 @@ package com.blogitory.blog.member.exception;
  * Exception when failed modify password.
  *
  * @author woonseok
- * @Date 2024-07-22
  * @since 1.0
  **/
 public class MemberPwdChangeFailedException extends RuntimeException {

@@ -10,7 +10,6 @@ import org.commonmark.renderer.text.TextContentRenderer;
  * Posts utils.
  *
  * @author woonseok
- * @Date 2024-08-30
  * @since 1.0
  **/
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

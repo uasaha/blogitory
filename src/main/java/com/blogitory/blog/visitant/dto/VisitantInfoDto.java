@@ -8,7 +8,6 @@ import lombok.Getter;
  * Visitant info dto.
  *
  * @author woonseok
- * @Date 2024-09-10
  * @since 1.0
  **/
 @EqualsAndHashCode

@@ -7,7 +7,6 @@ import lombok.Getter;
  * Posts create responses.
  *
  * @author woonseok
- * @Date 2024-08-03
  * @since 1.0
  **/
 @AllArgsConstructor

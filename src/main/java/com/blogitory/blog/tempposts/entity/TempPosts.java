@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
  * Temp posts entity.
  *
  * @author woonseok
- * @Date 2024-08-01
  * @since 1.0
  **/
 @Entity

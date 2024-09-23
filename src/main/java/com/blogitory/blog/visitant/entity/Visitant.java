@@ -19,7 +19,6 @@ import lombok.NoArgsConstructor;
  * Visitant entity.
  *
  * @author woonseok
- * @Date 2024-07-31
  * @since 1.0
  **/
 @Entity

@@ -57,7 +57,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementation of PostsService.
  *
  * @author woonseok
- * @Date 2024-08-01
  * @since 1.0
  **/
 @Service

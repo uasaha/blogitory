@@ -9,7 +9,6 @@ import org.hibernate.type.StandardBasicTypes;
  * Match Function Contributor for MySQL 8.
  *
  * @author woonseok
- * @Date 2024-09-03
  * @since 1.0
  **/
 public class MatchFunctionContributor implements FunctionContributor {

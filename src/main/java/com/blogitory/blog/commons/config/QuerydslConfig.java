@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * Querydsl config for use JPAQueryFactory.
  *
  * @author woonseok
- * @Date 2024-07-15
  * @since 1.0
  **/
 @Configuration

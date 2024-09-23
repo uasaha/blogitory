@@ -11,7 +11,6 @@ import software.amazon.awssdk.utils.IoUtils;
  * Index rest controller.
  *
  * @author woonseok
- * @Date 2024-09-12
  * @since 1.0
  **/
 @RestController

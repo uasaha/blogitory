@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Temp posts repository.
  *
  * @author woonseok
- * @Date 2024-08-01
  * @since 1.0
  **/
 public interface TempPostsRepository extends JpaRepository<TempPosts, UUID>,

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
  * Dto for modify post.
  *
  * @author woonseok
- * @Date 2024-08-20
  * @since 1.0
  **/
 @NoArgsConstructor

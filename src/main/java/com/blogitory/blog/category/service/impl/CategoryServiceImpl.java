@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Category service implementation.
  *
  * @author woonseok
- * @Date 2024-07-15
  * @since 1.0
  **/
 @Service

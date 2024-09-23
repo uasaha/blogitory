@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * Implementation of HeartRepository.
  *
  * @author woonseok
- * @Date 2024-08-29
  * @since 1.0
  **/
 public class HeartRepositoryImpl extends QuerydslRepositorySupport

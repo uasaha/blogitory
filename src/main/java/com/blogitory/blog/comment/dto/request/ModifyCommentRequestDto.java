@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
  * Dto for Modify Comment.
  *
  * @author woonseok
- * @Date 2024-08-20
  * @since 1.0
  **/
 @NoArgsConstructor

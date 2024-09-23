@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
  * Comment create request dto.
  *
  * @author woonseok
- * @Date 2024-08-07
  * @since 1.0
  **/
 @NoArgsConstructor

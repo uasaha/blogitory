@@ -8,7 +8,6 @@ import lombok.Getter;
  * Get child comment response dto.
  *
  * @author woonseok
- * @Date 2024-08-14
  * @since 1.0
  **/
 @Getter

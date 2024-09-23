@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
  * Blog create request dto.
  *
  * @author woonseok
- * @Date 2024-07-15
  * @since 1.0
  **/
 @Getter

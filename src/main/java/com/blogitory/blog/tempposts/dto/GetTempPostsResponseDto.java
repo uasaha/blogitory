@@ -9,7 +9,6 @@ import lombok.Setter;
  * Get temp posts response dto.
  *
  * @author woonseok
- * @Date 2024-08-05
  * @since 1.0
  **/
 @Getter

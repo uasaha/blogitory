@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RestController;
  * Comment Rest Controller.
  *
  * @author woonseok
- * @Date 2024-08-07
  * @since 1.0
  **/
 @RestController

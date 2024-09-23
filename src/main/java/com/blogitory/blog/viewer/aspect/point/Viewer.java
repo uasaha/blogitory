@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
  * Viewer annotation for AOP.
  *
  * @author woonseok
- * @Date 2024-09-09
  * @since 1.0
  **/
 @Target(value = ElementType.METHOD)

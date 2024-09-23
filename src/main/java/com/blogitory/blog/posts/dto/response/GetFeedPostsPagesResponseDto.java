@@ -8,7 +8,6 @@ import lombok.Getter;
  * Get posts for feed with pages response Dto.
  *
  * @author woonseok
- * @Date 2024-09-05
  * @since 1.0
  **/
 @Getter

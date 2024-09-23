@@ -8,7 +8,6 @@ import lombok.Getter;
  * Dto for getting category.
  *
  * @author woonseok
- * @Date 2024-07-15
  * @since 1.0
  **/
 @EqualsAndHashCode

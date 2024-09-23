@@ -24,7 +24,6 @@ import org.springframework.data.support.PageableExecutionUtils;
  * Comment Repository for using querydsl.
  *
  * @author woonseok
- * @Date 2024-08-13
  * @since 1.0
  **/
 public class CommentRepositoryImpl

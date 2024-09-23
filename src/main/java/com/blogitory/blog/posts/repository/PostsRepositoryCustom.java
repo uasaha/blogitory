@@ -18,7 +18,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Posts repository custom for using querydsl.
  *
  * @author woonseok
- * @Date 2024-08-03
  * @since 1.0
  **/
 @NoRepositoryBean

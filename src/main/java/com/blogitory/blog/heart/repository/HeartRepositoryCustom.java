@@ -8,7 +8,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Custom heart repository for using querydsl.
  *
  * @author woonseok
- * @Date 2024-08-29
  * @since 1.0
  **/
 @NoRepositoryBean

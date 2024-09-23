@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementation of Comment service.
  *
  * @author woonseok
- * @Date 2024-08-07
  * @since 1.0
  **/
 @Service

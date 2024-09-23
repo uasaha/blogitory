@@ -4,7 +4,6 @@ package com.blogitory.blog.blog.exception;
  * Blog limit reach exception.
  *
  * @author woonseok
- * @Date 2024-07-26
  * @since 1.0
  **/
 public class BlogLimitException extends RuntimeException {

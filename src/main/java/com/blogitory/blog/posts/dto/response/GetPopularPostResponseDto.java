@@ -8,7 +8,6 @@ import lombok.Getter;
  * Get popular post response dto.
  *
  * @author woonseok
- * @Date 2024-08-27
  * @since 1.0
  **/
 @Getter

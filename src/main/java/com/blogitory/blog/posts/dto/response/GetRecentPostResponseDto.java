@@ -8,7 +8,6 @@ import lombok.Getter;
  * Get Recent Post Response dto.
  *
  * @author woonseok
- * @Date 2024-08-22
  * @since 1.0
  **/
 @AllArgsConstructor

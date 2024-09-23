@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  * Posts controller.
  *
  * @author woonseok
- * @Date 2024-08-01
  * @since 1.0
  **/
 @Controller

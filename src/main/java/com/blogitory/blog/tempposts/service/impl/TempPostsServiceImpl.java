@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Temp posts service implementation.
  *
  * @author woonseok
- * @Date 2024-08-01
  * @since 1.0
  **/
 @Service

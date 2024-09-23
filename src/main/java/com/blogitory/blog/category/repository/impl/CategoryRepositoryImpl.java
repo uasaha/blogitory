@@ -17,7 +17,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * Implementation of category repository for using querydsl.
  *
  * @author woonseok
- * @Date 2024-08-28
  * @since 1.0
  **/
 public class CategoryRepositoryImpl

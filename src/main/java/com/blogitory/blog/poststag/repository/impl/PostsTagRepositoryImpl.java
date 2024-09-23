@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * Implementation of PostsTagRepository for using qureydsl.
  *
  * @author woonseok
- * @Date 2024-08-21
  * @since 1.0
  **/
 public class PostsTagRepositoryImpl extends QuerydslRepositorySupport implements PostsTagRepositoryCustom {

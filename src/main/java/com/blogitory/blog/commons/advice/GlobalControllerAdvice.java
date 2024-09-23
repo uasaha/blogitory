@@ -16,7 +16,6 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * Global controller advice.
  *
  * @author woonseok
- * @Date 2024-07-18
  * @since 1.0
  **/
 @ControllerAdvice

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Implementation of Follow service.
  *
  * @author woonseok
- * @Date 2024-08-26
  * @since 1.0
  **/
 @Service

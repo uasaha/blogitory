@@ -10,7 +10,6 @@ import lombok.Getter;
  * Dto for Signup Oauth member request.
  *
  * @author woonseok
- * @Date 2024-08-23
  * @since 1.0
  **/
 @Getter

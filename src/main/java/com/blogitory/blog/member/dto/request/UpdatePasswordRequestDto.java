@@ -10,7 +10,6 @@ import lombok.Getter;
  * Modify password request dto.
  *
  * @author woonseok
- * @Date 2024-07-22
  * @since 1.0
  **/
 @AllArgsConstructor

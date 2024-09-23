@@ -6,7 +6,6 @@ import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
  * Category service.
  *
  * @author woonseok
- * @Date 2024-07-15
  * @since 1.0
  **/
 public interface CategoryService {

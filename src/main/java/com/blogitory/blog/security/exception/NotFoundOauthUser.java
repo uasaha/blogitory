@@ -6,7 +6,6 @@ import lombok.Getter;
  * Not founded Oauth user.
  *
  * @author woonseok
- * @Date 2024-08-23
  * @since 1.0
  **/
 @Getter

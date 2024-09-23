@@ -8,7 +8,6 @@ import lombok.Getter;
  * GetAllFollowResponseDto.
  *
  * @author woonseok
- * @Date 2024-08-30
  * @since 1.0
  **/
 @Getter

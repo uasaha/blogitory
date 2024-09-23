@@ -8,7 +8,6 @@ import lombok.Getter;
  * User setting profile response dto.
  *
  * @author woonseok
- * @Date 2024-07-15
  * @since 1.0
  **/
 @Getter

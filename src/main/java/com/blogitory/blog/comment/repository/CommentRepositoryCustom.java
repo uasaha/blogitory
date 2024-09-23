@@ -12,7 +12,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Custom Comment repository for querydsl.
  *
  * @author woonseok
- * @Date 2024-08-13
  * @since 1.0
  **/
 @NoRepositoryBean

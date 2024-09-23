@@ -8,7 +8,6 @@ import lombok.Getter;
  * GetTagListResponseDto.
  *
  * @author woonseok
- * @Date 2024-07-31
  * @since 1.0
  **/
 @AllArgsConstructor

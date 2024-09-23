@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
  * Follow rest controller.
  *
  * @author woonseok
- * @Date 2024-08-26
  * @since 1.0
  **/
 @RestController

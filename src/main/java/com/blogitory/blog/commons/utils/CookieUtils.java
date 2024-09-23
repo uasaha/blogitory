@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  * Utils class for cookie.
  *
  * @author woonseok
- * @Date 2024-08-12
  * @since 1.0
  **/
 @Component

@@ -11,7 +11,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Viewer repository custom.
  *
  * @author woonseok
- * @Date 2024-09-09
  * @since 1.0
  **/
 @NoRepositoryBean

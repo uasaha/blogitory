@@ -9,7 +9,6 @@ import lombok.Getter;
  * Get blog with category response dto.
  *
  * @author woonseok
- * @Date 2024-08-02
  * @since 1.0
  **/
 @AllArgsConstructor
