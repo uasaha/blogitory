@@ -11,9 +11,12 @@ import com.blogitory.blog.commons.config.QuerydslConfig;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.visitant.dto.GetVisitantCountResponseDto;
 import com.blogitory.blog.visitant.entity.Visitant;
 import com.blogitory.blog.visitant.entity.VisitantDummy;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,5 +98,20 @@ class VisitantRepositoryTest {
 
     assertTrue(result.isPresent());
     assertEquals(visitant.getVisitDate(), result.get().getVisitDate());
+  }
+
+  @Test
+  void getCountsByBlogUrl() {
+    Member member = MemberDummy.dummy();
+    member = memberRepository.save(member);
+    Blog blog = BlogDummy.dummy(member);
+    blog = blogRepository.save(blog);
+    Visitant visitant = VisitantDummy.dummy(blog);
+    visitantRepository.save(visitant);
+
+    List<GetVisitantCountResponseDto> result = visitantRepository.getCountsByBlogUrl(
+            blog.getUrlName(), LocalDate.now(), LocalDate.now());
+
+    assertEquals(1, result.size());
   }
 }

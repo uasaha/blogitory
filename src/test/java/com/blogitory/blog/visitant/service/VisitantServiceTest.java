@@ -1,6 +1,7 @@
 package com.blogitory.blog.visitant.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -14,6 +15,8 @@ import com.blogitory.blog.blog.entity.BlogDummy;
 import com.blogitory.blog.blog.repository.BlogRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
+import com.blogitory.blog.security.exception.AuthorizationException;
+import com.blogitory.blog.visitant.dto.GetVisitantCountResponseDto;
 import com.blogitory.blog.visitant.dto.VisitantInfoDto;
 import com.blogitory.blog.visitant.entity.Visitant;
 import com.blogitory.blog.visitant.entity.VisitantDummy;
@@ -21,6 +24,8 @@ import com.blogitory.blog.visitant.repository.VisitantRepository;
 import com.blogitory.blog.visitant.service.impl.VisitantServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -33,12 +38,10 @@ import org.springframework.data.redis.core.RedisTemplate;
  * VisitantServiceTest.
  *
  * @author woonseok
- * @Date 2024-09-11
  * @since 1.0
  **/
 class VisitantServiceTest {
   VisitantService visitantService;
-
   VisitantRepository visitantRepository;
   BlogRepository blogRepository;
   RedisTemplate<String, Object> redisTemplate;
@@ -124,5 +127,33 @@ class VisitantServiceTest {
     visitantService.saveAndDelete();
 
     verify(visitantRepository, times(1)).save(any());
+  }
+
+  @Test
+  void getVisitantMonthlyCount() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+
+    when(blogRepository.findBlogByUrlName(anyString()))
+            .thenReturn(Optional.of(blog));
+    when(visitantRepository.getCountsByBlogUrl(anyString(), any(), any()))
+            .thenReturn(List.of(new GetVisitantCountResponseDto(LocalDate.now(), 1)));
+
+    List<GetVisitantCountResponseDto> result = visitantService.getVisitantMonthlyCount(1, "url");
+    assertEquals(30, result.size());
+  }
+
+  @Test
+  void getVisitantMonthlyCountFailed() {
+    Member member = MemberDummy.dummy();
+    Blog blog = BlogDummy.dummy(member);
+
+    when(blogRepository.findBlogByUrlName(anyString()))
+            .thenReturn(Optional.of(blog));
+    when(visitantRepository.getCountsByBlogUrl(anyString(), any(), any()))
+            .thenReturn(List.of(new GetVisitantCountResponseDto(LocalDate.now(), 1)));
+
+    assertThrows(AuthorizationException.class,
+            () -> visitantService.getVisitantMonthlyCount(2, "url"));
   }
 }

@@ -1,6 +1,8 @@
 package com.blogitory.blog.blog.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -148,6 +151,21 @@ class BlogControllerTest {
     when(blogService.getBlogByUrl(any())).thenReturn(responseDto);
 
     mockMvc.perform(get("/@test/test/tags/" + tags.getFirst().getTagName()))
+            .andExpect(status().isOk());
+  }
+
+  @WithMockUser("1")
+  @Test
+  @DisplayName("방문자 수 페이지 조회")
+  void visitantsPage() throws Exception {
+    GetBlogResponseDto blogResponseDto = new GetBlogResponseDto(
+            "thumb", "origin",
+            "blogUrl", "blogName",
+            "name", "username",
+            "blogBio", 0L);
+    when(blogService.getBlogForMy(anyInt(), anyString())).thenReturn(blogResponseDto);
+
+    mockMvc.perform(get("/@test/test/visitants"))
             .andExpect(status().isOk());
   }
 }

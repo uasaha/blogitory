@@ -72,4 +72,13 @@ public interface BlogService {
    * @return blog list
    */
   List<GetBlogWithCategoryResponseDto> getBlogListWithCategory(Integer memberNo);
+
+  /**
+   * Get blog with authorize.
+   *
+   * @param memberNo member no
+   * @param url      blog url
+   * @return blog dto
+   */
+  GetBlogResponseDto getBlogForMy(Integer memberNo, String url);
 }

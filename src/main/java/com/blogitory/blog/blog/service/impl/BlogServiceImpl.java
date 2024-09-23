@@ -155,4 +155,23 @@ public class BlogServiceImpl implements BlogService {
 
     return blogList;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public GetBlogResponseDto getBlogForMy(Integer memberNo, String url) {
+    GetBlogResponseDto responseDto = blogRepository.getBlogByUrl(url)
+            .orElseThrow(() -> new NotFoundException(Blog.class));
+
+    Member member = memberRepository.findById(memberNo)
+            .orElseThrow(() -> new NotFoundException(Member.class));
+
+    if (responseDto.getUsername().equals(member.getUsername())) {
+      return responseDto;
+    }
+
+    throw new AuthorizationException();
+  }
 }

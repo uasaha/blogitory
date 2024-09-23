@@ -4,8 +4,10 @@ import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
 
 import com.blogitory.blog.blog.dto.response.GetBlogResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
+import com.blogitory.blog.security.util.SecurityUtils;
 import com.blogitory.blog.visitant.aspect.point.Visitant;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -37,7 +39,7 @@ public class BlogController {
   /**
    * Go to blog page.
    *
-   * @param request HttpServletRequest
+   * @param request  HttpServletRequest
    * @param username username
    * @param blogUrl  blog url
    * @param model    model
@@ -62,7 +64,7 @@ public class BlogController {
   /**
    * All posts page.
    *
-   * @param request HttpServletRequest
+   * @param request  HttpServletRequest
    * @param username username
    * @param blogUrl  blog url
    * @param model    model
@@ -89,7 +91,7 @@ public class BlogController {
   /**
    * Category post page.
    *
-   * @param request HttpServletRequest
+   * @param request      HttpServletRequest
    * @param username     username
    * @param blogUrl      blog url
    * @param categoryName category name
@@ -119,7 +121,7 @@ public class BlogController {
   /**
    * Tag post page.
    *
-   * @param request HttpServletRequest
+   * @param request  HttpServletRequest
    * @param username username
    * @param blogUrl  blog url
    * @param tagName  tag name
@@ -144,5 +146,28 @@ public class BlogController {
     model.addAttribute(PAGEABLE_ATTR, pageable);
 
     return "blog/main/tag-posts";
+  }
+
+  /**
+   * Visitants page.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @param model    model
+   * @return visitants page
+   */
+  @RoleUser
+  @GetMapping("/@{username}/{blogUrl}/visitants")
+  public String visitantsPage(@PathVariable("username") String username,
+                              @PathVariable("blogUrl") String blogUrl,
+                              Model model) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+    String blogKey = getBlogKey(username, blogUrl);
+
+    GetBlogResponseDto blogResponse = blogService.getBlogForMy(memberNo, blogKey);
+
+    model.addAttribute(BLOG_ATTR, blogResponse);
+
+    return "chart/blog";
   }
 }

@@ -1,7 +1,9 @@
 package com.blogitory.blog.visitant.repository;
 
+import com.blogitory.blog.visitant.dto.GetVisitantCountResponseDto;
 import com.blogitory.blog.visitant.entity.Visitant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -9,7 +11,6 @@ import org.springframework.data.repository.NoRepositoryBean;
  * Visitant repository custom.
  *
  * @author woonseok
- * @Date 2024-09-10
  * @since 1.0
  **/
 @NoRepositoryBean
@@ -39,4 +40,14 @@ public interface VisitantRepositoryCustom {
    * @return visitant
    */
   Optional<Visitant> findByBlogUrlAndDate(String blogUrl, LocalDate date);
+
+  /**
+   * Get counts by blog url.
+   *
+   * @param blogUrl blog url
+   * @param start   start date
+   * @param end     end date
+   * @return counts
+   */
+  List<GetVisitantCountResponseDto> getCountsByBlogUrl(String blogUrl, LocalDate start, LocalDate end);
 }

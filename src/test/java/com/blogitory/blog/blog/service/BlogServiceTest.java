@@ -350,4 +350,40 @@ class BlogServiceTest {
     assertEquals(responseDto.getCategories().getFirst().getCategoryNo(),
             actual.getFirst().getCategories().getFirst().getCategoryNo());
   }
+
+  @Test
+  @DisplayName("내 블로그 정보 조회시")
+  void getBlogForMy() {
+    Member member = MemberDummy.dummy();
+    GetBlogResponseDto blogResponseDto = new GetBlogResponseDto(
+            "thumb", "origin",
+            "blogUrl", "blogName",
+            "name", member.getUsername(),
+            "blogBio", 0L);
+
+    when(blogRepository.getBlogByUrl(anyString()))
+            .thenReturn(Optional.of(blogResponseDto));
+    when(memberRepository.findById(member.getMemberNo())).thenReturn(Optional.of(member));
+
+    GetBlogResponseDto result = blogService.getBlogForMy(member.getMemberNo(), "url");
+
+    assertEquals(blogResponseDto.getBlogName(), result.getBlogName());
+  }
+
+  @Test
+  @DisplayName("다른 유저가 블로그 정보 조회시")
+  void getBlogForMyFailed() {
+    Member member = MemberDummy.dummy();
+    GetBlogResponseDto blogResponseDto = new GetBlogResponseDto(
+            "thumb", "origin",
+            "blogUrl", "blogName",
+            "name", "kjqwbgkqjwbg",
+            "blogBio", 0L);
+
+    when(blogRepository.getBlogByUrl(anyString()))
+            .thenReturn(Optional.of(blogResponseDto));
+    when(memberRepository.findById(member.getMemberNo())).thenReturn(Optional.of(member));
+
+    assertThrows(AuthorizationException.class, () -> blogService.getBlogForMy(1, "url"));
+  }
 }

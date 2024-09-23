@@ -1,6 +1,8 @@
 package com.blogitory.blog.visitant.service;
 
+import com.blogitory.blog.visitant.dto.GetVisitantCountResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,4 +43,13 @@ public interface VisitantService {
    * @throws JsonProcessingException object mapper exception
    */
   void saveAndDelete() throws JsonProcessingException;
+
+  /**
+   * Get visitants monthly count.
+   *
+   * @param memberNo member no
+   * @param blogUrl  blog url
+   * @return visitants count
+   */
+  List<GetVisitantCountResponseDto> getVisitantMonthlyCount(Integer memberNo, String blogUrl);
 }

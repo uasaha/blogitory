@@ -2,6 +2,9 @@ package com.blogitory.blog.visitant.service.impl;
 
 import com.blogitory.blog.blog.entity.Blog;
 import com.blogitory.blog.blog.repository.BlogRepository;
+import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.security.exception.AuthorizationException;
+import com.blogitory.blog.visitant.dto.GetVisitantCountResponseDto;
 import com.blogitory.blog.visitant.dto.VisitantInfoDto;
 import com.blogitory.blog.visitant.entity.Visitant;
 import com.blogitory.blog.visitant.repository.VisitantRepository;
@@ -9,9 +12,12 @@ import com.blogitory.blog.visitant.service.VisitantService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -139,6 +145,38 @@ public class VisitantServiceImpl implements VisitantService {
         visitantRepository.save(visitant);
       }
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Transactional(readOnly = true)
+  @Override
+  public List<GetVisitantCountResponseDto> getVisitantMonthlyCount(Integer memberNo, String blogUrl) {
+    Blog blog = blogRepository.findBlogByUrlName(blogUrl)
+            .orElseThrow(() -> new NotFoundException(Blog.class));
+
+    if (!blog.getMember().getMemberNo().equals(memberNo)) {
+      throw new AuthorizationException();
+    }
+
+    LocalDate today = LocalDate.now();
+    LocalDate start = today.minusDays(30L);
+
+    List<GetVisitantCountResponseDto> visitantCountList =
+            visitantRepository.getCountsByBlogUrl(blogUrl, start, today);
+
+    List<GetVisitantCountResponseDto> visitantCountSet = new ArrayList<>();
+
+    for (LocalDate now = start; now.isBefore(today); now = now.plusDays(1)) {
+      LocalDate nowDate = now;
+      Optional<GetVisitantCountResponseDto> countOptional = visitantCountList
+              .stream().filter(c -> nowDate.isEqual(c.getDate())).findFirst();
+
+      visitantCountSet.add(countOptional.orElse(new GetVisitantCountResponseDto(now, 0)));
+    }
+
+    return visitantCountSet;
   }
 
   private Set<VisitantInfoDto> getVisitants(String blogUrl) {

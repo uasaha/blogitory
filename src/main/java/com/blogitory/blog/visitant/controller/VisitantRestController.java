@@ -3,8 +3,12 @@ package com.blogitory.blog.visitant.controller;
 import static com.blogitory.blog.commons.utils.UrlUtil.getBlogKey;
 
 import com.blogitory.blog.commons.annotaion.RoleAdmin;
+import com.blogitory.blog.commons.annotaion.RoleUser;
+import com.blogitory.blog.security.util.SecurityUtils;
+import com.blogitory.blog.visitant.dto.GetVisitantCountResponseDto;
 import com.blogitory.blog.visitant.service.VisitantService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +53,26 @@ public class VisitantRestController {
    */
   @RoleAdmin
   @GetMapping("/admin/visitants/now")
-  public ResponseEntity<Void> nowSaveAndDelete() throws JsonProcessingException {
+  public ResponseEntity<Void> saveAndDeleteNow() throws JsonProcessingException {
     visitantService.saveAndDelete();
 
     return ResponseEntity.ok().build();
+  }
+
+  /**
+   * Get monthly visitants count.
+   *
+   * @param username username
+   * @param blogUrl  blog url
+   * @return monthly visitants count
+   */
+  @RoleUser
+  @GetMapping("/@{username}/{blogUrl}/visitants/statistics")
+  public ResponseEntity<List<GetVisitantCountResponseDto>> getMonthlyVisitantsCounts(
+          @PathVariable String username, @PathVariable String blogUrl) {
+    Integer memberNo = SecurityUtils.getCurrentUserNo();
+    String blogKey = getBlogKey(username, blogUrl);
+
+    return ResponseEntity.ok(visitantService.getVisitantMonthlyCount(memberNo, blogKey));
   }
 }
