@@ -12,9 +12,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.category.dto.CreateCategoryResponseDto;
 import com.blogitory.blog.category.service.CategoryService;
+import com.blogitory.blog.commons.config.WebMvcConfig;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,7 +35,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * @Date 2024-07-29
  * @since 1.0
  **/
-@WebMvcTest(value = {CategoryRestController.class, TestSecurityConfig.class})
+@WebMvcTest(value = {CategoryRestController.class, TestSecurityConfig.class},
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {WebMvcConfig.class}))
 class CategoryRestControllerTest {
   @Autowired
   MockMvc mvc;
@@ -43,9 +46,6 @@ class CategoryRestControllerTest {
 
   @MockBean
   CategoryService categoryService;
-
-  @MockBean
-  BlogService blogService;
 
   @WithMockUser("1")
   @Test

@@ -5,8 +5,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.category.exception.DuplicateCategoryException;
+import com.blogitory.blog.commons.config.WebMvcConfig;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.follow.service.FollowService;
@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -28,7 +30,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  * @Date 2024-07-30
  * @since 1.0
  **/
-@WebMvcTest(value = {MemberController.class, TestSecurityConfig.class})
+@WebMvcTest(value = {MemberController.class, TestSecurityConfig.class},
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {WebMvcConfig.class}))
 class PageControllerAdviceTest {
 
   @Autowired
@@ -39,9 +42,6 @@ class PageControllerAdviceTest {
 
   @MockBean
   FollowService followService;
-
-  @MockBean
-  BlogService blogService;
 
   @Test
   void handleAuthentication() throws Exception {

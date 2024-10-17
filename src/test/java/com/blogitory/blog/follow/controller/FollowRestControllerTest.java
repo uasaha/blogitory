@@ -7,13 +7,15 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.commons.config.WebMvcConfig;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.follow.service.FollowService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,7 +26,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * @Date 2024-08-26
  * @since 1.0
  **/
-@WebMvcTest(value = { FollowRestController.class, TestSecurityConfig.class })
+@WebMvcTest(value = { FollowRestController.class, TestSecurityConfig.class },
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {WebMvcConfig.class}))
 class FollowRestControllerTest {
 
   @Autowired
@@ -32,9 +35,6 @@ class FollowRestControllerTest {
 
   @MockBean
   FollowService followService;
-
-  @MockBean
-  BlogService blogService;
 
   @WithMockUser("1")
   @Test

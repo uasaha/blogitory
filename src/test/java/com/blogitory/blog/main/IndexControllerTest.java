@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.blogitory.blog.blog.dto.response.GetBlogInSettingsResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.commons.config.WebMvcConfig;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
@@ -24,12 +25,13 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,7 +43,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  * @author woonseok
  * @since 1.0
  */
-@WebMvcTest(value = {IndexController.class, TestSecurityConfig.class})
+@WebMvcTest(value = {IndexController.class, TestSecurityConfig.class},
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {WebMvcConfig.class}))
 @ActiveProfiles("test")
 class IndexControllerTest {
 
@@ -60,19 +63,6 @@ class IndexControllerTest {
   @MockBean
   private PostsService postsService;
 
-  /**
-   * Sets up.
-   */
-  @BeforeEach
-  void setUp() {
-
-  }
-
-  /**
-   * Index page.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @DisplayName("인덱스 페이지")
   void indexPage() throws Exception {
@@ -81,11 +71,6 @@ class IndexControllerTest {
             .andExpect(content().string(containsString("Blogitory")));
   }
 
-  /**
-   * Signup page.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @DisplayName("회원가입 페이지")
   void signupPage() throws Exception {
@@ -94,11 +79,6 @@ class IndexControllerTest {
             .andExpect(content().string(containsString("Blogitory")));
   }
 
-  /**
-   * Blog settings.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @DisplayName("블로그 설정 페이지")
   @WithMockUser("1")
@@ -129,11 +109,6 @@ class IndexControllerTest {
             .andExpect(content().string(containsString("name")));
   }
 
-  /**
-   * Blog settings no blog.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @DisplayName("블로그 설정 페이지 - 블로그 없음")
   @WithMockUser("1")

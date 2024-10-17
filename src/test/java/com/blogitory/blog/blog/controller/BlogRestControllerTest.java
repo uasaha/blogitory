@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.blogitory.blog.blog.dto.request.CreateBlogRequestDto;
 import com.blogitory.blog.blog.dto.request.UpdateBlogRequestDto;
 import com.blogitory.blog.blog.service.BlogService;
+import com.blogitory.blog.commons.config.WebMvcConfig;
 import com.blogitory.blog.config.TestSecurityConfig;
 import com.blogitory.blog.image.dto.UpdateThumbnailResponseDto;
 import com.blogitory.blog.image.service.ImageService;
@@ -21,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -34,7 +37,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * @Date 2024-07-29
  * @since 1.0
  **/
-@WebMvcTest(value = {BlogRestController.class, TestSecurityConfig.class})
+@WebMvcTest(value = {BlogRestController.class, TestSecurityConfig.class},
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {WebMvcConfig.class}))
 class BlogRestControllerTest {
   @Autowired
   MockMvc mvc;
