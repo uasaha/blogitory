@@ -5,7 +5,9 @@ import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.commons.listener.event.NewPostsNoticeEvent;
 import com.blogitory.blog.commons.utils.PostsUtils;
+import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
@@ -46,6 +48,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,12 +66,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class PostsServiceImpl implements PostsService {
+  private final ApplicationEventPublisher eventPublisher;
   private final MemberRepository memberRepository;
   private final PostsRepository postsRepository;
   private final TempPostsRepository tempPostsRepository;
   private final CategoryRepository categoryRepository;
   private final TagRepository tagRepository;
   private final PostsTagRepository postsTagRepository;
+  private final FollowRepository followRepository;
   private final RedisTemplate<String, Object> redisTemplate;
   private final ObjectMapper objectMapper;
   public static final String POST_KEY = "temp_post";
@@ -194,6 +199,9 @@ public class PostsServiceImpl implements PostsService {
             .build();
 
     posts = postsRepository.save(posts);
+
+    eventPublisher.publishEvent(new NewPostsNoticeEvent(posts,
+            followRepository.findFollowersByMemberNo(blog.getMember().getMemberNo())));
 
     connectTags(blog, posts, saveDto.getTags());
 

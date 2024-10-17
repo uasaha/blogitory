@@ -3,6 +3,7 @@ package com.blogitory.blog.commons.interceptor;
 import com.blogitory.blog.blog.dto.response.GetBlogInHeaderResponseDto;
 import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
+import com.blogitory.blog.notice.service.NoticeService;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class AuthenticatedInterceptor implements HandlerInterceptor {
   private final BlogService blogService;
+  private final NoticeService noticeService;
 
   @Override
   public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
@@ -46,6 +48,7 @@ public class AuthenticatedInterceptor implements HandlerInterceptor {
       List<GetBlogInHeaderResponseDto> blogs =
               blogService.blogListForHeader(userDetails.getIdName());
       mav.addObject("headerBlogs", blogs);
+      mav.addObject("readNotice", noticeService.hasNonReadNotice(userDetails.getUserNo()));
     }
   }
 }

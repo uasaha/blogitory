@@ -1,6 +1,7 @@
 package com.blogitory.blog.heart.service.impl;
 
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.commons.listener.event.HeartNoticeEvent;
 import com.blogitory.blog.heart.entity.Heart;
 import com.blogitory.blog.heart.repository.HeartRepository;
 import com.blogitory.blog.heart.service.HeartService;
@@ -9,6 +10,7 @@ import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.repository.PostsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class HeartServiceImpl implements HeartService {
+  private final ApplicationEventPublisher eventPublisher;
   private final HeartRepository heartRepository;
   private final MemberRepository memberRepository;
   private final PostsRepository postsRepository;
@@ -69,7 +72,13 @@ public class HeartServiceImpl implements HeartService {
       heart.cancelDelete();
     }
 
-    heartRepository.save(heart);
+    heart = heartRepository.save(heart);
+
+    Member postsOwner = posts.getCategory().getBlog().getMember();
+
+    if (!member.getMemberNo().equals(postsOwner.getMemberNo())) {
+      eventPublisher.publishEvent(new HeartNoticeEvent(heart, postsOwner));
+    }
   }
 
   /**

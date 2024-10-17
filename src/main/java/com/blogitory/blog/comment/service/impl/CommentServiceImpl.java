@@ -9,6 +9,7 @@ import com.blogitory.blog.comment.repository.CommentRepository;
 import com.blogitory.blog.comment.service.CommentService;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.commons.listener.event.CommentNoticeEvent;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.entity.Posts;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
+  private final ApplicationEventPublisher eventPublisher;
   private final MemberRepository memberRepository;
   private final CommentRepository commentRepository;
   private final PostsRepository postsRepository;
@@ -61,6 +64,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     commentRepository.save(comment);
+
+    Member postsOwner = posts.getCategory().getBlog().getMember();
+
+    if (!member.getMemberNo().equals(postsOwner.getMemberNo())) {
+      eventPublisher.publishEvent(new CommentNoticeEvent(
+              member.getName(),
+              comment,
+              postsOwner));
+    }
   }
 
   /**

@@ -1,6 +1,7 @@
 package com.blogitory.blog.notice.entity;
 
 import com.blogitory.blog.member.entity.Member;
+import com.blogitory.blog.notice.enums.NoticeType;
 
 /**
  * Notice dummy.
@@ -18,9 +19,10 @@ public class NoticeDummy {
   public static Notice dummy(Member member) {
     return new Notice(1L,
             member,
-            1L,
-            "type",
-            "msg",
+            "sender",
+            "url",
+            NoticeType.FOLLOW,
+            "content",
             false);
   }
 }

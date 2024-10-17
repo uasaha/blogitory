@@ -20,6 +20,7 @@ import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.dto.Pages;
+import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -60,6 +61,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -76,34 +78,40 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @since 1.0
  **/
 class PostsServiceTest {
+  ApplicationEventPublisher eventPublisher;
   MemberRepository memberRepository;
   PostsRepository postsRepository;
   TempPostsRepository tempPostsRepository;
   CategoryRepository categoryRepository;
   TagRepository tagRepository;
   PostsTagRepository postsTagRepository;
+  FollowRepository followRepository;
   RedisTemplate<String, Object> redisTemplate;
   ObjectMapper objectMapper;
   PostsService postsService;
 
   @BeforeEach
   void setUp() {
+    eventPublisher = mock(ApplicationEventPublisher.class);
     memberRepository = mock(MemberRepository.class);
     postsRepository = mock(PostsRepository.class);
     tempPostsRepository = mock(TempPostsRepository.class);
     categoryRepository = mock(CategoryRepository.class);
     tagRepository = mock(TagRepository.class);
     postsTagRepository = mock(PostsTagRepository.class);
+    followRepository = mock(FollowRepository.class);
     redisTemplate = mock(RedisTemplate.class);
     objectMapper = mock(ObjectMapper.class);
 
     postsService = new PostsServiceImpl(
+            eventPublisher,
             memberRepository,
             postsRepository,
             tempPostsRepository,
             categoryRepository,
             tagRepository,
             postsTagRepository,
+            followRepository,
             redisTemplate,
             objectMapper);
   }

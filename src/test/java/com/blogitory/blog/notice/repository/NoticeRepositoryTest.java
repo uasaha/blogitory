@@ -12,7 +12,6 @@ import com.blogitory.blog.notice.entity.Notice;
 import com.blogitory.blog.notice.entity.NoticeDummy;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +47,6 @@ class NoticeRepositoryTest {
   EntityManager entityManager;
 
   /**
-   * Sets up.
-   */
-  @BeforeEach
-  void setUp() {
-  }
-
-  /**
    * Teardown.
    */
   @AfterEach
@@ -80,9 +72,8 @@ class NoticeRepositoryTest {
     assertAll(
             () -> assertEquals(notice.getNoticeNo(), actual.getNoticeNo()),
             () -> assertEquals(notice.getMember().getMemberNo(), actual.getMember().getMemberNo()),
-            () -> assertEquals(notice.getRelation(), actual.getRelation()),
+            () -> assertEquals(notice.getUrl(), actual.getUrl()),
             () -> assertEquals(notice.getType(), actual.getType()),
-            () -> assertEquals(notice.getMsg(), actual.getMsg()),
             () -> assertEquals(notice.isRead(), actual.isRead())
     );
   }

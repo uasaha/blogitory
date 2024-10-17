@@ -1,6 +1,7 @@
 package com.blogitory.blog.follow.service.impl;
 
 import com.blogitory.blog.commons.exception.NotFoundException;
+import com.blogitory.blog.commons.listener.event.FollowNoticeEvent;
 import com.blogitory.blog.follow.dto.response.GetAllFollowResponseDto;
 import com.blogitory.blog.follow.dto.response.GetFollowResponseDto;
 import com.blogitory.blog.follow.entity.Follow;
@@ -10,6 +11,8 @@ import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
  * @author woonseok
  * @since 1.0
  **/
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class FollowServiceImpl implements FollowService {
+
+  private final ApplicationEventPublisher eventPublisher;
   private final MemberRepository memberRepository;
   private final FollowRepository followRepository;
 
@@ -44,6 +50,8 @@ public class FollowServiceImpl implements FollowService {
     Follow follow = new Follow(null, followToMember, followFromMember);
 
     followRepository.save(follow);
+
+    eventPublisher.publishEvent(new FollowNoticeEvent(followFromMember, followToMember));
   }
 
   /**

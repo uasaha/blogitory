@@ -29,6 +29,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -39,6 +40,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @since 1.0
  **/
 class HeartServiceTest {
+  ApplicationEventPublisher eventPublisher;
   HeartRepository heartRepository;
   MemberRepository memberRepository;
   PostsRepository postsRepository;
@@ -49,7 +51,8 @@ class HeartServiceTest {
     heartRepository = mock(HeartRepository.class);
     memberRepository = mock(MemberRepository.class);
     postsRepository = mock(PostsRepository.class);
-    heartService = new HeartServiceImpl(heartRepository, memberRepository, postsRepository);
+    eventPublisher = mock(ApplicationEventPublisher.class);
+    heartService = new HeartServiceImpl(eventPublisher, heartRepository, memberRepository, postsRepository);
   }
 
   @Test

@@ -4,6 +4,7 @@ import com.blogitory.blog.follow.dto.response.GetFollowResponseDto;
 import com.blogitory.blog.follow.entity.Follow;
 import com.blogitory.blog.follow.entity.QFollow;
 import com.blogitory.blog.follow.repository.FollowRepositoryCustom;
+import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.QMember;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQueryFactory;
@@ -80,6 +81,19 @@ public class FollowRepositoryImpl extends QuerydslRepositorySupport
     followToList.addAll(followFromList);
 
     return followToList;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public List<Member> findFollowersByMemberNo(Integer memberNo) {
+    return queryFactory.from(follow)
+            .select(followFrom)
+            .innerJoin(followFrom).on(follow.followFrom.memberNo.eq(followFrom.memberNo))
+            .innerJoin(followTo).on(follow.followTo.memberNo.eq(followTo.memberNo))
+            .where(followTo.memberNo.eq(memberNo))
+            .fetch();
   }
 
   /**

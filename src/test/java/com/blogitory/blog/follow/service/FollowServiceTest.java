@@ -20,12 +20,13 @@ import com.blogitory.blog.follow.service.impl.FollowServiceImpl;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.notice.service.NoticeService;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -36,16 +37,20 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @since 1.0
  **/
 class FollowServiceTest {
+  ApplicationEventPublisher eventPublisher;
   MemberRepository memberRepository;
   FollowRepository followRepository;
+  NoticeService noticeService;
   FollowService followService;
 
   @BeforeEach
   void setUp() {
     memberRepository = mock(MemberRepository.class);
     followRepository = mock(FollowRepository.class);
+    noticeService = mock(NoticeService.class);
+    eventPublisher = mock(ApplicationEventPublisher.class);
 
-    followService = new FollowServiceImpl(memberRepository, followRepository);
+    followService = new FollowServiceImpl(eventPublisher, memberRepository, followRepository);
   }
 
   @Test

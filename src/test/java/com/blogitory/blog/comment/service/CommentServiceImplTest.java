@@ -39,6 +39,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @since 1.0
  **/
 class CommentServiceImplTest {
+  ApplicationEventPublisher eventPublisher;
 
   MemberRepository memberRepository;
 
@@ -67,8 +69,11 @@ class CommentServiceImplTest {
     memberRepository = Mockito.mock(MemberRepository.class);
     commentRepository = Mockito.mock(CommentRepository.class);
     postsRepository = Mockito.mock(PostsRepository.class);
+    eventPublisher = Mockito.mock(ApplicationEventPublisher.class);
 
-    commentService = new CommentServiceImpl(memberRepository,
+    commentService = new CommentServiceImpl(
+            eventPublisher,
+            memberRepository,
             commentRepository,
             postsRepository);
   }
