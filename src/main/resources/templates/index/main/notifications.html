@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{index/layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>알림 - Blogitory</title>
+    <meta property="og:url" content="https://blogitory.com">
+    <meta property="og:title" content="Blogitory - 기록하는 공간">
+    <meta property="og:description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+    <meta property="og:image" content="/static/logo/logo-375582.png">
+    <meta name="description" content="Blogitory에서 생각을 기록하고, 세상과 소통하세요.">
+</head>
+<body>
+<div class="container-xl" layout:fragment="main-content">
+    <div class="page-body">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8">
+                <div class="card">
+                    <div class="list-group">
+
+                        <div id="observer" class="list-group-item">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <div>
+                                        <div class="placeholder placeholder-xs col-10"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="no-notice" class="list-group-item d-none">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <div>
+                                        <div>새로운 알림이 없습니다.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script defer>
+        let observer = document.getElementById("observer");
+        let noNotice = document.getElementById("no-notice");
+        let page = 0;
+
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    axios.get(`/api/notifications?page=` + page)
+                        .then((res) => {
+                            let notices = res.data.body;
+
+                            for (let notice of notices) {
+                                let noticeDiv = getNoticeComponent(notice);
+
+                                observer.before(noticeDiv);
+                            }
+
+                            if (res.data.hasNext) {
+                                page++;
+                                io.observe(observer);
+                            } else {
+                                observer.classList.add("d-none");
+                                io.unobserve(observer);
+                            }
+
+                            if (res.data.total === 0) {
+                                noNotice.classList.remove("d-none");
+                            }
+                        })
+                }
+            })
+        }, {threshold: 0.6});
+
+        document.addEventListener("DOMContentLoaded", () => {
+            io.observe(observer);
+        })
+    </script>
+</th:block>
+
+</body>
+</html>
