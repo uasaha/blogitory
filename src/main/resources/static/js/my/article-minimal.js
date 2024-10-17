@@ -5,10 +5,14 @@ function getRelativeDate(date) {
     const seconds = Math.floor(diff);
     const minutes = Math.floor(diff / 60);
     const hours = Math.floor(diff / 3600);
-    const days = Math.floor(diff / 86400);
-    const weeks = Math.floor(days / 7);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(days / 365);
+
+    const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const inputDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dayDiff = Math.floor((nowDate - inputDate) / 86400000); // 1일 = 86400000ms
+
+    const weeks = Math.floor(dayDiff / 7);
+    const months = Math.floor(dayDiff / 30);
+    const years = Math.floor(dayDiff / 365);
 
     if (seconds < 0) {
         return `${seconds}초 후`;
@@ -26,16 +30,8 @@ function getRelativeDate(date) {
         return `${hours}시간 전`;
     }
 
-    if (days === 1) {
-        return '어제';
-    }
-
-    if (days === 2) {
-        return '그저께';
-    }
-
-    if (days < 7) {
-        return `${days}일 전`;
+    if (dayDiff < 7) {
+        return `${dayDiff}일 전`;
     }
 
     if (weeks < 5) {
@@ -43,7 +39,7 @@ function getRelativeDate(date) {
     }
 
     if (months < 12) {
-        const remainingWeeks = Math.floor((days % 30) / 7);
+        const remainingWeeks = Math.floor((dayDiff % 30) / 7);
         return remainingWeeks > 0
             ? `${months}개월 ${remainingWeeks}주 전`
             : `${months}개월 전`;
