@@ -26,11 +26,11 @@
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-bs-theme="light">
+                    <a class="dropdown-item" href="/notifications">알림</a>
                     <a class="dropdown-item" href="/search">검색</a>
                     <a class="dropdown-item" onclick="toPostsIssuePage()">새 글 작성</a>
                     <a th:href="'/@' + ${members.getUsername()}" class="dropdown-item">내 프로필</a>
                     <a class="dropdown-item" href="/hearts">좋아요 표시한 글</a>
-<!--                    <a class="dropdown-item">알림</a>-->
                     <a class="dropdown-item" href="/tp">임시 작성 글</a>
                     <div class="dropdown-divider"></div>
                     <span class="dropdown-header">내 블로그</span>

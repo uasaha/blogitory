@@ -1,5 +1,6 @@
 package com.blogitory.blog.commons.config;
 
+import com.blogitory.blog.commons.listener.RedisMessageListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,8 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
@@ -21,6 +24,9 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfig {
   private final RedisProperties redisProperties;
+  private final RedisMessageListener messageListener;
+
+  public static final String NOTIFICATION_CHANNEL = "notification-channel";
 
   /**
    * Setting RedisConnectionFactory as LettuceConnectionFactory.
@@ -57,5 +63,29 @@ public class RedisConfig {
     redisTemplate.setValueSerializer(new StringRedisSerializer());
 
     return redisTemplate;
+  }
+
+  /**
+   * Notice Channel topic.
+   *
+   * @return notice channel topic
+   */
+  @Bean
+  public ChannelTopic noticeTopic() {
+    return new ChannelTopic(NOTIFICATION_CHANNEL);
+  }
+
+  /**
+   * RedisMessageListenerContainer bean.
+   *
+   * @return RedisMessageListenerContainer
+   */
+  @Bean
+  public RedisMessageListenerContainer redisMessageListenerContainer() {
+    RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+    container.setConnectionFactory(redisConnectionFactory());
+    container.addMessageListener(messageListener, noticeTopic());
+
+    return container;
   }
 }
