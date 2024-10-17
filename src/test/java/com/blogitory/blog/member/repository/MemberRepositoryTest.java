@@ -78,7 +78,7 @@ class MemberRepositoryTest {
   @Test
   @DisplayName("회원 이메일 중복 조회")
   void existsMemberByEmail() {
-    memberRepository.save(member);
+    member = memberRepository.save(member);
 
     boolean existResult = memberRepository.existsMemberByEmail(member.getEmail());
     boolean notExistResult = memberRepository.existsMemberByEmail("notExist@not.com");
@@ -90,11 +90,10 @@ class MemberRepositoryTest {
   @Test
   @DisplayName("로그인 정보 조회")
   void getPersistInfo() {
-    memberRepository.save(member);
+    member = memberRepository.save(member);
 
     Optional<GetMemberPersistInfoDto> responseDto =
             memberRepository.getPersistInfo(member.getMemberNo());
-
     assertTrue(responseDto.isPresent());
 
     GetMemberPersistInfoDto actual = responseDto.orElseThrow();
