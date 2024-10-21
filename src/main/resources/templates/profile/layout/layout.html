@@ -2,7 +2,8 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:xmls="http://www.w3.org/1999/xhtml">
+      xmlns:xmls="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -176,7 +177,7 @@
 
     });
 </script>
-<script src="/static/js/my/notification.js" defer></script>
+<script sec:authorize="isAuthenticated()" src="/static/js/my/notification.js" defer></script>
 <script src="/static/js/lib/tabler.min.js" defer></script>
 <script src="/static/js/lib/apexcharts.min.js" defer></script>
 <script src="/static/js/lib/litepicker.js" defer></script>
