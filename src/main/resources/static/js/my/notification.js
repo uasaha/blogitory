@@ -113,6 +113,7 @@ function getNoticeComponent(notice) {
     }
 
     messageDiv.addEventListener("click", () => {
+        axios.get(`/api/notifications/` + notice.noticeNo);
         window.location.href = notice.response.url;
     })
 

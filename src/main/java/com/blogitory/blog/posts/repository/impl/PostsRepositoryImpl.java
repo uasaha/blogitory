@@ -551,6 +551,7 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
                     .and(category.deleted.isFalse())
                     .and(posts.deleted.isFalse())
                     .and(posts.open.isTrue()))
+            .orderBy(posts.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();

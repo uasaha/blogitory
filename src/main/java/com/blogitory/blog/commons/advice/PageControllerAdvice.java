@@ -9,6 +9,7 @@ import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.main.IndexController;
 import com.blogitory.blog.member.controller.MemberController;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
+import com.blogitory.blog.notice.controller.NoticeController;
 import com.blogitory.blog.posts.controller.PostsController;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
@@ -33,7 +34,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @ControllerAdvice(assignableTypes = {BlogController.class,
                                      IndexController.class,
                                      MemberController.class,
-                                     PostsController.class})
+                                     PostsController.class,
+                                     NoticeController.class})
 @RequiredArgsConstructor
 public class PageControllerAdvice {
 
