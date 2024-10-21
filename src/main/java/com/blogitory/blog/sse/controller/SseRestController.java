@@ -38,7 +38,7 @@ public class SseRestController {
           @RequestHeader(name = LAST_EVENT_ID, required = false, defaultValue = "") String lastId) {
 
     if (!SecurityUtils.isAuthenticated()) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     SseEmitter emitter = sseService.connect(SecurityUtils.getCurrentUserNo());
