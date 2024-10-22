@@ -2,6 +2,7 @@ package com.blogitory.blog.commons.config;
 
 import com.blogitory.blog.commons.listener.RedisMessageListener;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @author woonseok
  * @since 1.0
  **/
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
@@ -37,7 +39,7 @@ public class RedisConfig {
   public RedisConnectionFactory redisConnectionFactory() {
     final LettuceClientConfiguration clientConfiguration =
             LettuceClientConfiguration.builder()
-                    .useSsl().build();
+                    .build();
 
     RedisStandaloneConfiguration standaloneConfiguration =
             new RedisStandaloneConfiguration();
@@ -45,6 +47,8 @@ public class RedisConfig {
     standaloneConfiguration.setHostName(redisProperties.getHost());
     standaloneConfiguration.setPort(redisProperties.getPort());
     standaloneConfiguration.setPassword(redisProperties.getPassword());
+
+    log.info(redisProperties.getHost());
 
     return new LettuceConnectionFactory(standaloneConfiguration, clientConfiguration);
   }
