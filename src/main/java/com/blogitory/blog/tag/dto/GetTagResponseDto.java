@@ -3,6 +3,7 @@ package com.blogitory.blog.tag.dto;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * GetTagListResponseDto.
@@ -10,6 +11,7 @@ import lombok.Getter;
  * @author woonseok
  * @since 1.0
  **/
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode
