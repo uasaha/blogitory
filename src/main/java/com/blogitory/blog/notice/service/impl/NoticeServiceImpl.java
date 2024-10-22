@@ -1,7 +1,5 @@
 package com.blogitory.blog.notice.service.impl;
 
-import static com.blogitory.blog.commons.config.RedisConfig.NOTIFICATION_CHANNEL;
-
 import com.blogitory.blog.comment.entity.Comment;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
@@ -204,6 +202,6 @@ public class NoticeServiceImpl implements NoticeService {
    */
   private void publishEvent(Long noticeNo, Integer target, Object body) {
     SseSendEvent sendEvent = new SseSendEvent(noticeNo, target, body);
-    redisPublisher.publish(NOTIFICATION_CHANNEL, sendEvent);
+    redisPublisher.noticePublish(sendEvent);
   }
 }

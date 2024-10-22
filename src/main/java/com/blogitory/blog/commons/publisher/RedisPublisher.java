@@ -1,5 +1,7 @@
 package com.blogitory.blog.commons.publisher;
 
+import static com.blogitory.blog.commons.config.RedisConfig.NOTIFICATION_CHANNEL;
+
 import com.blogitory.blog.commons.listener.event.SseSendEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -34,13 +36,12 @@ public class RedisPublisher {
   /**
    * Publish sse event to channel.
    *
-   * @param topic topic
    * @param event event
    */
-  public void publish(String topic, SseSendEvent event) {
+  public void noticePublish(SseSendEvent event) {
     try {
       String message = objectMapper.writeValueAsString(event);
-      publish(topic, message);
+      publish(NOTIFICATION_CHANNEL, message);
     } catch (IOException e) {
       log.error(e.getMessage(), e);
     }

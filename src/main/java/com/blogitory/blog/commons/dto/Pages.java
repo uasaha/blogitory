@@ -1,5 +1,6 @@
 package com.blogitory.blog.commons.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 /**
@@ -8,6 +9,7 @@ import java.util.List;
  * @author woonseok
  * @since 1.0
  **/
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record Pages<E>(List<E> body,
                        long currentPage,
                        boolean hasPrevious,

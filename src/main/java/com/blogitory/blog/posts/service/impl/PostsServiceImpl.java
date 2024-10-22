@@ -48,6 +48,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -167,6 +170,10 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @Caching(evict = {
+      @CacheEvict(cacheNames = "recent-post", allEntries = true),
+      @CacheEvict(cacheNames = "posts-activity", allEntries = true)
+  })
   @Override
   public CreatePostsResponseDto createPosts(String tp, Integer memberNo, SaveTempPostsDto saveDto) {
     Category category = categoryRepository.findById(saveDto.getCategoryNo())
@@ -230,6 +237,7 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @Cacheable(cacheNames = "post", key = "#postUrl")
   @Transactional(readOnly = true)
   @Override
   public GetPostResponseDto getPostByUrl(String postUrl) {
@@ -260,6 +268,7 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @CacheEvict(cacheNames = "post", key = "#postKey")
   @Override
   public void modifyPosts(Integer memberNo, String postKey, ModifyPostsRequestDto requestDto) {
     Posts posts = postsRepository.findByUrl(postKey)
@@ -286,6 +295,11 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @Caching(evict = {
+      @CacheEvict(cacheNames = "post", key = "#postKey"),
+      @CacheEvict(cacheNames = "recent-post", allEntries = true),
+      @CacheEvict(cacheNames = "posts-activity", allEntries = true)
+  })
   @Override
   public void deletePosts(Integer memberNo, String postKey) {
     Posts posts = postsRepository.findByUrl(postKey)
@@ -307,6 +321,8 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @Cacheable(cacheNames = "recent-posts",
+          key = "'page-' + #pageable.getPageNumber() + 'size-' + #pageable.getPageSize()")
   @Transactional(readOnly = true)
   @Override
   public Pages<GetRecentPostResponseDto> getRecentPost(Pageable pageable) {
@@ -460,9 +476,10 @@ public class PostsServiceImpl implements PostsService {
   /**
    * {@inheritDoc}
    */
+  @Cacheable(cacheNames = "posts-activity", key = "#username")
   @Transactional(readOnly = true)
   @Override
-  public Map<DayOfWeek, List<GetPostActivityResponseDto>> getPostActivity(String username) {
+  public Map<String, List<GetPostActivityResponseDto>> getPostActivity(String username) {
     int dayOfYear = 365;
 
     LocalDate today = LocalDate.now();
@@ -499,7 +516,7 @@ public class PostsServiceImpl implements PostsService {
     }
 
     return result.stream()
-            .collect(Collectors.groupingBy(d -> d.getDate().getDayOfWeek()));
+            .collect(Collectors.groupingBy(d -> d.getDate().getDayOfWeek().name()));
   }
 
   /**

@@ -6,7 +6,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +53,7 @@ class UrlUtilTest {
 
   @Test
   @DisplayName("request로부터 post url 획득")
-  void getPostsUrlFromRequest() throws UnsupportedEncodingException {
+  void getPostsUrlFromRequest() {
     request = new MockHttpServletRequest();
     request.setRequestURI("/@test/test/test");
 
@@ -65,7 +64,7 @@ class UrlUtilTest {
 
   @Test
   @DisplayName("request로부터 post url 획득 - null")
-  void getPostsUrlFromRequestNull() throws UnsupportedEncodingException {
+  void getPostsUrlFromRequestNull() {
     request = new MockHttpServletRequest();
     request.setRequestURI("/@test/test");
 

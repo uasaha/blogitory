@@ -885,12 +885,12 @@ class PostsServiceTest {
     when(postsRepository.getPostActivity(anyString(), any(), any()))
             .thenReturn(List.of(responseDto));
 
-    Map<DayOfWeek, List<GetPostActivityResponseDto>> activities =
+    Map<String, List<GetPostActivityResponseDto>> activities =
             postsService.getPostActivity("username");
 
     assertFalse(activities.isEmpty());
 
-    GetPostActivityResponseDto actual = activities.get(now.getDayOfWeek()).getLast();
+    GetPostActivityResponseDto actual = activities.get(now.getDayOfWeek().name()).getLast();
     assertEquals(responseDto.getDate(),actual.getDate());
     assertEquals(responseDto.getCount(), actual.getCount());
   }
@@ -905,16 +905,16 @@ class PostsServiceTest {
     when(postsRepository.getPostActivity(anyString(), any(), any()))
             .thenReturn(List.of(responseDto));
 
-    Map<DayOfWeek, List<GetPostActivityResponseDto>> activities =
+    Map<String, List<GetPostActivityResponseDto>> activities =
             postsService.getPostActivity("username");
 
     assertFalse(activities.isEmpty());
 
-    GetPostActivityResponseDto actual = activities.get(now.getDayOfWeek()).getLast();
+    GetPostActivityResponseDto actual = activities.get(now.getDayOfWeek().name()).getLast();
     assertEquals(responseDto.getDate(),actual.getDate());
     assertEquals(responseDto.getCount(), actual.getCount());
 
-    GetPostActivityResponseDto sundays = activities.get(DayOfWeek.SUNDAY).getFirst();
+    GetPostActivityResponseDto sundays = activities.get(DayOfWeek.SUNDAY.name()).getFirst();
     assertEquals(DayOfWeek.SUNDAY, sundays.getDate().getDayOfWeek());
   }
 

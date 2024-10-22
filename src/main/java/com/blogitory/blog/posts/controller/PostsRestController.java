@@ -14,7 +14,6 @@ import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.security.util.SecurityUtils;
 import jakarta.validation.Valid;
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -295,7 +294,7 @@ public class PostsRestController {
    * @return 200
    */
   @GetMapping("/@{username}/activity")
-  ResponseEntity<Map<DayOfWeek, List<GetPostActivityResponseDto>>> getActivityPosts(
+  ResponseEntity<Map<String, List<GetPostActivityResponseDto>>> getActivityPosts(
           @PathVariable String username) {
     return ResponseEntity.ok(postsService.getPostActivity(username));
   }

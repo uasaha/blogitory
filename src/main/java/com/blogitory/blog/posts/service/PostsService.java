@@ -11,7 +11,6 @@ import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
-import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Pageable;
@@ -199,7 +198,7 @@ public interface PostsService {
    * @param username username
    * @return Activity, grouping by day of week
    */
-  Map<DayOfWeek, List<GetPostActivityResponseDto>> getPostActivity(String username);
+  Map<String, List<GetPostActivityResponseDto>> getPostActivity(String username);
 
   /**
    * Search posts.

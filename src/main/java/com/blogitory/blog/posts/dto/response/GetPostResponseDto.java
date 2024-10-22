@@ -1,10 +1,15 @@
 package com.blogitory.blog.posts.dto.response;
 
 import com.blogitory.blog.tag.dto.GetTagResponseDto;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -14,6 +19,7 @@ import lombok.Setter;
  * @since 1.0
  **/
 @Getter
+@NoArgsConstructor
 public class GetPostResponseDto {
   private String username;
   private String memberName;
@@ -27,7 +33,11 @@ public class GetPostResponseDto {
   private String summary;
   private String detail;
   private Integer views;
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
   private LocalDateTime createdAt;
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
   private LocalDateTime updatedAt;
 
   @Setter
