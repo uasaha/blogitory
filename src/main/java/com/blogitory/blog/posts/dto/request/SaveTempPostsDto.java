@@ -1,6 +1,5 @@
 package com.blogitory.blog.posts.dto.request;
 
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,6 @@ public class SaveTempPostsDto {
   private Integer memberNo;
 
   @Size(min = 1, max = 100)
-  @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9!@#$%^&*()_+=~₩\\s]+$")
   private String title;
 
   private Long categoryNo;

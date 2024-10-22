@@ -78,6 +78,7 @@ public class PostsServiceImpl implements PostsService {
   private final ObjectMapper objectMapper;
   public static final String POST_KEY = "temp_post";
   private static final String URL_REGEX = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+$";
+  private static final String TITLE_URL_REGEX = "[^ㄱ-ㅎ가-힣a-zA-Z0-9\\s]";
 
   /**
    * {@inheritDoc}
@@ -564,8 +565,12 @@ public class PostsServiceImpl implements PostsService {
     String url = blog.getUrlName() + "/" + saveDto.getUrl();
 
     if (saveDto.getUrl() == null || saveDto.getUrl().isEmpty()) {
-      String urlTitle = saveDto.getTitle().replace(" ", "-");
-      url = blog.getUrlName() + "/" + urlTitle;
+      String titleUrl = saveDto.getTitle().replaceAll(TITLE_URL_REGEX, "");
+      titleUrl = titleUrl.replaceAll("\\s{2,}", " ");
+      titleUrl = titleUrl.trim();
+      titleUrl = titleUrl.replace(" ", "-");
+
+      url = blog.getUrlName() + "/" + titleUrl;
     } else {
       if (!Pattern.matches(URL_REGEX, saveDto.getUrl())) {
         throw new InvalidPostsUrlException();

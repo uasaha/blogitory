@@ -4,7 +4,6 @@ const {colorSyntax} = Editor.plugin;
 
 const tagInput = document.querySelector("#tag-input");
 const tagRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9]+$/;
-const titleRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9!@#$%^&*()_+=~₩\s]+$/;
 const urlRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+$/;
 
 // const youtubeEl = document.createElement('span');
@@ -266,7 +265,7 @@ function savePosts(el) {
 }
 
 function validateTitle(el) {
-    if(titleRegex.test(el.value)) {
+    if(el.value.length > 0) {
         return true;
     }
     el.classList.add("is-invalid");

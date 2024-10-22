@@ -4,7 +4,6 @@ import com.blogitory.blog.security.util.SecurityUtils;
 import com.blogitory.blog.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +24,6 @@ public class SseRestController {
   private final SseService sseService;
 
   private static final String LAST_EVENT_ID = "Last-Event-ID";
-  private static final String ACCEL_BUFFERING = "X-Accel-Buffering";
 
   /**
    * Create new sse emitter.
@@ -41,15 +39,12 @@ public class SseRestController {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    SseEmitter emitter = sseService.connect(SecurityUtils.getCurrentUserNo());
-
     if (!lastId.isBlank()) {
       sseService.checkAndSend(SecurityUtils.getCurrentUserNo(), Long.parseLong(lastId));
     }
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.add(ACCEL_BUFFERING, "no");
+    SseEmitter emitter = sseService.connect(SecurityUtils.getCurrentUserNo());
 
-    return ResponseEntity.status(HttpStatus.OK).headers(headers).body(emitter);
+    return ResponseEntity.status(HttpStatus.OK).body(emitter);
   }
 }
