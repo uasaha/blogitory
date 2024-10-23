@@ -1,6 +1,5 @@
 package com.blogitory.blog.posts.dto.request;
 
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ModifyPostsRequestDto {
   @Size(min = 1, max = 100)
-  @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9!@#$%^&*()_+=~₩\\s]+$")
   private String title;
 
   @Size(max = 300)

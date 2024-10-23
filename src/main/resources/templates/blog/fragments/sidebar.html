@@ -68,7 +68,7 @@
             </div>
             <div th:if="${not #strings.isEmpty(blog.blogBio)}" class="row mt-1 ms-lg-2"
                  style="width: 95%">
-                <textarea class="form-control" rows="5" th:text="${blog.blogBio}" readonly></textarea>
+                <textarea type="text" class="form-control" data-bs-toggle="autosize" th:text="${blog.blogBio}" readonly></textarea>
             </div>
             <ul class="navbar-nav pt-lg-3" style="flex-grow: 0 !important;">
                 <li class="nav-item">

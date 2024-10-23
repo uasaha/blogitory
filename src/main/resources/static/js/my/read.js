@@ -478,18 +478,16 @@ function getAnswerComment(parentNo, targetNo, childCnt, msg, page) {
     childBtn.className = "m-1";
     childBtn.style = "cursor: pointer;";
 
-    let icon = document.createElement("img");
-    icon.style = "height: 16px;";
-    icon.src = "/static/icons/chevron-down.svg";
-    icon.alt = "comment";
+    let icon = document.createElement("div");
+    icon.innerHTML = "<svg  xmlns=\"http://www.w3.org/2000/svg\"  width=\"24\"  height=\"24\"  viewBox=\"0 0 24 24\"  fill=\"none\"  stroke=\"currentColor\"  stroke-width=\"2\"  stroke-linecap=\"round\"  stroke-linejoin=\"round\"  class=\"icon icon-tabler icons-tabler-outline icon-tabler-chevron-down\"><path stroke=\"none\" d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M6 9l6 6l6 -6\" /></svg>";
 
     let text = document.createElement("span");
     text.classList.add("ms-1")
     text.style = "font-size: 12px;";
     text.textContent = childCnt + msg;
 
+    icon.appendChild(text);
     childBtn.appendChild(icon);
-    childBtn.appendChild(text);
 
     childBtn.addEventListener("click", () => {
         loadChildComments(parentNo, targetNo, page, answerComment);

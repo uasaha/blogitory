@@ -8,7 +8,7 @@ function getRelativeDate(date) {
 
     const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const inputDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const dayDiff = Math.floor((nowDate - inputDate) / 86400000); // 1일 = 86400000ms
+    const dayDiff = Math.floor((nowDate - inputDate) / 86400000);
 
     const weeks = Math.floor(dayDiff / 7);
     const months = Math.floor(dayDiff / 30);
@@ -35,20 +35,14 @@ function getRelativeDate(date) {
     }
 
     if (weeks < 5) {
-        return `${weeks}주일 전`;
+        return `${weeks}주 전`;
     }
 
     if (months < 12) {
-        const remainingWeeks = Math.floor((dayDiff % 30) / 7);
-        return remainingWeeks > 0
-            ? `${months}개월 ${remainingWeeks}주 전`
-            : `${months}개월 전`;
+        return`${months}개월 전`;
     }
 
-    const remainingMonths = months % 12;
-    return remainingMonths > 0
-        ? `${years}년 ${remainingMonths}개월 전`
-        : `${years}년 전`;
+    return `${years}년 전`;
 }
 
 function getFormattedNumber(num) {

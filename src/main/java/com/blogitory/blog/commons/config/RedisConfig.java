@@ -48,8 +48,6 @@ public class RedisConfig {
     standaloneConfiguration.setPort(redisProperties.getPort());
     standaloneConfiguration.setPassword(redisProperties.getPassword());
 
-    log.info(redisProperties.getHost());
-
     return new LettuceConnectionFactory(standaloneConfiguration, clientConfiguration);
   }
 

@@ -40,7 +40,7 @@
                         <span style="font-size: 18px" th:text="'@'+${profile.username}"></span>
                     </div>
                     <div th:if="${profile.bio} != null" id="profile-bio" class="row mt-1">
-                        <textarea class="form-control" rows="5" th:text="${profile.bio}" readonly></textarea>
+                        <textarea type="text" class="form-control" data-bs-toggle="autosize" th:text="${profile.bio}" readonly></textarea>
                     </div>
                     <div sec:authorize="isAuthenticated()" id="profile-updatable"
                          class="row justify-content-center d-none">
@@ -59,11 +59,11 @@
                                     <span id="cant-name" class="d-none text-danger">사용할 수 없는 이름입니다.</span>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Bio
-                                        <span class="form-label-description">200</span></label>
-                                    <textarea id="profile-bio-updatable" class="form-control" rows="6"
-                                              placeholder="Bio.."
-                                              th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
+                                    <label class="form-label">
+                                        Bio
+                                        <span class="form-label-description">200</span>
+                                    </label>
+                                    <textarea id="profile-bio-updatable" type="text" class="form-control" data-bs-toggle="autosize" th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
@@ -270,7 +270,7 @@
                         </div>
                     </div>
                     <div id="profile-bio-mobile" th:if="${profile.bio} != null" class="row justify-content-center">
-                        <textarea class="form-control" th:text="${profile.bio}"></textarea>
+                        <textarea type="text" class="form-control" data-bs-toggle="autosize" th:text="${profile.bio}" readonly></textarea>
                     </div>
                     <div id="profile-button-mobile" sec:authorize="isAuthenticated()" class="row justify-content-center"
                          style="margin-top: 5px">
@@ -304,9 +304,7 @@
                                 <div class="mb-3">
                                     <label class="form-label">Bio
                                         <span class="form-label-description">100</span></label>
-                                    <textarea id="profile-bio-updatable-mobile" class="form-control" rows="6"
-                                              placeholder="Bio..">
-                                              th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
+                                    <textarea id="profile-bio-updatable-mobile" type="text" class="form-control" data-bs-toggle="autosize" th:text="${profile.bio} == null ? '' : ${profile.bio}"></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
