@@ -1,4 +1,4 @@
-package com.blogitory.blog.security.service;
+package com.blogitory.blog.security.service.impl;
 
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -29,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    Member member = memberRepository.findByEmail(email)
+    Member member = memberRepository.findByEmailOrUsername(email)
             .orElseThrow(() -> new AuthenticationException(
                     this.getClass().getName() + ": LoadUserByUsername failed"));
 

@@ -30,4 +30,13 @@ public interface MemberRepositoryCustom {
    * @return member
    */
   Optional<Member> findByOauthId(String provider, String id);
+
+
+  /**
+   * Find Member by email or username.
+   *
+   * @param id email or username
+   * @return Member entity
+   */
+  Optional<Member> findByEmailOrUsername(String id);
 }

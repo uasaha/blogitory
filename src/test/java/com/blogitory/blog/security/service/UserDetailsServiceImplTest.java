@@ -11,6 +11,7 @@ import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.role.repository.RoleRepository;
+import com.blogitory.blog.security.service.impl.UserDetailsServiceImpl;
 import com.blogitory.blog.security.users.UserDetailsImpl;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,7 @@ class UserDetailsServiceImplTest {
     List<GrantedAuthority> grantedRoles =
             List.of(new SimpleGrantedAuthority("ROLE_DUMMY"));
 
-    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
+    when(memberRepository.findByEmailOrUsername(any())).thenReturn(Optional.of(member));
     when(roleRepository.findRolesByMemberNo(any())).thenReturn(roles);
 
     UserDetailsImpl expect = new UserDetailsImpl(

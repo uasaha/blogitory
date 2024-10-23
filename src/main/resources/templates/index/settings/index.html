@@ -60,9 +60,9 @@
                                 <span id="cant-name" class="d-none text-danger">사용할 수 없는 이름입니다.</span>
                             </div>
                         </div>
-                        <h3 class="card-title mt-4">이메일</h3>
-                        <p class="card-subtitle">로그인에 이용됩니다.</p>
-                        <div>
+                        <h3 th:if="not ${memberProfile.oauth}" class="card-title mt-4">이메일</h3>
+                        <p th:if="not ${memberProfile.oauth}" class="card-subtitle">로그인에 이용됩니다.</p>
+                        <div th:if="not ${memberProfile.oauth}">
                             <div class="row g-2">
                                 <div class="col-6">
                                     <input id="memberEmail" type="text" class="form-control"
@@ -70,8 +70,8 @@
                                 </div>
                             </div>
                         </div>
-                        <h3 class="card-title mt-4">비밀번호</h3>
-                        <div>
+                        <h3 th:if="not ${memberProfile.oauth}" class="card-title mt-4">비밀번호</h3>
+                        <div th:if="not ${memberProfile.oauth}">
                             <button onclick="changePasswordClick()" class="btn">
                                 비밀번호 변경
                             </button>

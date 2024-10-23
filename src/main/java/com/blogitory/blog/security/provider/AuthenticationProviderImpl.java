@@ -33,7 +33,7 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
 
     try {
       password = memberService
-              .getPasswordByEmail(authenticationToken.getPrincipal().toString());
+              .getPasswordByEmailOrUsername(authenticationToken.getPrincipal().toString());
 
     } catch (NotFoundException e) {
       throw new com.blogitory.blog.security.exception.AuthenticationException("Not found User");

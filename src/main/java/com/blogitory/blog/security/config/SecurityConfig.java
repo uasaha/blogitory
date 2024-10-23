@@ -10,7 +10,7 @@ import com.blogitory.blog.security.handler.AuthenticationSuccessHandlerImpl;
 import com.blogitory.blog.security.handler.LogoutHandlerImpl;
 import com.blogitory.blog.security.handler.LogoutSuccessHandlerImpl;
 import com.blogitory.blog.security.provider.AuthenticationProviderImpl;
-import com.blogitory.blog.security.service.UserDetailsServiceImpl;
+import com.blogitory.blog.security.service.impl.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

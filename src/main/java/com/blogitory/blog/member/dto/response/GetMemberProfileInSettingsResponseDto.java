@@ -19,5 +19,6 @@ public class GetMemberProfileInSettingsResponseDto {
   private String email;
   private String bio;
   private String introEmail;
+  private boolean oauth;
   private List<String> links;
 }

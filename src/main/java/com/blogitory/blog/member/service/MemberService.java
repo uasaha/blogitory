@@ -57,12 +57,12 @@ public interface MemberService {
   Boolean isDuplicateUsername(String username);
 
   /**
-   * Get member's password for Login by email.
+   * Get member's password for Login by email or username.
    *
-   * @param email email
+   * @param id email or username
    * @return password
    */
-  String getPasswordByEmail(String email);
+  String getPasswordByEmailOrUsername(String id);
 
   /**
    * Get pfp by memberNo.

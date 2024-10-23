@@ -14,8 +14,11 @@ import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
 import com.blogitory.blog.mail.exception.EmailNotVerificationException;
 import com.blogitory.blog.mail.service.impl.MailServiceImpl;
+import com.blogitory.blog.member.entity.Member;
+import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
-import com.blogitory.blog.member.service.MemberService;
+import com.blogitory.blog.member.repository.MemberRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +41,7 @@ class MailServiceTest {
   /**
    * The Member service.
    */
-  MemberService memberService;
+  MemberRepository memberRepository;
   /**
    * The Java mail sender.
    */
@@ -54,10 +57,10 @@ class MailServiceTest {
    */
   @BeforeEach
   void setUp() {
-    memberService = mock(MemberService.class);
+    memberRepository = mock(MemberRepository.class);
     javaMailSender = mock(JavaMailSender.class);
     redisTemplate = mock(RedisTemplate.class);
-    mailService = new MailServiceImpl(memberService, javaMailSender, redisTemplate);
+    mailService = new MailServiceImpl(memberRepository, javaMailSender, redisTemplate);
   }
 
   /**
@@ -68,7 +71,9 @@ class MailServiceTest {
   void sendVerificationCode() {
     String email = "test@email.com";
 
-    when(memberService.existMemberByEmail(any())).thenReturn(false);
+    Member member = MemberDummy.dummy();
+
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
     when(redisTemplate.opsForValue()).thenReturn(operations);
     doNothing().when(operations).set(anyString(), anyString(), anyLong(), any());
@@ -84,7 +89,7 @@ class MailServiceTest {
   @Test
   @DisplayName("메일 발송 실패 - 중복 이메일")
   void sendVerificationCodeFailed() {
-    when(memberService.existMemberByEmail(any())).thenReturn(true);
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.empty());
 
     assertThrows(MemberEmailAlreadyUsedException.class,
             () -> mailService.sendVerificationCode("email"));
@@ -131,7 +136,9 @@ class MailServiceTest {
   void sendPasswordChangeLink() {
     String email = "test@email.com";
 
-    when(memberService.existMemberByEmail(any())).thenReturn(true);
+    Member member = MemberDummy.dummy();
+
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
     when(redisTemplate.opsForValue()).thenReturn(operations);
     doNothing().when(operations).set(anyString(), anyString(), anyLong(), any());
@@ -146,7 +153,7 @@ class MailServiceTest {
   void sendPasswordChangeLinkFailed() {
     String email = "test@email.com";
 
-    when(memberService.existMemberByEmail(any())).thenReturn(false);
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.empty());
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
     when(redisTemplate.opsForValue()).thenReturn(operations);
     doNothing().when(operations).set(anyString(), anyString(), anyLong(), any());

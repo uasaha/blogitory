@@ -5,7 +5,7 @@ function login() {
     const pwd = document.getElementById('login-pwd-input').value;
     const failedDiv = document.getElementById('failed-reason');
 
-    if (!emailReg.test(email)) {
+    if (email.length <= 1 || pwd.length <= 1) {
         failedDiv.className = "mb-4";
     }
 

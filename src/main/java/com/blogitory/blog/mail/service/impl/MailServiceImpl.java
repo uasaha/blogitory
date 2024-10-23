@@ -3,12 +3,14 @@ package com.blogitory.blog.mail.service.impl;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
 import com.blogitory.blog.mail.exception.EmailNotVerificationException;
+import com.blogitory.blog.mail.exception.OauthMemberException;
 import com.blogitory.blog.mail.service.MailService;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
-import com.blogitory.blog.member.service.MemberService;
+import com.blogitory.blog.member.repository.MemberRepository;
 import java.security.SecureRandom;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,7 @@ public class MailServiceImpl implements MailService {
   private static final Integer MAIL_TIMEOUT = 10;
   private static final String PASSWORD_UUID_PREFIX = "pwd-";
 
-  private final MemberService memberService;
+  private final MemberRepository memberRepository;
   private final JavaMailSender javaMailSender;
   private final RedisTemplate<String, Object> redisTemplate;
   private final SecureRandom random = new SecureRandom();
@@ -44,7 +46,7 @@ public class MailServiceImpl implements MailService {
    */
   @Override
   public void sendVerificationCode(String email) {
-    if (memberService.existMemberByEmail(email)) {
+    if (memberRepository.findByEmail(email).isEmpty()) {
       throw new MemberEmailAlreadyUsedException(email);
     }
 
@@ -90,8 +92,16 @@ public class MailServiceImpl implements MailService {
    */
   @Override
   public void sendUpdatePassword(String email) {
-    if (!memberService.existMemberByEmail(email)) {
+    Optional<Member> memberOptional = memberRepository.findByEmail(email);
+
+    if (memberOptional.isEmpty()) {
       throw new NotFoundException(Member.class);
+    }
+
+    Member member = memberOptional.get();
+
+    if (Objects.nonNull(member.getOauth()) && !member.getOauth().isEmpty()) {
+      throw new OauthMemberException();
     }
 
     String uuid = UUID.randomUUID().toString();

@@ -144,6 +144,7 @@ class IndexControllerTest {
                     "email",
                     "bio",
                     "intro",
+                    false,
                     List.of());
     when(memberService.getSettingsProfile(any())).thenReturn(responseDto);
 
@@ -171,6 +172,7 @@ class IndexControllerTest {
                     "email",
                     "bio",
                     "intro",
+                    false,
                     List.of());
     when(memberService.getSettingsProfile(any())).thenReturn(responseDto);
 

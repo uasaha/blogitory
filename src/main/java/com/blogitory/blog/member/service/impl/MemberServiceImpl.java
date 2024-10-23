@@ -32,6 +32,7 @@ import com.blogitory.blog.rolemember.entity.RoleMember;
 import com.blogitory.blog.rolemember.repository.RoleMemberRepository;
 import com.blogitory.blog.security.exception.AuthenticationException;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -155,8 +156,8 @@ public class MemberServiceImpl implements MemberService {
    */
   @Override
   @Transactional(readOnly = true)
-  public String getPasswordByEmail(String email) {
-    return memberRepository.findByEmail(email)
+  public String getPasswordByEmailOrUsername(String id) {
+    return memberRepository.findByEmailOrUsername(id)
             .orElseThrow(() -> new NotFoundException(Member.class))
             .getPassword();
   }
@@ -241,6 +242,7 @@ public class MemberServiceImpl implements MemberService {
             member.getEmail(),
             member.getBio(),
             member.getIntroEmail(),
+            Objects.nonNull(member.getOauth()) && !member.getOauth().isEmpty(),
             member.getLinks().stream().map(Link::getUrl).toList()
     );
   }

@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Oauth Service.
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  **/
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OauthServiceImpl implements OauthService {
   private final OauthAdaptor oauthAdaptor;
@@ -40,7 +42,7 @@ public class OauthServiceImpl implements OauthService {
   private final JwtService jwtService;
   private final RoleMemberRepository roleMemberRepository;
 
-  private static final String GITHUB = "github";
+  public static final String GITHUB = "github";
 
   /**
    * {@inheritDoc}
@@ -88,6 +90,7 @@ public class OauthServiceImpl implements OauthService {
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public String githubLogin(String githubAccessToken) {
     GithubUserInfoResponseDto userInfo = oauthAdaptor.getGithubUserInfo(githubAccessToken);

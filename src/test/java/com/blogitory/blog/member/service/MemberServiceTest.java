@@ -321,10 +321,10 @@ class MemberServiceTest {
   void getPasswordByEmail() {
     Member member = MemberDummy.dummy();
 
-    when(memberRepository.findByEmail(member.getEmail()))
+    when(memberRepository.findByEmailOrUsername(member.getEmail()))
             .thenReturn(Optional.of(member));
 
-    String password = memberService.getPasswordByEmail(member.getEmail());
+    String password = memberService.getPasswordByEmailOrUsername(member.getEmail());
 
     assertEquals(password, member.getPassword());
   }
@@ -337,7 +337,7 @@ class MemberServiceTest {
     when(memberRepository.findByEmail(email))
             .thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> memberService.getPasswordByEmail(email));
+    assertThrows(NotFoundException.class, () -> memberService.getPasswordByEmailOrUsername(email));
   }
 
   @Test

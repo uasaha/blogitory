@@ -54,4 +54,16 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                     .where(member.oauth.eq(provider).and(member.email.eq(id)))
                     .fetchFirst());
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Optional<Member> findByEmailOrUsername(String id) {
+    return Optional.ofNullable(
+            queryFactory.selectFrom(member)
+                    .where(member.left.isFalse())
+                    .where(member.email.eq(id).or(member.username.eq(id)))
+                    .fetchFirst());
+  }
 }
