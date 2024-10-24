@@ -1,14 +1,9 @@
-document.addEventListener('DOMContentLoaded', function(){
-    console.log(posts);
-});
-
 const {Editor} = toastui;
 const {codeSyntaxHighlight} = Editor.plugin;
 const {colorSyntax} = Editor.plugin;
 
 const tagInput = document.querySelector("#tag-input");
 const tagRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9]+$/;
-const urlRegex = /^[ㄱ-ㅎ가-힣a-zA-Z0-9-]+$/;
 
 const tagify = new Tagify(tagInput, {
     pattern: tagRegex,
@@ -77,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function validateTitle(el) {
-    if(el.value.length > 0) {
+    if(el.length > 0) {
         return true;
     }
     el.classList.add("is-invalid");
