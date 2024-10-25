@@ -176,11 +176,11 @@
         }
     });
 </script>
-<script sec:authorize="isAuthenticated()" src="/static/js/my/notification.js" defer></script>
 <th:block layout:fragment="script"></th:block>
 <script src="/static/js/lib/tabler.min.js" defer></script>
 <script src="/static/js/lib/axios.js" defer></script>
 <script src="/static/js/my/login.js" defer></script>
 <script src="/static/js/my/posts.js" defer></script>
+<script sec:authorize="isAuthenticated()" src="/static/js/my/notification.js" defer></script>
 </body>
 </html>
