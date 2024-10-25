@@ -26,6 +26,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Mail service test.
@@ -71,9 +72,7 @@ class MailServiceTest {
   void sendVerificationCode() {
     String email = "test@email.com";
 
-    Member member = MemberDummy.dummy();
-
-    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.empty());
     ValueOperations<String, Object> operations = mock(ValueOperations.class);
     when(redisTemplate.opsForValue()).thenReturn(operations);
     doNothing().when(operations).set(anyString(), anyString(), anyLong(), any());
@@ -89,7 +88,8 @@ class MailServiceTest {
   @Test
   @DisplayName("메일 발송 실패 - 중복 이메일")
   void sendVerificationCodeFailed() {
-    when(memberRepository.findByEmail(any())).thenReturn(Optional.empty());
+    Member member = MemberDummy.dummy();
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
 
     assertThrows(MemberEmailAlreadyUsedException.class,
             () -> mailService.sendVerificationCode("email"));
@@ -159,5 +159,18 @@ class MailServiceTest {
     doNothing().when(operations).set(anyString(), anyString(), anyLong(), any());
 
     assertThrows(NotFoundException.class, () -> mailService.sendUpdatePassword(email));
+  }
+
+  @Test
+  @DisplayName("비밀번호 변경 메일 발송 실패 - oauth 유저")
+  void sendPasswordChangeLinkFailedOauth() {
+    String email = "test@email.com";
+
+    Member member = MemberDummy.dummy();
+    ReflectionTestUtils.setField(member, "oauth", "value");
+
+    when(memberRepository.findByEmail(any())).thenReturn(Optional.of(member));
+
+    assertThrows(MemberEmailAlreadyUsedException.class, () -> mailService.sendUpdatePassword(email));
   }
 }
