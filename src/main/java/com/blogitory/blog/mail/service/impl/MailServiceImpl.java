@@ -3,7 +3,6 @@ package com.blogitory.blog.mail.service.impl;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.mail.dto.request.GetMailVerificationRequestDto;
 import com.blogitory.blog.mail.exception.EmailNotVerificationException;
-import com.blogitory.blog.mail.exception.OauthMemberException;
 import com.blogitory.blog.mail.service.MailService;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.exception.MemberEmailAlreadyUsedException;
@@ -46,7 +45,7 @@ public class MailServiceImpl implements MailService {
    */
   @Override
   public void sendVerificationCode(String email) {
-    if (memberRepository.findByEmail(email).isEmpty()) {
+    if (memberRepository.findByEmail(email).isPresent()) {
       throw new MemberEmailAlreadyUsedException(email);
     }
 
@@ -100,8 +99,10 @@ public class MailServiceImpl implements MailService {
 
     Member member = memberOptional.get();
 
-    if (Objects.nonNull(member.getOauth()) && !member.getOauth().isEmpty()) {
-      throw new OauthMemberException();
+    String oauth = member.getOauth();
+
+    if (Objects.nonNull(oauth) && !oauth.isBlank()) {
+      throw new MemberEmailAlreadyUsedException(email);
     }
 
     String uuid = UUID.randomUUID().toString();
