@@ -169,7 +169,7 @@ public class NoticeServiceImpl implements NoticeService {
    */
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Override
-  public void newPostsNotice(Posts posts, List<Member> targets) {
+  public void newPostsNotice(Posts posts) {
     String url = "/" + posts.getUrl();
     Member member = posts.getCategory().getBlog().getMember();
 

@@ -6,7 +6,6 @@ import com.blogitory.blog.heart.entity.Heart;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.notice.dto.GetNoticeResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
-import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -79,7 +78,6 @@ public interface NoticeService {
    * Create new posts notice.
    *
    * @param post    posts
-   * @param targets followers of posts writer
    */
-  void newPostsNotice(Posts post, List<Member> targets);
+  void newPostsNotice(Posts post);
 }

@@ -3,7 +3,6 @@ package com.blogitory.blog.tempposts.dto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Get temp posts response dto.
@@ -12,14 +11,21 @@ import lombok.Setter;
  * @since 1.0
  **/
 @Getter
-@Setter
 public class GetTempPostsResponseDto {
-  private String tempPostsId;
-  private String tempPostsTitle;
-  private LocalDateTime createdAt;
+  private final String tempPostsId;
+  private final String title;
+  private final LocalDateTime createdAt;
 
-  public GetTempPostsResponseDto(UUID tempPostsId, LocalDateTime createdAt) {
+  /**
+   * Constructor.
+   *
+   * @param tempPostsId id(UUID)
+   * @param title       title
+   * @param createdAt   created at
+   */
+  public GetTempPostsResponseDto(UUID tempPostsId, String title, LocalDateTime createdAt) {
     this.tempPostsId = tempPostsId.toString();
+    this.title = title;
     this.createdAt = createdAt;
   }
 }

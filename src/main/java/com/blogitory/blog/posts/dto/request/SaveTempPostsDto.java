@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Temp posts save dto.
@@ -19,16 +18,12 @@ import lombok.Setter;
 public class SaveTempPostsDto {
   private Long blogNo;
 
-  @Setter
-  private Integer memberNo;
+  private String url;
 
   @Size(min = 1, max = 100)
   private String title;
 
   private Long categoryNo;
-
-  @Size(max = 100)
-  private String url;
 
   @Size(max = 300)
   private String summary;

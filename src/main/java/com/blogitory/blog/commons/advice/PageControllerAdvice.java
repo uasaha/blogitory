@@ -15,6 +15,7 @@ import com.blogitory.blog.security.exception.AuthenticationException;
 import com.blogitory.blog.security.exception.AuthorizationException;
 import com.blogitory.blog.storage.exception.FileUploadException;
 import com.blogitory.blog.storage.exception.NoOriginalFileNameException;
+import com.blogitory.blog.tempposts.controller.TempPostsController;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
                                      IndexController.class,
                                      MemberController.class,
                                      PostsController.class,
-                                     NoticeController.class})
+                                     NoticeController.class,
+                                     TempPostsController.class})
 @RequiredArgsConstructor
 public class PageControllerAdvice {
 

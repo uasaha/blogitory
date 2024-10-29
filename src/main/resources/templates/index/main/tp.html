@@ -43,12 +43,12 @@
                         <tbody class="table-tbody">
                         <tr th:each="tempPost : ${tempPosts}">
                             <td class="col-2"
-                                th:text="${#temporals.format(tempPost.getCreatedAt(), 'yyyy. MM. dd HH:mm')}"></td>
-                            <td class="col" th:text="${tempPost.getTempPostsTitle()}"></td>
-                            <td class="col-1"><a class="btn" th:href="'posts?tp=' + ${tempPost.getTempPostsId()}"
+                                th:text="${#temporals.format(tempPost.createdAt, 'yyyy. MM. dd HH:mm')}"></td>
+                            <td class="col" th:text="${tempPost.title}"></td>
+                            <td class="col-1"><a class="btn" th:href="'posts?tp=' + ${tempPost.tempPostsId}"
                                                  style="height: 25px">수정</a></td>
                             <td class="col-1"><a class="btn btn-outline-danger"
-                                                 th:onclick="deleteTempPosts([[${tempPost.getTempPostsId()}]])"
+                                                 th:onclick="deleteTempPosts([[${tempPost.tempPostsId}]])"
                                                  style="height: 25px">삭제</a></td>
                         </tr>
                         </tbody>

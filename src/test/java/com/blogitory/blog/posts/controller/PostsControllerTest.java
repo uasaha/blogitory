@@ -77,13 +77,12 @@ class PostsControllerTest {
 
     SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
-            1,
+            "url",
             "title",
             1L,
-            "url",
             "summary",
             "thumb",
-            "detail",
+            "details",
             List.of("tag"));
 
     List<GetBlogWithCategoryResponseDto> blogs = List.of(new GetBlogWithCategoryResponseDto(tpDto.getBlogNo(), "blogName", List.of(
@@ -108,13 +107,12 @@ class PostsControllerTest {
   void issuePostsPageNoBlog() throws Exception {
     SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
-            1,
+            "url",
             "title",
             1L,
-            "url",
             "summary",
             "thumb",
-            "detail",
+            "details",
             List.of("tag"));
 
     List<GetBlogWithCategoryResponseDto> blogs = List.of();

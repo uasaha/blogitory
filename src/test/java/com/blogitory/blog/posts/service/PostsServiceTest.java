@@ -20,6 +20,7 @@ import com.blogitory.blog.category.entity.Category;
 import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.dto.Pages;
+import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
@@ -38,7 +39,6 @@ import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.PostsDummy;
 import com.blogitory.blog.posts.exception.InvalidPostsUrlException;
-import com.blogitory.blog.posts.exception.PostsJsonConvertException;
 import com.blogitory.blog.posts.repository.PostsRepository;
 import com.blogitory.blog.posts.service.impl.PostsServiceImpl;
 import com.blogitory.blog.poststag.entity.PostsTag;
@@ -49,8 +49,6 @@ import com.blogitory.blog.tag.entity.Tag;
 import com.blogitory.blog.tag.repository.TagRepository;
 import com.blogitory.blog.tempposts.entity.TempPosts;
 import com.blogitory.blog.tempposts.repository.TempPostsRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -66,8 +64,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -86,8 +82,6 @@ class PostsServiceTest {
   TagRepository tagRepository;
   PostsTagRepository postsTagRepository;
   FollowRepository followRepository;
-  RedisTemplate<String, Object> redisTemplate;
-  ObjectMapper objectMapper;
   PostsService postsService;
 
   @BeforeEach
@@ -100,8 +94,6 @@ class PostsServiceTest {
     tagRepository = mock(TagRepository.class);
     postsTagRepository = mock(PostsTagRepository.class);
     followRepository = mock(FollowRepository.class);
-    redisTemplate = mock(RedisTemplate.class);
-    objectMapper = mock(ObjectMapper.class);
 
     postsService = new PostsServiceImpl(
             eventPublisher,
@@ -111,25 +103,19 @@ class PostsServiceTest {
             categoryRepository,
             tagRepository,
             postsTagRepository,
-            followRepository,
-            redisTemplate,
-            objectMapper);
+            followRepository);
   }
 
   @Test
   @DisplayName("임시 게시물 ID 발급")
-  void getTempPostsId() throws Exception {
+  void getTempPostsId() {
     Member member = MemberDummy.dummy();
 
     UUID uuid = UUID.randomUUID();
     TempPosts tempPosts = new TempPosts(uuid, member);
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
 
     when(memberRepository.findById(any())).thenReturn(Optional.of(member));
     when(tempPostsRepository.save(any())).thenReturn(tempPosts);
-    when(objectMapper.writeValueAsString(any())).thenReturn("dto");
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    doNothing().when(hashOperations).put(anyString(), anyString(), any());
 
     String actual = postsService.getTempPostsId(member.getMemberNo());
 
@@ -138,147 +124,96 @@ class PostsServiceTest {
 
   @Test
   @DisplayName("임시 게시물 ID 발급 실패")
-  void getTempPostsIdFailed() throws Exception {
+  void getTempPostsIdFailed() {
     Member member = MemberDummy.dummy();
 
     UUID uuid = UUID.randomUUID();
     TempPosts tempPosts = new TempPosts(uuid, member);
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
 
-    when(memberRepository.findById(any())).thenReturn(Optional.of(member));
+    when(memberRepository.findById(any())).thenReturn(Optional.empty());
     when(tempPostsRepository.save(any())).thenReturn(tempPosts);
-    when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    doNothing().when(hashOperations).put(anyString(), anyString(), any());
 
-    assertThrows(PostsJsonConvertException.class,
+    assertThrows(NotFoundException.class,
             () -> postsService.getTempPostsId(1));
   }
 
   @Test
   @DisplayName("임시게시물 로드 성공")
-  void loadTempPosts() throws Exception {
-    String saveData = "dto";
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            1,
-            "title",
+  void loadTempPosts() {
+    UUID uuid = UUID.randomUUID();
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
             "url",
+            "title",
+            1L,
             "summary",
             "thumb",
             "details",
-            List.of());
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
+            List.of("tag"));
 
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.get(anyString(), anyString())).thenReturn(saveData);
-    when(objectMapper.readValue(saveData, SaveTempPostsDto.class))
-            .thenReturn(postsDto);
+    Member member = MemberDummy.dummy();
+    TempPosts tp = new TempPosts(uuid, member);
+    tp.updateTempPosts(tpDto);
 
-    SaveTempPostsDto actual = postsService.loadTempPosts("tpid", 1);
+    when(tempPostsRepository.findById(uuid)).thenReturn(Optional.of(tp));
 
-    assertEquals(postsDto.getMemberNo(), actual.getMemberNo());
-    assertEquals(postsDto.getTitle(), actual.getTitle());
-    assertEquals(postsDto.getUrl(), actual.getUrl());
-    assertEquals(postsDto.getSummary(), actual.getSummary());
-  }
+    SaveTempPostsDto actual = postsService.loadTempPosts(uuid.toString(), member.getMemberNo());
 
-  @Test
-  @DisplayName("임시게시물 로드 실패 - JSON 변환")
-  void loadTempPostsFailedConvertJson() throws Exception {
-    String saveData = "dto";
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
-
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.get(anyString(), anyString())).thenReturn(saveData);
-    when(objectMapper.readValue(saveData, SaveTempPostsDto.class))
-            .thenThrow(JsonProcessingException.class);
-
-    assertThrows(PostsJsonConvertException.class, () -> postsService.loadTempPosts("tpid", 1));
+    assertEquals(tpDto.getTitle(), actual.getTitle());
+    assertEquals(tpDto.getSummary(), actual.getSummary());
   }
 
   @Test
   @DisplayName("임시게시물 로드 실패 - 다른 유저")
-  void loadTempPostsFailedAuthorization() throws Exception {
-    String saveData = "dto";
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            1,
-            "title",
+  void loadTempPostsFailedAuthorization() {
+    UUID uuid = UUID.randomUUID();
+
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
             "url",
+            "title",
+            1L,
             "summary",
             "thumb",
             "details",
-            List.of());
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
+            List.of("tag"));
 
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.get(anyString(), anyString())).thenReturn(saveData);
-    when(objectMapper.readValue(saveData, SaveTempPostsDto.class))
-            .thenReturn(postsDto);
+    Member member = MemberDummy.dummy();
+    TempPosts tp = new TempPosts(uuid, member);
+    tp.updateTempPosts(tpDto);
 
-    assertThrows(AuthorizationException.class, () -> postsService.loadTempPosts("tpid", 2));
+    when(tempPostsRepository.findById(uuid)).thenReturn(Optional.of(tp));
+
+    String uuidStr = uuid.toString();
+
+    assertThrows(AuthorizationException.class, () -> postsService.loadTempPosts(uuidStr, 2));
   }
 
 
   @Test
   @DisplayName("임시게시물 저장")
-  void saveTempPosts() throws Exception {
+  void saveTempPosts() {
     UUID uuid = UUID.randomUUID();
-    Member member = MemberDummy.dummy();
-    TempPosts tempPosts = new TempPosts(uuid, member);
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            null,
-            "title",
+
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
             "url",
+            "title",
+            1L,
             "summary",
             "thumb",
             "details",
-            List.of());
-    String saved = "saved";
+            List.of("tag"));
 
-    when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
-    when(objectMapper.writeValueAsString(any(SaveTempPostsDto.class))).thenReturn(saved);
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    doNothing().when(hashOperations).put(anyString(), anyString(), any());
-
-    postsService.saveTempPosts(uuid.toString(), postsDto, 1);
-
-    assertEquals(1, postsDto.getMemberNo());
-  }
-
-  @Test
-  @DisplayName("임시게시물 저장 실패 - JSON")
-  void saveTempPostsFailed() throws Exception {
-    UUID uuid = UUID.randomUUID();
     Member member = MemberDummy.dummy();
-    TempPosts tempPosts = new TempPosts(uuid, member);
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            null,
-            "title",
-            1L,
-            "url",
-            "summary",
-            "thumb",
-            "details",
-            List.of());
+    TempPosts tp = new TempPosts(uuid, member);
+    tp.updateTempPosts(tpDto);
 
-    when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
-    when(objectMapper.writeValueAsString(any(SaveTempPostsDto.class))).thenThrow(JsonProcessingException.class);
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    doNothing().when(hashOperations).put(anyString(), anyString(), any());
+    when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tp));
 
-    String uuidString = uuid.toString();
+    postsService.saveTempPosts(uuid.toString(), tpDto, 1);
 
-    assertThrows(PostsJsonConvertException.class,
-            () -> postsService.saveTempPosts(uuidString, postsDto, 1));
+    assertEquals(1, tp.getMember().getMemberNo());
   }
 
   @Test
@@ -288,20 +223,19 @@ class PostsServiceTest {
     Member member = MemberDummy.dummy();
     Blog blog = BlogDummy.dummy(member);
     Category category = CategoryDummy.dummy(blog);
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            null,
-            "title",
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
             "url",
+            "title",
+            1L,
             "summary",
             "thumb",
             "details",
             List.of("tag"));
+
     Posts posts = PostsDummy.dummy(category);
     Tag tag = new Tag(1L, "tag", false);
     PostsTag postsTag = new PostsTag(1L, tag, posts, blog);
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
     TempPosts tempPosts = new TempPosts(uuid, member);
 
     when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
@@ -311,13 +245,11 @@ class PostsServiceTest {
             .thenReturn(Optional.of(tag));
     when(tagRepository.save(any(Tag.class))).thenReturn(tag);
     when(postsTagRepository.save(any(PostsTag.class))).thenReturn(postsTag);
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.delete(anyString(), anyString())).thenReturn(1L);
     when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
     doNothing().when(tempPostsRepository).delete(any());
 
     CreatePostsResponseDto responseDto =
-            postsService.createPosts(uuid.toString(), 1, postsDto);
+            postsService.createPosts(uuid.toString(), 1, tpDto);
 
     assertEquals("posts_url", responseDto.getPostsUrl());
   }
@@ -328,103 +260,19 @@ class PostsServiceTest {
     Member member = MemberDummy.dummy();
     Blog blog = BlogDummy.dummy(member);
     Category category = CategoryDummy.dummy(blog);
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            null,
-            "title",
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
             "url",
-            "summary",
-            "thumb",
-            "details",
-            List.of("tag"));
-
-    when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
-
-    assertThrows(AuthorizationException.class, () -> postsService.createPosts("up", 0, postsDto));
-  }
-
-  @Test
-  @DisplayName("게시글 저장 성공 - url 중복")
-  void createPostsDuplicateUrl() {
-    UUID uuid = UUID.randomUUID();
-    Member member = MemberDummy.dummy();
-    Blog blog = BlogDummy.dummy(member);
-    Category category = CategoryDummy.dummy(blog);
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            null,
             "title",
             1L,
-            "url",
             "summary",
             "thumb",
             "details",
             List.of("tag"));
-    Posts posts = PostsDummy.dummy(category);
-
-    Tag tag = new Tag(1L, "tag", false);
-    PostsTag postsTag = new PostsTag(1L, tag, posts, blog);
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
-    TempPosts tempPosts = new TempPosts(uuid, member);
 
     when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
-    when(postsRepository.existsByUrl(anyString())).thenReturn(true);
-    when(postsRepository.save(any(Posts.class))).thenReturn(posts);
-    when(tagRepository.findByName(anyString()))
-            .thenReturn(Optional.of(tag));
-    when(tagRepository.save(any(Tag.class))).thenReturn(tag);
-    when(postsTagRepository.save(any(PostsTag.class))).thenReturn(postsTag);
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.delete(anyString(), anyString())).thenReturn(1L);
-    when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
-    doNothing().when(tempPostsRepository).delete(any());
 
-    CreatePostsResponseDto responseDto =
-            postsService.createPosts(uuid.toString(), 1, postsDto);
-
-    assertTrue(responseDto.getPostsUrl().startsWith("posts_url"));
-  }
-
-  @Test
-  @DisplayName("게시글 저장 성공 - url 미지정")
-  void createPostsSuccessNullUrl() {
-    UUID uuid = UUID.randomUUID();
-    Member member = MemberDummy.dummy();
-    Blog blog = BlogDummy.dummy(member);
-    Category category = CategoryDummy.dummy(blog);
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            null,
-            "title",
-            1L,
-            "",
-            "summary",
-            "thumb",
-            "details",
-            List.of("tag"));
-    Posts posts = PostsDummy.dummy(category);
-    Tag tag = new Tag(1L, "tag", false);
-    PostsTag postsTag = new PostsTag(1L, tag, posts, blog);
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
-    TempPosts tempPosts = new TempPosts(uuid, member);
-
-    when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
-    when(postsRepository.existsByUrl(anyString())).thenReturn(false);
-    when(postsRepository.save(any(Posts.class))).thenReturn(posts);
-    when(tagRepository.findByName(anyString()))
-            .thenReturn(Optional.of(tag));
-    when(tagRepository.save(any(Tag.class))).thenReturn(tag);
-    when(postsTagRepository.save(any(PostsTag.class))).thenReturn(postsTag);
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.delete(anyString(), anyString())).thenReturn(1L);
-    when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
-    doNothing().when(tempPostsRepository).delete(any());
-
-    CreatePostsResponseDto responseDto =
-            postsService.createPosts(uuid.toString(), 1, postsDto);
-
-    assertEquals("posts_url", responseDto.getPostsUrl());
+    assertThrows(AuthorizationException.class, () -> postsService.createPosts("up", 0, tpDto));
   }
 
   @Test
@@ -434,22 +282,27 @@ class PostsServiceTest {
     Member member = MemberDummy.dummy();
     Blog blog = BlogDummy.dummy(member);
     Category category = CategoryDummy.dummy(blog);
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
-            null,
+            "url!@#",
             "title",
             1L,
-            "!!@#!@%@",
             "summary",
             "thumb",
             "details",
             List.of("tag"));
+    TempPosts tempPosts = new TempPosts(uuid, member);
+    tempPosts.updateTempPosts(tpDto);
 
+    Posts posts = PostsDummy.dummy(category);
+
+    when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
     when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
+    when(postsRepository.save(any(Posts.class))).thenReturn(posts);
 
     String uuidString = uuid.toString();
 
-    assertThrows(InvalidPostsUrlException.class, () -> postsService.createPosts(uuidString, 1, postsDto));
+    assertThrows(InvalidPostsUrlException.class, () -> postsService.createPosts(uuidString, 1, tpDto));
   }
 
   @Test
@@ -457,11 +310,8 @@ class PostsServiceTest {
   void deleteTempPosts() {
     UUID uuid = UUID.randomUUID();
     Member member = MemberDummy.dummy();
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
     TempPosts tempPosts = new TempPosts(uuid, member);
 
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.delete(anyString(), anyString())).thenReturn(1L);
     when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
 
     postsService.deleteTempPosts(1, uuid.toString());
@@ -474,11 +324,8 @@ class PostsServiceTest {
   void deleteTempPostsFailed() {
     UUID uuid = UUID.randomUUID();
     Member member = MemberDummy.dummy();
-    HashOperations<String, Object, Object> hashOperations = mock(HashOperations.class);
     TempPosts tempPosts = new TempPosts(uuid, member);
 
-    when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    when(hashOperations.delete(anyString(), anyString())).thenReturn(1L);
     when(tempPostsRepository.findById(any())).thenReturn(Optional.of(tempPosts));
     String uuidString = uuid.toString();
     assertThrows(AuthorizationException.class, () -> postsService.deleteTempPosts(2, uuidString));

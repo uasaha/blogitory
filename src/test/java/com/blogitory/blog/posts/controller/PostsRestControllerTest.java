@@ -71,22 +71,21 @@ class PostsRestControllerTest {
   @Test
   @DisplayName("게시물 임시 저장")
   void tempSave() throws Exception {
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            1,
-            "title",
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
             "url",
+            "title",
+            1L,
             "summary",
             "thumb",
             "details",
-            List.of());
+            List.of("tag"));
 
     doNothing().when(postsService).saveTempPosts(anyString(), any(), any());
 
     mvc.perform(post("/api/posts/tp-qwejnqwe")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(postsDto)))
+                    .content(objectMapper.writeValueAsString(tpDto)))
             .andExpect(status().isOk());
   }
 
@@ -94,16 +93,15 @@ class PostsRestControllerTest {
   @Test
   @DisplayName("게시물 등록")
   void createPosts() throws Exception {
-    SaveTempPostsDto postsDto = new SaveTempPostsDto(
-            1L,
-            1,
-            "title",
+    SaveTempPostsDto tpDto = new SaveTempPostsDto(
             1L,
             "url",
+            "title",
+            1L,
             "summary",
             "thumb",
             "details",
-            List.of());
+            List.of("tag"));
 
     CreatePostsResponseDto responseDto = new CreatePostsResponseDto("postsUrl");
 
@@ -111,7 +109,7 @@ class PostsRestControllerTest {
 
     mvc.perform(post("/api/posts?tp=lqgnqwngl")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postsDto)))
+            .content(objectMapper.writeValueAsString(tpDto)))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.postsUrl").value("postsUrl"));
   }

@@ -320,4 +320,22 @@ class FollowRepositoryTest {
     assertEquals(followTo.getUsername(), result.getUsername());
     assertEquals(followTo.getName(), result.getName());
   }
+
+  @Test
+  @DisplayName("팔로워 멤버 조회")
+  void findFollowersByMemberNo() {
+    Member followTo = MemberDummy.dummy();
+    memberRepository.save(followTo);
+    Member followFrom = MemberDummy.dummy();
+    ReflectionTestUtils.setField(followFrom, "memberNo", 2);
+    ReflectionTestUtils.setField(followFrom, "username", "followFrom");
+    memberRepository.save(followFrom);
+    Follow follow = FollowDummy.dummy(followTo, followFrom);
+    followRepository.save(follow);
+
+    List<Member> followers = followRepository.findFollowersByMemberNo(followTo.getMemberNo());
+
+    assertEquals(1, followers.size());
+    assertEquals(followFrom.getMemberNo(), followers.getFirst().getMemberNo());
+  }
 }

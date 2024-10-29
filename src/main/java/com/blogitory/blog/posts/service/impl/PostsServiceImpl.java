@@ -7,7 +7,6 @@ import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
 import com.blogitory.blog.commons.listener.event.NewPostsNoticeEvent;
 import com.blogitory.blog.commons.utils.PostsUtils;
-import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
@@ -23,7 +22,6 @@ import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.exception.InvalidPostsUrlException;
-import com.blogitory.blog.posts.exception.PostsJsonConvertException;
 import com.blogitory.blog.posts.repository.PostsRepository;
 import com.blogitory.blog.posts.service.PostsService;
 import com.blogitory.blog.poststag.entity.PostsTag;
@@ -34,12 +32,11 @@ import com.blogitory.blog.tag.entity.Tag;
 import com.blogitory.blog.tag.repository.TagRepository;
 import com.blogitory.blog.tempposts.entity.TempPosts;
 import com.blogitory.blog.tempposts.repository.TempPostsRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,7 +52,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,10 +72,6 @@ public class PostsServiceImpl implements PostsService {
   private final CategoryRepository categoryRepository;
   private final TagRepository tagRepository;
   private final PostsTagRepository postsTagRepository;
-  private final FollowRepository followRepository;
-  private final RedisTemplate<String, Object> redisTemplate;
-  private final ObjectMapper objectMapper;
-  public static final String POST_KEY = "temp_post";
   private static final String URL_REGEX = "^[ㄱ-ㅎ가-힣a-zA-Z0-9_-]+$";
   private static final String TITLE_URL_REGEX = "[^ㄱ-ㅎ가-힣a-zA-Z0-9\\s]";
 
@@ -104,43 +96,38 @@ public class PostsServiceImpl implements PostsService {
 
     tempPosts = tempPostsRepository.save(tempPosts);
 
-    SaveTempPostsDto saveDto = new SaveTempPostsDto();
-    saveDto.setMemberNo(memberNo);
-
-    String saved;
-
-    try {
-      saved = objectMapper.writeValueAsString(saveDto);
-    } catch (JsonProcessingException e) {
-      throw new PostsJsonConvertException();
-    }
-
-    redisTemplate.opsForHash().put(POST_KEY, uuid.toString(), saved);
-
     return tempPosts.getTempPostsId().toString();
   }
 
   /**
    * {@inheritDoc}
    */
+  @Transactional(readOnly = true)
   @Override
   public SaveTempPostsDto loadTempPosts(String id, Integer memberNo) {
-    String saveData =
-            (String) redisTemplate.opsForHash().get(POST_KEY, id);
+    TempPosts tempPosts = tempPostsRepository.findById(UUID.fromString(id))
+            .orElseThrow(() -> new NotFoundException(TempPosts.class));
 
-    SaveTempPostsDto saveDto;
-
-    try {
-      saveDto = objectMapper.readValue(saveData, SaveTempPostsDto.class);
-    } catch (JsonProcessingException e) {
-      throw new PostsJsonConvertException();
-    }
-
-    if (!saveDto.getMemberNo().equals(memberNo)) {
+    if (!tempPosts.getMember().getMemberNo().equals(memberNo)) {
       throw new AuthorizationException();
     }
 
-    return saveDto;
+    List<String> tags = new ArrayList<>();
+
+    if (Objects.nonNull(tempPosts.getTags())) {
+      tags = Arrays.stream(tempPosts.getTags().split(",")).toList();
+
+    }
+
+    return new SaveTempPostsDto(
+            tempPosts.getBlogNo(),
+            null,
+            tempPosts.getTitle(),
+            tempPosts.getCategoryNo(),
+            tempPosts.getSummary(),
+            tempPosts.getThumbnailUrl(),
+            tempPosts.getDetails(),
+            tags);
   }
 
   /**
@@ -151,20 +138,11 @@ public class PostsServiceImpl implements PostsService {
     TempPosts tempPosts = tempPostsRepository.findById(UUID.fromString(id))
             .orElseThrow(() -> new NotFoundException(TempPosts.class));
 
-    tempPosts.updateCreateAt();
-    saveDto.setMemberNo(memberNo);
-
-    String saved;
-
-    try {
-      saved = objectMapper.writeValueAsString(saveDto);
-    } catch (JsonProcessingException e) {
-      throw new PostsJsonConvertException();
+    if (!tempPosts.getMember().getMemberNo().equals(memberNo)) {
+      throw new AuthorizationException();
     }
 
-    redisTemplate.opsForHash().put(POST_KEY, id, saved);
-
-
+    tempPosts.updateTempPosts(saveDto);
   }
 
   /**
@@ -208,8 +186,7 @@ public class PostsServiceImpl implements PostsService {
 
     posts = postsRepository.save(posts);
 
-    eventPublisher.publishEvent(new NewPostsNoticeEvent(posts,
-            followRepository.findFollowersByMemberNo(blog.getMember().getMemberNo())));
+    eventPublisher.publishEvent(new NewPostsNoticeEvent(posts));
 
     connectTags(blog, posts, saveDto.getTags());
 
@@ -223,7 +200,6 @@ public class PostsServiceImpl implements PostsService {
    */
   @Override
   public void deleteTempPosts(Integer memberNo, String tp) {
-    redisTemplate.opsForHash().delete(POST_KEY, tp);
     TempPosts tempPosts = tempPostsRepository.findById(UUID.fromString(tp))
             .orElseThrow(() -> new NotFoundException(TempPosts.class));
 
@@ -582,10 +558,14 @@ public class PostsServiceImpl implements PostsService {
     String url = blog.getUrlName() + "/" + saveDto.getUrl();
 
     if (saveDto.getUrl() == null || saveDto.getUrl().isEmpty()) {
-      String titleUrl = saveDto.getTitle().replaceAll(TITLE_URL_REGEX, "");
+      String titleUrl = saveDto.getTitle().replaceAll(TITLE_URL_REGEX, " ");
       titleUrl = titleUrl.replaceAll("\\s{2,}", " ");
       titleUrl = titleUrl.trim();
       titleUrl = titleUrl.replace(" ", "-");
+
+      if (titleUrl.isEmpty() || url.isBlank()) {
+        throw new InvalidPostsUrlException();
+      }
 
       url = blog.getUrlName() + "/" + titleUrl;
     } else {

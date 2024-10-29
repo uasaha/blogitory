@@ -34,6 +34,7 @@ public class TempPostsRepositoryImpl extends QuerydslRepositorySupport
             .select(Projections.constructor(
                     GetTempPostsResponseDto.class,
                     tempPosts.tempPostsId,
+                    tempPosts.title,
                     tempPosts.createdAt))
             .innerJoin(member).on(tempPosts.member.eq(member))
             .orderBy(tempPosts.createdAt.desc())

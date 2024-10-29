@@ -17,7 +17,6 @@ import com.blogitory.blog.security.util.SecurityUtils;
 import com.blogitory.blog.viewer.aspect.point.Viewer;
 import com.blogitory.blog.viewer.service.ViewerService;
 import com.blogitory.blog.visitant.aspect.point.Visitant;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -110,8 +109,7 @@ public class PostsController {
   @Visitant
   @Viewer
   @GetMapping("/@{username}/{blogUrl}/{postUrl}")
-  public String postsPage(HttpServletRequest request,
-                          @PathVariable String username,
+  public String postsPage(@PathVariable String username,
                           @PathVariable String blogUrl,
                           @PathVariable String postUrl,
                           Model model) {

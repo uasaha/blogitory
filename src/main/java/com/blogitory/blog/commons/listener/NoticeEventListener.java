@@ -74,7 +74,7 @@ public class NoticeEventListener {
   @Async
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void newPostsNoticeEvent(NewPostsNoticeEvent noticeEvent) {
-    noticeService.newPostsNotice(noticeEvent.posts(), noticeEvent.targets());
+    noticeService.newPostsNotice(noticeEvent.posts());
   }
 
   /**
