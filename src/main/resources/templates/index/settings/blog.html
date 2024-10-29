@@ -81,6 +81,7 @@
                         <div class="row g-3">
                             <div class="col-auto">
                                 <input type="text" class="form-control" id="blogName" onkeyup="validateBlogName(this)">
+                                <span id="cant-blog-name" class="text-danger d-none">사용할 수 없는 블로그 이름입니다.</span>
                             </div>
                         </div>
                         <h3 class="card-title mt-4">블로그 URL</h3>
@@ -91,6 +92,7 @@
                                           th:text="'https://blogitory.com/@' + ${members.username} + '/'"></span>
                                     <input type="text" class="form-control" id="blogUrl" readonly onkeyup="validateBlogUrl(this)">
                                 </div>
+                                <span id="cant-blog-url" class="text-danger d-none">사용할 수 없는 URL 이름입니다.</span>
                             </div>
                         </div>
                         <div id="blogOpenDiv">
@@ -115,7 +117,8 @@
                             <h3 class="card-title mt-4">카테고리</h3>
                             <div class="row g-3 mb-1">
                                 <div class="col-auto">
-                                    <input id="newCategory" type="text" class="form-control" value="">
+                                    <input id="newCategory" type="text" class="form-control" value="" onkeyup="validateCategory(this)">
+                                    <span id="cant-category" class="text-danger d-none">사용할 수 없는 카테고리입니다.</span>
                                 </div>
                                 <div class="col-auto">
                                     <button class="btn" onclick="addCategory()" value="추가"></button>

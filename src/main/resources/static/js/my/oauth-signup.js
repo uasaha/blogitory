@@ -1,5 +1,5 @@
 let usernameReg = /^[a-z0-9-]{2,30}$/;
-let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d]{2,50}$/;
+let nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d\s]{2,50}$/;
 
 async function usernameValidate() {
     let isDuplicated = true;

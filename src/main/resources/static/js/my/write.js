@@ -266,8 +266,11 @@ function savePosts(el) {
 
 function validateTitle(el) {
     if(el.value.length > 0) {
+        el.classList.remove("is-invalid")
+        el.classList.add("is-valid");
         return true;
     }
+    el.classList.remove("is-valid")
     el.classList.add("is-invalid");
     return false;
 }

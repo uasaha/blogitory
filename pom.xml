@@ -164,7 +164,12 @@
 			<artifactId>commonmark</artifactId>
 			<version>0.22.0</version>
 		</dependency>
-    </dependencies>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+
+	</dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

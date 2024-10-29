@@ -54,6 +54,34 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="d-flex">
+                                <div class="col-12">
+                                    <div class="float-start" th:if="${posts.hasPrevious()}">
+                                        <a id="page-previous" class="text-body" th:href="|${'/settings/posts?page=' + (posts.currentPage() - 1)}|" tabindex="-1" aria-disabled="true">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                                 stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M15 6l-6 6l6 6"/>
+                                            </svg>
+                                            이전
+                                        </a>
+                                    </div>
+                                    <div class="ms-md-auto float-end" th:if="${posts.hasNext()}">
+                                        <a id="page-next" class="text-body" th:href="|${'/settings/posts?page=' + (posts.currentPage() + 1)}|">
+                                            다음
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                                 stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M9 6l6 6l-6 6"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

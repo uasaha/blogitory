@@ -2,6 +2,7 @@ const nameReg = /^[a-zA-Zㄱ-ㅣ가-힣\d\s]{2,30}$/;
 const socialLength = 50;
 const blogNameReg = /^[ㄱ-ㅎ가-힣a-zA-Z0-9\s_-]{2,20}$/
 const blogUrlReg = /^[a-zA-Z0-9-]{2,50}$/
+const categoryReg = /^[ㄱ-ㅎ가-힣a-zA-Z0-9\s]{2,50}$/
 
 function pfpInputClick() {
     document.querySelector("#pfpInput").click();
@@ -152,7 +153,8 @@ function blogSwap() {
     categoryDiv.innerHTML = "<h3 class=\"card-title mt-4\">카테고리</h3>" +
         "<div class=\"row g-3 mb-1\">\n" +
         "    <div class=\"col-auto\">\n" +
-        "        <input id=\"newCategory\" type=\"text\" class=\"form-control\" value=\"\">\n" +
+        "        <input id=\"newCategory\" type=\"text\" class=\"form-control\" value=\"\" onkeyup='validateCategory(this)'>\n" +
+        "        <span id=\"cant-category\" class=\"text-danger d-none\">사용할 수 없는 카테고리입니다.</span>" +
         "    </div>\n" +
         "    <div class=\"col-auto\"><button class=\"btn\" onclick='addCategory()'>\n" +
         "        추가\n" +
@@ -218,7 +220,11 @@ function addCategory() {
     let blogUrl = document.querySelector("#blogUrl").value;
 
     if (newCategory.value === "" || newCategory.value === null) {
-        alert("카테고리를 입력하지 않았습니다.");
+        openWarnAlerts("카테고리를 입력하지 않았습니다.");
+        return;
+    }
+
+    if (!validateCategory(newCategory)) {
         return;
     }
 
@@ -451,22 +457,43 @@ function deleteBlog() {
 }
 
 function validateBlogName(el) {
+    let cantReason = document.querySelector("#cant-blog-name");
+
     if (blogNameReg.test(el.value)) {
-        el.classList.remove("is-invalid")
+        cantReason.classList.add("d-none");
+        el.classList.remove("is-invalid");
         el.classList.add("is-valid");
         return true;
     }
+    cantReason.classList.remove("d-none");
     el.classList.remove("is-valid");
     el.classList.add("is-invalid");
     return false;
 }
 function validateBlogUrl(el) {
+    let cantReason = document.querySelector("#cant-blog-url");
     if (blogUrlReg.test(el.value)) {
+        cantReason.classList.add("d-none");
         el.classList.remove("is-invalid")
         el.classList.add("is-valid");
         return true;
     }
+    cantReason.classList.remove("d-none");
     el.classList.remove("is-valid");
+    el.classList.add("is-invalid");
+    return false;
+}
+
+function validateCategory(el) {
+    let cantReason = document.querySelector("#cant-category");
+    if (categoryReg.test(el.value)) {
+        cantReason.classList.add("d-none");
+        el.classList.remove("is-invalid");
+        el.classList.add("is-valid");
+        return true;
+    }
+    cantReason.classList.remove("d-none");
+    el.classList.remove("is-invalid");
     el.classList.add("is-invalid");
     return false;
 }
