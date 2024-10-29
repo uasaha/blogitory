@@ -21,7 +21,6 @@ import com.blogitory.blog.category.entity.CategoryDummy;
 import com.blogitory.blog.category.repository.CategoryRepository;
 import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.commons.exception.NotFoundException;
-import com.blogitory.blog.follow.repository.FollowRepository;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.entity.MemberDummy;
 import com.blogitory.blog.member.repository.MemberRepository;
@@ -81,7 +80,6 @@ class PostsServiceTest {
   CategoryRepository categoryRepository;
   TagRepository tagRepository;
   PostsTagRepository postsTagRepository;
-  FollowRepository followRepository;
   PostsService postsService;
 
   @BeforeEach
@@ -93,7 +91,6 @@ class PostsServiceTest {
     categoryRepository = mock(CategoryRepository.class);
     tagRepository = mock(TagRepository.class);
     postsTagRepository = mock(PostsTagRepository.class);
-    followRepository = mock(FollowRepository.class);
 
     postsService = new PostsServiceImpl(
             eventPublisher,
@@ -102,8 +99,7 @@ class PostsServiceTest {
             tempPostsRepository,
             categoryRepository,
             tagRepository,
-            postsTagRepository,
-            followRepository);
+            postsTagRepository);
   }
 
   @Test
