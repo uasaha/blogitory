@@ -10,6 +10,7 @@ import com.blogitory.blog.blog.service.BlogService;
 import com.blogitory.blog.commons.annotaion.RoleUser;
 import com.blogitory.blog.follow.service.FollowService;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
+import com.blogitory.blog.posts.dto.response.GetBeforeNextPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
@@ -120,7 +121,9 @@ public class PostsController {
 
     GetBlogResponseDto blogResponse = blogService.getBlogByUrl(blogKey);
     GetPostResponseDto postsResponse = postsService.getPostByUrl(postKey);
+    GetBeforeNextPostsResponseDto relatedPosts = postsService.getRelatedPosts(postKey);
 
+    model.addAttribute("relatedPosts", relatedPosts);
     model.addAttribute("blog", blogResponse);
     model.addAttribute(POSTS_ATTR, postsResponse);
 

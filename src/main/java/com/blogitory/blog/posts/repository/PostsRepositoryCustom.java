@@ -7,6 +7,7 @@ import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRelatedPostsResponseDto;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -164,4 +165,7 @@ public interface PostsRepositoryCustom {
    */
   Page<GetFeedPostsResponseDto> getFeedPostsByMemberNo(Integer memberNo,
                                                        Long start, Pageable pageable);
+
+  List<GetRelatedPostsResponseDto> getLatestPostsInCategory(
+          Long targetCategoryNo, Long targetPostsNo, Long postsCount, boolean isAfter);
 }

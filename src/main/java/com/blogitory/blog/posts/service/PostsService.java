@@ -4,6 +4,7 @@ import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetBeforeNextPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetFeedPostsPagesResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPopularPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
@@ -218,4 +219,12 @@ public interface PostsService {
    * @return posts
    */
   GetFeedPostsPagesResponseDto feed(Integer memberNo, Long start, Pageable pageable);
+
+  /**
+   * Get related posts.
+   *
+   * @param postKey post key
+   * @return posts list
+   */
+  GetBeforeNextPostsResponseDto getRelatedPosts(String postKey);
 }

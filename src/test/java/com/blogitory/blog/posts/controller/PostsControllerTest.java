@@ -20,6 +20,7 @@ import com.blogitory.blog.follow.service.FollowService;
 import com.blogitory.blog.member.dto.MemberPersistInfoDtoDummy;
 import com.blogitory.blog.member.dto.response.GetMemberPersistInfoDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
+import com.blogitory.blog.posts.dto.response.GetBeforeNextPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.service.PostsService;
@@ -165,9 +166,13 @@ class PostsControllerTest {
     Map<String, Object> attrs = new HashMap<>();
     attrs.put("members", persistInfoDto);
 
+    GetBeforeNextPostsResponseDto beforeNextPostsResponseDto =
+            new GetBeforeNextPostsResponseDto("", "", 1L, List.of());
+
     when(blogService.getBlogByUrl(anyString())).thenReturn(blogResponse);
     when(postsService.getPostByUrl(anyString())).thenReturn(postResponse);
     when(followService.isFollowed(anyInt(), anyString())).thenReturn(true);
+    when(postsService.getRelatedPosts(anyString())).thenReturn(beforeNextPostsResponseDto);
 
     mvc.perform(get("/@username/blog/post")
                     .flashAttrs(attrs))

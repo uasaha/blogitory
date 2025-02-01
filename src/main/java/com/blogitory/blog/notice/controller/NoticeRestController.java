@@ -51,7 +51,6 @@ public class NoticeRestController {
   @DeleteMapping("/{noticeNo}")
   public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeNo) {
     noticeService.delete(SecurityUtils.getCurrentUserNo(), noticeNo);
-
     return ResponseEntity.noContent().build();
   }
 

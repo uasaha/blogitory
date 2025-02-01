@@ -13,6 +13,7 @@ import com.blogitory.blog.posts.dto.response.GetPostForModifyResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostManageResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRelatedPostsResponseDto;
 import com.blogitory.blog.posts.entity.Posts;
 import com.blogitory.blog.posts.entity.QPosts;
 import com.blogitory.blog.posts.repository.PostsRepositoryCustom;
@@ -27,6 +28,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -649,6 +651,32 @@ public class PostsRepositoryImpl extends QuerydslRepositorySupport
     return new PageImpl<>(postList, pageable, total);
   }
 
+  @Override
+  public List<GetRelatedPostsResponseDto> getLatestPostsInCategory(
+          Long targetCategoryNo, Long targetPostsNo, Long postsCount, boolean isAfter) {
+    JPAQuery<GetRelatedPostsResponseDto> query = queryFactory
+            .from(posts)
+            .select(Projections.constructor(GetRelatedPostsResponseDto.class,
+                    posts.postsNo,
+                    posts.subject,
+                    posts.url,
+                    posts.createdAt))
+            .innerJoin(category).on(category.categoryNo.eq(posts.category.categoryNo))
+            .where(posts.deleted.isFalse().and(posts.open.isTrue()))
+            .where(category.categoryNo.eq(targetCategoryNo));
+
+    if (isAfter) {
+      query = query.where(posts.postsNo.gt(targetPostsNo))
+              .orderBy(posts.postsNo.asc());
+    } else {
+      query = query.where(posts.postsNo.lt(targetPostsNo))
+              .orderBy(posts.postsNo.desc());
+    }
+
+    return query
+            .limit(postsCount)
+            .fetch();
+  }
 
   /**
    * Get recent posts.

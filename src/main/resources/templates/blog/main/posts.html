@@ -190,6 +190,58 @@
                         </div>
                     </div>
                 </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="d-flex">
+                            <div class="col-12">
+                                <div class="float-start">
+                                    <a id="page-previous" class="text-body" th:href="'/'+${relatedPosts.beforeUrl}" tabindex="-1" aria-disabled="true" th:if="${not #strings.isEmpty(relatedPosts.beforeUrl)}">
+                                        <div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                                 stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M15 6l-6 6l6 6"/>
+                                            </svg>
+                                            이전 글
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="ms-md-auto float-end">
+                                    <a id="page-next" class="text-body" th:href="'/'+${relatedPosts.afterUrl}" th:if="${not #strings.isEmpty(relatedPosts.afterUrl)}">
+                                        <div>
+                                            다음 글
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                                 stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                <path d="M9 6l6 6l-6 6"/>
+                                            </svg>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <p>
+                            <a th:href="'/'+${blog.blogUrl} + '/categories/' + ${posts.categoryName}" th:text="${posts.categoryName}"></a>
+                            카테고리의 다른 글
+                        </p>
+                        <ul class="list-unstyled space-y-1 ms-2">
+                            <li th:each="related : ${relatedPosts.relatedPosts}">
+                                <a th:href="'/'+${related.url}" class="text-body" th:if="${related.postsNo != relatedPosts.nowPostsNo}">
+                                    <p th:text="${related.title}" style="margin-bottom: 0px"></p>
+                                </a>
+                                <a th:href="'/'+${related.url}" th:if="${related.postsNo == relatedPosts.nowPostsNo}">
+                                    <p style="font-weight: bold; margin-bottom: 0px" th:text="${related.title}"></p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div sec:authorize="isAuthenticated()" id="comment-write-form" class="card-footer">
                     <div class="row">
                         <div class="row">

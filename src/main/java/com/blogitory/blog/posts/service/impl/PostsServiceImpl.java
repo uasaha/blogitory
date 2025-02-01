@@ -9,6 +9,8 @@ import com.blogitory.blog.commons.listener.event.NewPostsNoticeEvent;
 import com.blogitory.blog.commons.utils.PostsUtils;
 import com.blogitory.blog.member.entity.Member;
 import com.blogitory.blog.member.repository.MemberRepository;
+import com.blogitory.blog.posts.dto.response.GetBeforeNextPostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetRelatedPostsResponseDto;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
@@ -37,6 +39,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -528,6 +531,66 @@ public class PostsServiceImpl implements PostsService {
             result.hasPrevious(),
             result.hasNext(),
             result.getTotalElements()));
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public GetBeforeNextPostsResponseDto getRelatedPosts(String postKey) {
+    Posts posts = postsRepository.findByUrl(postKey)
+            .orElseThrow(() -> new NotFoundException(Posts.class));
+
+    Category category = posts.getCategory();
+    Long targetCategoryNo = category.getCategoryNo();
+
+    List<GetRelatedPostsResponseDto> beforePosts =
+            postsRepository.getLatestPostsInCategory(
+                    targetCategoryNo,
+                    posts.getPostsNo(),
+                    4L,
+                    false
+            );
+
+    beforePosts.sort(Comparator.comparing(GetRelatedPostsResponseDto::getPostsNo));
+
+    List<GetRelatedPostsResponseDto> afterPosts =
+            postsRepository.getLatestPostsInCategory(
+                    targetCategoryNo,
+                    posts.getPostsNo(),
+                    4L,
+                    true);
+
+    GetRelatedPostsResponseDto nowPost = new GetRelatedPostsResponseDto(
+            posts.getPostsNo(), posts.getSubject(), posts.getUrl(), posts.getCreatedAt());
+
+    List<GetRelatedPostsResponseDto> allPosts = new ArrayList<>(beforePosts);
+    allPosts.add(nowPost);
+    allPosts.addAll(afterPosts);
+
+    int nowIdx = allPosts.indexOf(nowPost);
+    int startIdx = nowIdx - 2;
+
+    if (nowIdx < 2) {
+      startIdx = 0;
+    }
+
+    int endIdx = nowIdx + 3;
+
+    if (afterPosts.size() == 1) {
+      endIdx--;
+    } else if (afterPosts.isEmpty()) {
+      endIdx -= 2;
+    }
+
+    List<GetRelatedPostsResponseDto> result = new ArrayList<>();
+
+    for (int i = startIdx; i < endIdx; i++) {
+      result.add(allPosts.get(i));
+    }
+
+    String beforeUrl = beforePosts.isEmpty() ? "" : beforePosts.getLast().getUrl();
+    String nextUrl = afterPosts.isEmpty() ? "" : afterPosts.getFirst().getUrl();
+
+    return new GetBeforeNextPostsResponseDto(beforeUrl, nextUrl, nowPost.getPostsNo(), result);
   }
 
 

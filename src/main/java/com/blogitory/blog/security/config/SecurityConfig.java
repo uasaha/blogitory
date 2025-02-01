@@ -3,7 +3,6 @@ package com.blogitory.blog.security.config;
 import com.blogitory.blog.commons.utils.CookieUtils;
 import com.blogitory.blog.jwt.properties.JwtProperties;
 import com.blogitory.blog.jwt.service.JwtService;
-import com.blogitory.blog.member.service.MemberService;
 import com.blogitory.blog.security.filter.AuthenticationFilterCustom;
 import com.blogitory.blog.security.filter.AuthenticationProcessingFilterCustom;
 import com.blogitory.blog.security.handler.AuthenticationSuccessHandlerImpl;
@@ -45,7 +44,6 @@ public class SecurityConfig {
   private final ObjectMapper objectMapper;
   private final JwtService jwtService;
   private final PasswordEncoder passwordEncoder;
-  private final MemberService memberService;
   private final CookieUtils cookieUtils;
 
   private static final String LOGIN_URL = "/api/login";
@@ -169,7 +167,7 @@ public class SecurityConfig {
   @Bean
   public AuthenticationProvider authenticationProvider() {
 
-    return new AuthenticationProviderImpl(userDetailsService, memberService, passwordEncoder);
+    return new AuthenticationProviderImpl(userDetailsService, passwordEncoder);
   }
 
 }

@@ -8,6 +8,7 @@ import com.blogitory.blog.commons.dto.Pages;
 import com.blogitory.blog.posts.dto.request.ModifyPostsRequestDto;
 import com.blogitory.blog.posts.dto.request.SaveTempPostsDto;
 import com.blogitory.blog.posts.dto.response.CreatePostsResponseDto;
+import com.blogitory.blog.posts.dto.response.GetBeforeNextPostsResponseDto;
 import com.blogitory.blog.posts.dto.response.GetFeedPostsPagesResponseDto;
 import com.blogitory.blog.posts.dto.response.GetPostActivityResponseDto;
 import com.blogitory.blog.posts.dto.response.GetRecentPostResponseDto;
@@ -314,5 +315,13 @@ public class PostsRestController {
     Integer memberNo = SecurityUtils.getCurrentUserNo();
 
     return ResponseEntity.ok(postsService.feed(memberNo, start, pageable));
+  }
+
+  @GetMapping("/@{username}/{blogUrl}/{postUrl}/related")
+  ResponseEntity<GetBeforeNextPostsResponseDto> getRelatedPosts(@PathVariable String username,
+                                                                @PathVariable String blogUrl,
+                                                                @PathVariable String postUrl) {
+    String postsKey = getPostsKey(username, blogUrl, postUrl);
+    return ResponseEntity.ok(postsService.getRelatedPosts(postsKey));
   }
 }

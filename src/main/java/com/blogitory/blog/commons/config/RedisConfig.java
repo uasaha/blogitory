@@ -39,6 +39,7 @@ public class RedisConfig {
   public RedisConnectionFactory redisConnectionFactory() {
     final LettuceClientConfiguration clientConfiguration =
             LettuceClientConfiguration.builder()
+                    .useSsl()
                     .build();
 
     RedisStandaloneConfiguration standaloneConfiguration =
