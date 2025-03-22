@@ -569,7 +569,7 @@ public class PostsServiceImpl implements PostsService {
     int nowIdx = allPosts.indexOf(nowPost);
     int startIdx = nowIdx - 2;
 
-    if (nowIdx < 2) {
+    if (afterPosts.size() < 2) {
       startIdx = 0;
     }
 
